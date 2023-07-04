@@ -17,10 +17,10 @@
 <p align="left">asasiincrit@bk.ru
   
 </p>
-<p align="left">asasiincrit@bk.ru
+<p align="left">
   https://t.me/Avard_sir
 </p>
-<p align="left">asasiincrit@bk.ru
+<p align="left">
   https://vk.com/bat1901
 </p>
 
