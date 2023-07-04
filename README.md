@@ -15,6 +15,13 @@
 
 <h3 align="left">Connect with me:</h3>
 <p align="left">asasiincrit@bk.ru
+  
+</p>
+<p align="left">asasiincrit@bk.ru
+  https://t.me/Avard_sir
+</p>
+<p align="left">asasiincrit@bk.ru
+  https://vk.com/bat1901
 </p>
 
 <h3 align="left">Languages and Tools:</h3>
