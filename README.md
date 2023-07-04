@@ -14,16 +14,6 @@
 - ⚡ Fun fact **wise guy, joker, charismatic like Downey Jr. and perfectly able to joke inside my head**
 
 <h3 align="left">Connect with me:</h3>
-<p align="left">asasiincrit@bk.ru
-  
-</p>
-<p align="left">
-  <img src="  https://t.me/Avard_sir https://taxiline24.ru/wp-content/uploads/2018/11/telegram.png
-"
-</p>
-<p align="left">
-  https://vk.com/bat1901
-</p>
 <a href ="https://t.me/Avard_sir">
 					<img src = "https://img.shields.io/badge/Telegram-0088cc?logo=telegram&style=flat-for-badge"/>
 				</a>
