@@ -17,6 +17,16 @@
             padding: 15px;
             text-align: center;
         }
+        button {
+            width: 200px;
+            background-color: #17e4eb;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            color: white;
+            font-size: 16px;
+            margin-left: auto; 
+        }
         main {
             display: flex;
             flex: 1;
@@ -65,9 +75,10 @@
                     <p>Содержание 1...</p>
                 </article>
                 <article>
-                    <h2>Заголовок статьи 2</h2>
+                    <h2 id='Заголовок' >Заголовок статьи 2</h2>
                     <p>Содержание статьи 2...</p>
                 </article>
+                <button onclick="buton_fun(this)">Кнопка</button>
             </div>
             <nav>
                 <ul>
