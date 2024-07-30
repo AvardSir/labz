@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создание кнопок</title>
+</head>
+<body>
+    <div id="button-container">
+        <button id="add-button">Добавить кнопку</button>
+    </div>
+
+    <script>
+        document.getElementById('add-button').addEventListener('click', function() {
+            // Создаем новую кнопку
+            const newButton = document.createElement('button');
+            newButton.textContent = 'Новая кнопка';
+
+            // Вставляем новую кнопку после контейнера с кнопками
+            const container = document.getElementById('button-container');
+            container.insertAdjacentElement('beforeend', newButton);
+        });
+    </script>
+</body>
+</html>

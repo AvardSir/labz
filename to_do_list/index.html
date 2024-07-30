@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To do list</title>
+    <style>
+        .button {
+            background-color: #ff6f61; /* Мягкий коралловый цвет */
+            color: #ffffff; /* Белый текст */
+            border: none;
+            border-radius: 12px; /* Закругленные углы */
+            padding: 12px 24px; /* Отступы */
+            font-size: 1em; /* Размер шрифта */
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s; /* Плавные переходы */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Легкая тень */
+        }
+        .button:hover {
+            background-color: #ff4d3b; /* Более темный оттенок при наведении */
+            transform: translateY(-2px); /* Легкий эффект поднятия */
+        }
+        .button:active {
+            background-color: #e03e28; /* Еще более темный оттенок при нажатии */
+            transform: translateY(0); /* Вернуть в исходное положение */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Увеличенная тень при нажатии */
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #fef6e4; /* Нежный кремовый фон */
+            color: #333333; /* Темный текст */
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #ffdac1; /* Светло-розовый фон для заголовка */
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid #f1a7a7; /* Тонкая розовая линия снизу */
+        }
+        .container {
+            background-color: #ffffff; /* Белый фон записи */
+            border-radius: 8px; /* Закруглённые углы */
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Лёгкая тень */
+            max-width: 600px; /* Ограничение ширины */
+            width: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+            margin: auto;
+        }
+        .content {
+            font-size: 1em;
+            color: #666666; /* Более светлый текст для содержимого */
+            line-height: 1.6;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            color: #333333;
+        }
+        nav {
+            margin: 20px 0;
+            text-align: center;
+        }
+        nav a {
+            text-decoration: none;
+            color: #ff9a8b; /* Мягкий коралловый цвет для ссылок */
+            font-weight: bold;
+            margin: 0 15px;
+            transition: color 0.3s;
+        }
+        nav a:hover {
+            color: #ff6f61; /* Цвет при наведении */
+        }
+        main {
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        main p {
+            font-size: 1.2em;
+            line-height: 1.6;
+        }
+        footer {
+            background-color: #ffdac1;
+            padding: 10px;
+            text-align: center;
+            border-top: 1px solid #f1a7a7;
+        }
+        footer p {
+            margin: 0;
+            font-size: 0.9em;
+            color: #555555;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>to do list на сайте!</h1>
+    </header>
+    <nav>
+        <a href="#">Главная</a>
+        <a href="#">О нас</a>
+        <a href="#">Услуги</a>
+        <a href="#">Контакты</a>
+    </nav>
+    <main>
+        <p>
+            Добавляйте что нужно отслеживать
+        </p>
+
+        <div class="container" id="container_1">
+            <h1 class="title">Название записи</h1>
+            <p class="content">
+                Это содержимое записи. Здесь можно добавить текст, который будет отображаться в записи. Фон белый, 
+                а текст имеет светлый серый цвет для контраста. Ширина записи ограничена для лучшего отображения на 
+                экране. Вы можете заменить этот текст на свой собственный, сохраняя структуру и оформление.
+            </p>
+            
+            <button class="button" id="add_button_1" >Добавить</button>
+            <button class="button" id="del_button">Удалить</button>
+            <button class="button" id="change_button">Изменить</button>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2024 todolist. Все права защищены.</p>
+    </footer>
+    <script src="js/main.js">
+       
+    </script>
+</body>
+</html>
