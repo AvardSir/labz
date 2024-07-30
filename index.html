@@ -5,7 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Простейший сайт</title>
     <style>
+        form {
+            border: 2px solid #007BFF; /* Ширина: 2px, цвет: синий */
+            border-radius: 5px; /* Закругленные углы */
+            padding: 15px; /* Внутренние отступы */
+            width: 500px; /* Ширина формы */
+            
+            margin: 5px ; /*Центровка формы */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Тень */
+            margin-right: auto; /* Выравнивание формы слева */
+        }
         body {
+            margin: 5px ;
             display: flex;
             flex-direction: column;
             margin: 0;
@@ -82,12 +93,52 @@
             </div>
             <nav>
                 <ul>
-                    <li><a href="index.html">Главная</a></li>
-                    <li><a href="О нас.html">О нас</a></li>
-                    <li><a href="#">Контакты</a></li>
+                    <li><a class="Leftbar" href="index.html">Главная</a></li>
+                    <li><a class="Leftbar" href="О нас.html">О нас</a></li>
+                    <li><a class="Leftbar" href="#">Контакты</a></li>
                 </ul>
             </nav>
         </div>
+        <form id="main-form" >
+            <h2>Форма ввода</h2> 
+            <label for="паме">Имя: </label>
+            <input type="text" name="name" placeholder="Имя" id="name"><br><br>
+            <label for="password">Пароль: </label>
+            <input type="password" name="pass" placeholder="Пароль" id="pass"><br><br>
+            <label for="repass">Проверка пароля: </label>
+            <input type="password" name="repass" placeholder="Проверка пароля" id="repass"><br><br>
+            <span>Пол:</span>
+            <input type="radio" name="state" id="male" value="Мужской">
+            <label for="male">Межской</label>
+            <input type="radio" name="state" id="female" value="Женский">
+            <label for="female">Женский</label><br><br>
+            <label for="fail" style="color: red;"  id="fail"></label><br>
+            <input type="button" onclick="
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            ready_click(this)" name="submit" value="Готово">
+            </form>
     </main>
     <footer>
         <p>Все права защищены &copy; 2024</p>

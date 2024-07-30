@@ -134,8 +134,96 @@ function buton_fun(el) {
     }
     
 }
-let Заг=document.getElementById('Заголовок');
-Заг.style.color='red'
-Заг.style.background="#17e4eb"
-Заг.innerHTML='Привеет'
-console.log(Заг.id)
+// let Заг=document.getElementById('Заголовок');
+// Заг.style.color='red'
+// Заг.style.background="#17e4eb"
+// Заг.innerHTML='Что как?'
+// console.log(Заг.id)
+// let p_=document.getElementsByTagName('p')
+// //p_.style.setProperty("font-size" , "200px");
+
+// //p_.style.background="#17e4eb"
+// for (const i of p_) {
+    
+//     //i.style.setProperty("font-size" , "200px");
+// }
+// let _leftbar=document.getElementsByClassName('Leftbar')
+// for (const i of _leftbar) {
+//     //console.log(i)
+//     //i.style.setProperty("font-size" , "200px");
+// }
+
+function ready_click(el) {
+    let name=document.getElementById('name')
+    let repass=document.getElementById('repass')
+    let pass=document.getElementById('pass')
+    const state=document.querySelector('input[name="state"]:checked')
+    let fail=document.getElementById('fail')
+
+    fail.innerHTML=''
+    if (state==null){console.log('Выбери пол')
+        fail.innerHTML+='Выбери пол<br>'
+    }
+    if (typeof name.value !== "string" || name.value=='') {
+        console.log('В имени ошибка')
+        fail.innerHTML+='В имени ошибка<br>'
+    } 
+    
+    // console.lo
+    //(name.value)
+    // console.log(pass.value)
+    // console.log(repass.value)
+    console.log(state.value)
+
+    if (typeof name.value !== "string" ) {
+        console.log('В пароле ошибка')
+        fail.innerHTML+='В пароле ошибка<br>'
+    } 
+    
+    
+    if (pass.value!=repass.value) {
+        fail.innerHTML+='Пароли не сходятся<br>'
+
+        console.log('Пароли не сходятся')
+    }
+    if (fail.innerHTML==''){window.location='https://sp.freehat.cc/episode/season-26/'}
+    
+
+}
+
+// function fun() {
+//     console.log('фан')
+//     count_1++
+//     if (count_1==2){clearInterval(inter_1)}
+// }
+// let count_1=0
+// let inter_1=setInterval(fun, 1000)
+// setInterval(function () {
+//     console.log('фан ананомный')
+// },1000)
+
+// setTimeout(() => {
+//     console.log('Таймер сработал')
+// }, 1000);
+
+// let data=new Date();
+// console.log(data.getFullYear())
+// data.setFullYear(10)
+// console.log(data.getFullYear())
+class person{
+    constructor(name,hp,atack){
+        this.name=name
+        this.hp=hp
+        this.atack=atack
+    }
+     atack_someone(who_under_atack) {
+        who_under_atack.hp-=this.atack
+        if (who_under_atack.hp<=0){
+            console.log(who_under_atack.name+' убит')
+        }
+    }
+}
+let per=new person('Bob',10,10)
+let ork1=new person('ork1',20,10)
+per.atack_someone(ork1)
+console.log(ork1.hp)
