@@ -20,9 +20,9 @@ let title=container_1.childNodes[1]
 console.log(container_1.childNodes[3])
 console.log(container_1.childNodes[1])
 var count=1
-document.getElementById(`add_button_${count}`).addEventListener('click', function() {
+document.getElementById(`add_button`).addEventListener('click', function() {
     
-    el=`add_button_${count}`
+    el=`add_button`
     el=document.getElementById(el)
     console.log(count)
     console.log(el)
@@ -36,7 +36,7 @@ document.getElementById(`add_button_${count}`).addEventListener('click', functio
                 экране. Вы можете заменить этот текст на свой собственный, сохраняя структуру и оформление.
             </p>
             
-            <button class="button" id="add_button_${count}" >Добавить</button>
+            <button class="button" id="add_button" >Добавить</button>
             <button class="button" id="del_button">Удалить</button>
             <button class="button" id="change_button">Изменить</button>
         </div>`
@@ -44,7 +44,8 @@ document.getElementById(`add_button_${count}`).addEventListener('click', functio
     el=el.parentElement
     
     el.insertAdjacentHTML('afterend', code_of_class);
-    
+    document.body.appendChild(newButton);
+
 })
 
     
