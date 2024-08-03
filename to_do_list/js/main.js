@@ -41,51 +41,57 @@ document.getElementById(`add_button`).addEventListener('click', function() {
             <button class="button" id="change_button">Изменить</button>
         </div>`
     
+    let newElement=el
     el=el.parentElement
+
+    let mainElement=document.getElementById('main-content');
+    mainElement.appendChild(newElement);
     
     el.insertAdjacentHTML('afterend', code_of_class);
     document.body.appendChild(newButton);
 
 })
-
+//ненен
     
-function add_button(el) {
-    count++
-    console.log(count)
-    console.log(el)
-    console.log(el.parentElement)
+// function add_button(el) {//ЗАБРОШЕНО
+//     count++
+//     console.log(count)
+//     console.log(el)
+//     console.log(el.parentElement)
     
-    code_of_class=`<div class="container" id="container_${count}">
-            <h1 class="title">Название записи</h1>
-            <p class="content">
-                Это содержимое записи. Здесь можно добавить текст, который будет отображаться в записи. Фон белый, 
-                а текст имеет светлый серый цвет для контраста. Ширина записи ограничена для лучшего отображения на 
-                экране. Вы можете заменить этот текст на свой собственный, сохраняя структуру и оформление.
-            </p>
+//     code_of_class=`<div class="container" id="container_${count}">
+//             <h1 class="title">Название записи</h1>
+//             <p class="content">
+//                 Это содержимое записи. Здесь можно добавить текст, который будет отображаться в записи. Фон белый, 
+//                 а текст имеет светлый серый цвет для контраста. Ширина записи ограничена для лучшего отображения на 
+//                 экране. Вы можете заменить этот текст на свой собственный, сохраняя структуру и оформление.
+//             </p>
             
-            <button class="button" id="add_button_${count}" onclick="add_button()">Добавить</button>
-            <button class="button" id="del_button">Удалить</button>
-            <button class="button" id="change_button">Изменить</button>
-        </div>`
-    
-    el=el.parentElement
-    
-    el.insertAdjacentHTML('afterend', code_of_class);
+//             <button class="button" id="add_button_${count}" onclick="add_button()">Добавить</button>
+//             <button class="button" id="del_button">Удалить</button>
+//             <button class="button" id="change_button">Изменить</button>
+//         </div>`
+//     let mainElement=document.getElementById('main-content');
+//     mainElement.appendChild(newElement);
 
-    // document.write(`<div class="container" id="container_1">
-    //         <h1 class="title">Название записи</h1>
-    //         <p class="content">
-    //             Это содержимое записи. Здесь можно добавить текст, который будет отображаться в записи. Фон белый, 
-    //             а текст имеет светлый серый цвет для контраста. Ширина записи ограничена для лучшего отображения на 
-    //             экране. Вы можете заменить этот текст на свой собственный, сохраняя структуру и оформление.
-    //         </p>
+//     //el=el.parentElement
+    
+//     //el.insertAdjacentHTML('afterend', code_of_class);
+
+//     // document.write(`<div class="container" id="container_1">
+//     //         <h1 class="title">Название записи</h1>
+//     //         <p class="content">
+//     //             Это содержимое записи. Здесь можно добавить текст, который будет отображаться в записи. Фон белый, 
+//     //             а текст имеет светлый серый цвет для контраста. Ширина записи ограничена для лучшего отображения на 
+//     //             экране. Вы можете заменить этот текст на свой собственный, сохраняя структуру и оформление.
+//     //         </p>
             
-    //         <button class="button" id="add_button" onclick="add_button()">Добавить</button>
-    //         <button class="button" id="del_button">Удалить</button>
-    //         <button class="button" id="change_button">Изменить</button>
-    //     </div>`)
+//     //         <button class="button" id="add_button" onclick="add_button()">Добавить</button>
+//     //         <button class="button" id="del_button">Удалить</button>
+//     //         <button class="button" id="change_button">Изменить</button>
+//     //     </div>`)
 
 
 
-}
+// }
 // не сегодня
