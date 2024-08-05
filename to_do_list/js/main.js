@@ -53,6 +53,7 @@ document.getElementById(`add_button`).addEventListener('click', function() {
 })
 //ненен
 //может да может нет
+//not today
 // function add_button(el) {//ЗАБРОШЕНО
 //     count++
 //     console.log(count)
