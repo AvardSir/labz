@@ -17,16 +17,14 @@ let container_1=document.getElementById('container_1')
 let text=container_1.childNodes[3]
 let title=container_1.childNodes[1]
 
-console.log(container_1.childNodes[3])
-console.log(container_1.childNodes[1])
+//console.log(container_1.childNodes[3])
+//console.log(container_1.childNodes[1])
 var count=1
 document.getElementById(`add_button`).addEventListener('click', function() {
     
     el=`add_button`
     el=document.getElementById(el)
-    console.log(count)
-    console.log(el)
-    console.log(el.parentElement)
+    
     count++
     code_of_class=`<div class="container" id="container_${count}">
             <h1 class="title">Название записи</h1>
@@ -44,11 +42,12 @@ document.getElementById(`add_button`).addEventListener('click', function() {
     let newElement=el
     el=el.parentElement
 
-    let mainElement=document.getElementById('main-content');
-    mainElement.appendChild(newElement);
+    let mainElement=el.parentElement
+    
+    //mainElement.appendChild(newElement);
     
     el.insertAdjacentHTML('afterend', code_of_class);
-    document.body.appendChild(newButton);
+    //document.body.appendChild(newButton);
 
 })
 //забавно но нет
