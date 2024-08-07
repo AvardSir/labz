@@ -1,25 +1,88 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Создание кнопок</title>
+  <title>Пример перевода тегов в input и обратно</title>
+  <style>
+    .container {
+      margin: 20px;
+    }
+
+    .editable-input {
+      display: block;
+      margin: 10px 0;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: inherit; /* Сохраняем размер шрифта */
+      width: auto; /* Позволяет изменять ширину в зависимости от текста */
+      resize: auto /* Отключаем возможность изменения размера вручную */
+      overflow: hidden; /* Отключаем отображение полос прокрутки */
+    }
+  </style>
 </head>
 <body>
-    <div id="button-container">
-        <button id="add-button">Добавить кнопку</button>
-    </div>
+  <div class="container">
+    <h1 style="color: red; font-size: 24px;" class="title">Заголовок H1</h1>
+    <p style="color: blue; font-size: 16px;" class="content">Это абзац текста.</p>
+    <button id="convertButton">Перевести в input</button>
+  </div>
 
-    <script>
-        document.getElementById('add-button').addEventListener('click', function() {
-            // Создаем новую кнопку
-            const newButton = document.createElement('button');
-            newButton.textContent = 'Новая кнопка';
+  <script>
+    const convertButton = document.getElementById('convertButton');
+    let isConverted = false;
 
-            // Вставляем новую кнопку после контейнера с кнопками
-            const container = document.getElementById('button-container');
-            container.insertAdjacentElement('beforeend', newButton);
+    convertButton.addEventListener('click', () => {
+      // Функция для перевода элемента в textarea
+      function convertToTextarea(element) {
+        const textarea = document.createElement('textarea');
+        textarea.value = element.textContent;
+        textarea.className = 'editable-input';
+        textarea.dataset.originalTag = element.tagName.toLowerCase();
+        textarea.dataset.originalClass = element.className; // Сохраняем классы оригинального элемента
+        textarea.dataset.originalStyle = element.style.cssText; // Сохраняем инлайн-стили
+        textarea.size = textarea.value.length; // Устанавливаем размер textarea в зависимости от длины текста
+
+        // Функция для автоматического изменения размера textarea
+        function autoResizeTextarea(textarea) {
+          textarea.style.height = 'auto';
+          textarea.style.height = textarea.scrollHeight + 'px';
+        }
+
+        // Изменение размера при первоначальном создании и при вводе текста
+        autoResizeTextarea(textarea);
+        textarea.addEventListener('input', () => autoResizeTextarea(textarea));
+
+        return textarea;
+      }
+
+      // Функция для перевода элемента textarea обратно в p или h1
+      function convertToText(element) {
+        const tag = element.dataset.originalTag;
+        const textElement = document.createElement(tag);
+        textElement.textContent = element.value;
+        textElement.className = element.dataset.originalClass; // Восстанавливаем классы
+        textElement.style.cssText = element.dataset.originalStyle; // Восстанавливаем инлайн-стили
+        return textElement;
+      }
+
+      if (!isConverted) {
+        // Переводим все h1 и p в textarea
+        document.querySelectorAll('h1, p').forEach(element => {
+          const textarea = convertToTextarea(element);
+          element.replaceWith(textarea);
         });
-    </script>
+        convertButton.textContent = 'Перевести обратно';
+      } else {
+        // Переводим все textarea обратно в p или h1
+        document.querySelectorAll('textarea.editable-input').forEach(textarea => {
+          const textElement = convertToText(textarea);
+          textarea.replaceWith(textElement);
+        });
+        convertButton.textContent = 'Перевести в input';
+      }
+
+      isConverted = !isConverted;
+    });
+  </script>
 </body>
 </html>

@@ -55,6 +55,8 @@
             line-height: 1.6;
         }
         header h1 {
+            display: inline-flex;
+
             margin: 0;
             font-size: 2.5em;
             color: #333333;
@@ -94,6 +96,78 @@
             font-size: 0.9em;
             color: #555555;
         }
+
+      /* Основной контейнер чекбокса */
+    .cute-checkbox {
+      display: inline-flex;
+      align-items: center;
+      margin-right: 20px; /* Добавляем отступ между чекбоксами */
+    }
+
+    /* Скрытый чекбокс */
+    .cute-checkbox input[type="checkbox"] {
+      display: none;
+    }
+
+    /* Стилизация для видимого квадратика */
+    .cute-checkbox label {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      background-color: #f0f0f0;
+      border-radius: 5px;
+      border: 2px solid #ccc;
+      cursor: pointer;
+      position: relative;
+      transition: background-color 0.3s, border-color 0.3s;
+    }
+
+    /* Стилизация для галочки */
+    .cute-checkbox label::after {
+      content: '';
+      position: absolute;
+      width: 8px;
+      height: 14px;
+      border: solid #ffffff;
+      border-width: 0 3px 3px 0;
+      transform: rotate(45deg);
+      top: 3px;
+      left: 7px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    /* Стилизация для текста */
+    .cute-checkbox span {
+      margin-left: 10px;
+      font-family: 'Arial', sans-serif;
+      color: #333;
+      font-size: 16px;
+    }
+
+    /* Стили для активного состояния */
+    .cute-checkbox input[type="checkbox"]:checked + label {
+      background-color: #4caf50;
+      border-color: #4caf50;
+    }
+
+    /* Отображение галочки при активном состоянии */
+    .cute-checkbox input[type="checkbox"]:checked + label::after {
+      opacity: 1;
+    }
+
+    /* инпуты */
+    .editable-input {
+      display: block;
+      margin: 10px 0;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: inherit; /* Сохраняем размер шрифта */
+      width: auto; /* Позволяет изменять ширину в зависимости от текста */
+      resize: auto; /* Отключаем возможность изменения размера вручную */
+      overflow: hidden; /* Отключаем отображение полос прокрутки */
+    }
     </style>
 </head>
 <body>
@@ -110,19 +184,10 @@
         <p>
             Добавляйте что нужно отслеживать
         </p>
-
-        <div class="container" id="container_1">
-            <h1 class="title">Название записи</h1>
-            <p class="content">
-                Это содержимое записи. Здесь можно добавить текст, который будет отображаться в записи. Фон белый, 
-                а текст имеет светлый серый цвет для контраста. Ширина записи ограничена для лучшего отображения на 
-                экране. Вы можете заменить этот текст на свой собственный, сохраняя структуру и оформление.
-            </p>
-            
-            <button class="button" id="add_button" script="console.log('g')" >Добавить</button>
-            <button class="button" id="del_button">Удалить</button>
-            <button class="button" id="change_button">Изменить</button>
-        </div>
+        
+        <div class="container_parent" id="container_parent">
+        
+    </div>
     </main>
     <footer>
         <p>&copy; 2024 todolist. Все права защищены.</p>

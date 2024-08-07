@@ -12,87 +12,111 @@ function add_noet(el) {
 
     arr_note.push(new note())
 }
-
-let container_1=document.getElementById('container_1')
-let text=container_1.childNodes[3]
-let title=container_1.childNodes[1]
-
-//console.log(container_1.childNodes[3])
-//console.log(container_1.childNodes[1])
-var count=1
-document.getElementById(`add_button`).addEventListener('click', function() {
-    
-    el=`add_button`
-    el=document.getElementById(el)
-    
+let count=0;
+function add_but() {
     count++
-    code_of_class=`<div class="container" id="container_${count}">
-            <h1 class="title">Название записи</h1>
+    let newButton = document.createElement('text');
+    newButton.innerHTML = `<div class="container" id="container_2">
+            <h1 class="title">Название записи ${count} 
+           <div class="cute-checkbox">
+    <input type="checkbox" id="cuteCheckbox${count} ">
+    <label for="cuteCheckbox${count} "></label>
+    
+  </div> 
+  </h1>
+  
+        
             <p class="content">
                 Это содержимое записи. Здесь можно добавить текст, который будет отображаться в записи. Фон белый, 
                 а текст имеет светлый серый цвет для контраста. Ширина записи ограничена для лучшего отображения на 
                 экране. Вы можете заменить этот текст на свой собственный, сохраняя структуру и оформление.
             </p>
             
-            <button class="button" id="add_button" >Добавить</button>
+            <button class="button" id="add_button">Добавить</button>
             <button class="button" id="del_button">Удалить</button>
             <button class="button" id="change_button">Изменить</button>
-        </div>`
+        </div>`;
+
+
     
-    let newElement=el
-    el=el.parentElement
-
-    let mainElement=el.parentElement
     
-    //mainElement.appendChild(newElement);
-    
-    el.insertAdjacentHTML('afterend', code_of_class);
-    //document.body.appendChild(newButton);
+    //del but=[7]
+    let del_buttonn=newButton.childNodes[0].childNodes[7]
+    del_buttonn.addEventListener('click', () => {
+        del_buttonn.parentNode.parentNode.remove()
+        console.log(del_buttonn.parentNode.parentNode)
+      });
 
-})
-//забавно но нет
-//ненен
-//может да может нет
-//not today
-// function add_button(el) {//ЗАБРОШЕНО
-//     count++
-//     console.log(count)
-//     console.log(el)
-//     console.log(el.parentElement)
-    
-//     code_of_class=`<div class="container" id="container_${count}">
-//             <h1 class="title">Название записи</h1>
-//             <p class="content">
-//                 Это содержимое записи. Здесь можно добавить текст, который будет отображаться в записи. Фон белый, 
-//                 а текст имеет светлый серый цвет для контраста. Ширина записи ограничена для лучшего отображения на 
-//                 экране. Вы можете заменить этот текст на свой собственный, сохраняя структуру и оформление.
-//             </p>
-            
-//             <button class="button" id="add_button_${count}" onclick="add_button()">Добавить</button>
-//             <button class="button" id="del_button">Удалить</button>
-//             <button class="button" id="change_button">Изменить</button>
-//         </div>`
-//     let mainElement=document.getElementById('main-content');
-//     mainElement.appendChild(newElement);
+    add_buton=newButton.childNodes[0].childNodes[5]
+    add_buton.addEventListener('click', () => {
+      add_but();
+    });
 
-//     //el=el.parentElement
-    
-//     //el.insertAdjacentHTML('afterend', code_of_class);
-
-//     // document.write(`<div class="container" id="container_1">
-//     //         <h1 class="title">Название записи</h1>
-//     //         <p class="content">
-//     //             Это содержимое записи. Здесь можно добавить текст, который будет отображаться в записи. Фон белый, 
-//     //             а текст имеет светлый серый цвет для контраста. Ширина записи ограничена для лучшего отображения на 
-//     //             экране. Вы можете заменить этот текст на свой собственный, сохраняя структуру и оформление.
-//     //         </p>
-            
-//     //         <button class="button" id="add_button" onclick="add_button()">Добавить</button>
-//     //         <button class="button" id="del_button">Удалить</button>
-//     //         <button class="button" id="change_button">Изменить</button>
-//     //     </div>`)
+    // Вставка кнопки в контейнер
+    const container = document.getElementById('container_parent');
+    container.appendChild(newButton);
 
 
+    //change_but
+        const convertButton = document.getElementById('change_button');
+        let isConverted = false;
 
-// }
-// не сегодня
+        convertButton.addEventListener('click', () => {
+        // Функция для перевода элемента в textarea
+        function convertToTextarea(element) {
+            const textarea = document.createElement('textarea');
+            textarea.value = element.textContent;
+            textarea.className = 'editable-input';
+            textarea.dataset.originalTag = element.tagName.toLowerCase();
+            textarea.dataset.originalClass = element.className; // Сохраняем классы оригинального элемента
+            textarea.dataset.originalStyle = element.style.cssText; // Сохраняем инлайн-стили
+            // textarea.size = 500
+            textarea.size = textarea.value.length; // Устанавливаем размер textarea в зависимости от длины текста
+
+            // Функция для автоматического изменения размера textarea
+            function autoResizeTextarea(textarea) {
+            textarea.style.width='80%';
+            textarea.style.height = 'auto';
+            // textarea.style.height = textarea.scrollHeight + 'px';
+            textarea.style.height = textarea.scrollHeight
+            }
+
+            // Изменение размера при первоначальном создании и при вводе текста
+            autoResizeTextarea(textarea);
+            autoResizeTextarea(textarea);
+            textarea.addEventListener('input', () => autoResizeTextarea(textarea));
+
+            return textarea;
+        }
+
+        // Функция для перевода элемента textarea обратно в p или h1
+        function convertToText(element) {
+            const tag = element.dataset.originalTag;
+            const textElement = document.createElement(tag);
+            textElement.textContent = element.value;
+            textElement.className = element.dataset.originalClass; // Восстанавливаем классы
+            textElement.style.cssText = element.dataset.originalStyle; // Восстанавливаем инлайн-стили
+            return textElement;
+        }
+
+        if (!isConverted) {
+            // Переводим все h1 и p в textarea
+            document.querySelectorAll('h1, p').forEach(element => {
+            const textarea = convertToTextarea(element);
+            element.replaceWith(textarea);
+            });
+            convertButton.textContent = 'Перевести обратно';
+        } else {
+            // Переводим все textarea обратно в p или h1
+            document.querySelectorAll('textarea.editable-input').forEach(textarea => {
+            const textElement = convertToText(textarea);
+            textarea.replaceWith(textElement);
+            });
+            convertButton.textContent = 'Перевести в input';
+        }
+
+        isConverted = !isConverted;
+        });
+}
+
+add_but();
