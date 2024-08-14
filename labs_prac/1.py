@@ -1,52 +1,30 @@
 import numpy as np
-import matplotlib.pyplot as plt
 
-def my_cos(x, n_terms):
-    result = np.zeros_like(x)
+v1 = np.array([6, 2, 7, -2], dtype=float)
+v2 = np.array([-4, 3, -4, 1], dtype=float)
 
-    for n in range(n_terms):
-        term = ((-1)**n * x**(2*n)) / np.math.factorial(2*n)
-        result += term
-    return result
+product = v1 * v2
+print("Перемноженные векторы:", product)
 
-def my_exp(x, n_terms):
-    result = np.zeros_like(x)
-    for n in range(n_terms):
-        term = x**n / np.math.factorial(n)
-        result += term
-    return result
+squared_v1 = v1 ** 2
+print("v1 возведенный в квадрат:", squared_v1)
 
-x_cos = np.linspace(-np.pi, np.pi, 400)
-x_exp = np.linspace(-2*np.pi, 2*np.pi, 400)
-n_terms = 10
+v1_power_v2 = v1 ** v2
+print("v1 возведенный в степени, указанные в v2:", v1_power_v2)
 
-true_cos = np.cos(x_cos)
-approx_cos = my_cos(x_cos, n_terms)
+division_v1_by_v2 = v1 / v2
+division_v2_by_v1 = v2 / v1
+print("v1 разделенный на v2:", division_v1_by_v2)
+print("v2 разделенный на v1:", division_v2_by_v1)
 
-true_exp = np.exp(x_exp)
-approx_exp = my_exp(x_exp, n_terms)
+v = np.array([7, 2, 5, 4])
+add_7_5 = v + 7.5
+subtract_7_5 = v - 7.5
+multiply_by_2 = v * 2
+divide_by_2 = v / 2
 
-plt.figure(figsize=(14, 6))
-
-# График для cos(x)
-plt.subplot(1, 2, 1)
-plt.plot(x_cos, true_cos, label='Точное значение cos(x)', color='blue')
-plt.plot(x_cos, approx_cos, '--', label=f'Приближенное значение cos(x) (n={n_terms})', color='red')
-plt.xlabel('x')
-plt.ylabel('cos(x)')
-plt.title('Функция cos(x)')
-plt.legend()
-plt.grid(True)
-
-# График для exp(x)
-plt.subplot(1, 2, 2)
-plt.plot(x_exp, true_exp, label='Точное значение e^x', color='blue')
-plt.plot(x_exp, approx_exp, '--', label=f'Приближенное значение e^x (n={n_terms})', color='red')
-plt.xlabel('x')
-plt.ylabel('e^x')
-plt.title('Функция e^x')
-plt.legend()
-plt.grid(True)
-
-plt.tight_layout()
-plt.show()
+print('v :',v)
+print("v + 7.5:", add_7_5)
+print("v - 7.5:", subtract_7_5)
+print("v * 2:", multiply_by_2)
+print("v / 2:", divide_by_2)
