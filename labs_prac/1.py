@@ -29,3 +29,4 @@ print("v - 7.5:", subtract_7_5)
 print("v * 2:", multiply_by_2)
 print("v / 2:", divide_by_2)
 //al hi whos dont see
+/// я купил гвинт!
