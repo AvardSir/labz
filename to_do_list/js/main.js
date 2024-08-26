@@ -54,69 +54,68 @@ function add_but() {
 
     // Вставка кнопки в контейнер
     const container = document.getElementById('container_parent');
-    container.appendChild(newButton);
+container.appendChild(newButton);
 
+//change_but
+const convertButton = document.getElementById('change_button');
+let isConverted = false;
 
-    //change_but
-        const convertButton = document.getElementById('change_button');
-        let isConverted = false;
+convertButton.addEventListener('click', () => {
+    // Функция для перевода элемента в textarea
+    function convertToTextarea(element) {
+        const textarea = document.createElement('textarea');
+        textarea.value = element.textContent;
+        textarea.className = 'editable-input';
+        textarea.dataset.originalTag = element.tagName.toLowerCase();
+        textarea.dataset.originalClass = element.className; // Сохраняем классы оригинального элемента
+        textarea.dataset.originalStyle = element.style.cssText; // Сохраняем инлайн-стили
 
-        convertButton.addEventListener('click', () => {
-        // Функция для перевода элемента в textarea
-        function convertToTextarea(element) {
-            const textarea = document.createElement('textarea');
-            textarea.value = element.textContent;
-            textarea.className = 'editable-input';
-            textarea.dataset.originalTag = element.tagName.toLowerCase();
-            textarea.dataset.originalClass = element.className; // Сохраняем классы оригинального элемента
-            textarea.dataset.originalStyle = element.style.cssText; // Сохраняем инлайн-стили
-            // textarea.size = 500
-            textarea.size = textarea.value.length; // Устанавливаем размер textarea в зависимости от длины текста
+        // Применяем инлайн-стили к textarea, чтобы сохранить оформление
+        textarea.style.cssText = element.style.cssText;
 
-            // Функция для автоматического изменения размера textarea
-            function autoResizeTextarea(textarea) {
-            textarea.style.width='80%';
+        // Функция для автоматического изменения размера textarea
+        function autoResizeTextarea(textarea) {
+            textarea.style.width = '80%';
             textarea.style.height = 'auto';
-            // textarea.style.height = textarea.scrollHeight + 'px';
-            textarea.style.height = textarea.scrollHeight
-            }
-
-            // Изменение размера при первоначальном создании и при вводе текста
-            autoResizeTextarea(textarea);
-            autoResizeTextarea(textarea);
-            textarea.addEventListener('input', () => autoResizeTextarea(textarea));
-
-            return textarea;
+            textarea.style.height = textarea.scrollHeight + 'px';
         }
 
-        // Функция для перевода элемента textarea обратно в p или h1
-        function convertToText(element) {
-            const tag = element.dataset.originalTag;
-            const textElement = document.createElement(tag);
-            textElement.textContent = element.value;
-            textElement.className = element.dataset.originalClass; // Восстанавливаем классы
-            textElement.style.cssText = element.dataset.originalStyle; // Восстанавливаем инлайн-стили
-            return textElement;
-        }
+        // Изменение размера при первоначальном создании и при вводе текста
+        autoResizeTextarea(textarea);
+        textarea.addEventListener('input', () => autoResizeTextarea(textarea));
 
-        if (!isConverted) {
-            // Переводим все h1 и p в textarea
-            document.querySelectorAll('h1, p').forEach(element => {
+        return textarea;
+    }
+
+    // Функция для перевода элемента textarea обратно в p или h1
+    function convertToText(element) {
+        const tag = element.dataset.originalTag;
+        const textElement = document.createElement(tag);
+        textElement.textContent = element.value;
+        textElement.className = element.dataset.originalClass; // Восстанавливаем классы
+        textElement.style.cssText = element.dataset.originalStyle; // Восстанавливаем инлайн-стили
+        return textElement;
+    }
+
+    if (!isConverted) {
+        // Переводим все h1 и p в textarea
+        document.querySelectorAll('h1, p').forEach(element => {
             const textarea = convertToTextarea(element);
             element.replaceWith(textarea);
-            });
-            convertButton.textContent = 'Перевести обратно';
-        } else {
-            // Переводим все textarea обратно в p или h1
-            document.querySelectorAll('textarea.editable-input').forEach(textarea => {
+        });
+        convertButton.textContent = 'Перевести обратно';
+    } else {
+        // Переводим все textarea обратно в p или h1
+        document.querySelectorAll('textarea.editable-input').forEach(textarea => {
             const textElement = convertToText(textarea);
             textarea.replaceWith(textElement);
-            });
-            convertButton.textContent = 'Перевести в input';
-        }
-
-        isConverted = !isConverted;
         });
+        convertButton.textContent = 'Перевести в input';
+    }
+
+    isConverted = !isConverted;
+});
+
 }
 
 add_but();//ne to do homeworks

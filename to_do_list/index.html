@@ -119,23 +119,24 @@
       border: 2px solid #ccc;
       cursor: pointer;
       position: relative;
+      top: 3px;
       transition: background-color 0.3s, border-color 0.3s;
     }
 
     /* Стилизация для галочки */
-    .cute-checkbox label::after {
-      content: '';
-      position: absolute;
-      width: 8px;
-      height: 14px;
-      border: solid #ffffff;
-      border-width: 0 3px 3px 0;
-      transform: rotate(45deg);
-      top: 3px;
-      left: 7px;
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
+    .cute-checkbox label::after  {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 14px;
+  border: solid #ffffff;
+  border-width: 0 3px 3px 0;
+  transform: rotate(45deg);
+  top: 3px; /* Здесь можно увеличить значение */
+  left: 7px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
 
     /* Стилизация для текста */
     .cute-checkbox span {
