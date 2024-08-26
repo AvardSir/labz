@@ -49,6 +49,10 @@
             box-sizing: border-box;
             margin: auto;
         }
+        main h2 {
+            margin-top: 5px; /* Уменьшенный отступ сверху для h2 */
+        }
+
         .content {
             font-size: 1em;
             color: #666666; /* Более светлый текст для содержимого */
@@ -60,9 +64,10 @@
             margin: 0;
             font-size: 2.5em;
             color: #333333;
+            
         }
         nav {
-            margin: 20px 0;
+            margin-top: 5px; 
             text-align: center;
         }
         nav a {
@@ -76,7 +81,7 @@
             color: #ff6f61; /* Цвет при наведении */
         }
         main {
-            padding: 20px;
+            padding: 10px;
             max-width: 800px;
             margin: 0 auto;
             text-align: center;
@@ -176,15 +181,11 @@
         <h1>to do list на сайте!</h1>
     </header>
     <nav>
-        <a href="#">Главная</a>
-        <a href="#">О нас</a>
-        <a href="#">Услуги</a>
-        <a href="#">Контакты</a>
+        <a href="#" id="create_note">Создать запись</a> <!-- Ссылка для создания записи -->
+        
     </nav>
     <main>
-        <p>
-            Добавляйте что нужно отслеживать
-        </p>
+        <h2>Добавляйте что нужно отслеживать</h2>
         
         <div class="container_parent" id="container_parent">
         
