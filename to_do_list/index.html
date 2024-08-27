@@ -1,201 +1,316 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>To do list</title>
     <style>
         .button {
-            background-color: #ff6f61; /* Мягкий коралловый цвет */
-            color: #ffffff; /* Белый текст */
+            background-color: #ff6f61;
+            /* Мягкий коралловый цвет */
+            color: #ffffff;
+            /* Белый текст */
             border: none;
-            border-radius: 12px; /* Закругленные углы */
-            padding: 12px 24px; /* Отступы */
-            font-size: 1em; /* Размер шрифта */
+            border-radius: 12px;
+            /* Закругленные углы */
+            padding: 12px 24px;
+            /* Отступы */
+            font-size: 1em;
+            /* Размер шрифта */
             cursor: pointer;
-            transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s; /* Плавные переходы */
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Легкая тень */
+            transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s;
+            /* Плавные переходы */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            /* Легкая тень */
         }
+
         .button:hover {
-            background-color: #ff4d3b; /* Более темный оттенок при наведении */
-            transform: translateY(-2px); /* Легкий эффект поднятия */
+            background-color: #ff4d3b;
+            /* Более темный оттенок при наведении */
+            transform: translateY(-2px);
+            /* Легкий эффект поднятия */
         }
+
         .button:active {
-            background-color: #e03e28; /* Еще более темный оттенок при нажатии */
-            transform: translateY(0); /* Вернуть в исходное положение */
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Увеличенная тень при нажатии */
+            background-color: #e03e28;
+            /* Еще более темный оттенок при нажатии */
+            transform: translateY(0);
+            /* Вернуть в исходное положение */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            /* Увеличенная тень при нажатии */
         }
 
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #fef6e4; /* Нежный кремовый фон */
-            color: #333333; /* Темный текст */
+            background-color: #fef6e4;
+            /* Нежный кремовый фон */
+            color: #333333;
+            /* Темный текст */
             margin: 0;
             padding: 0;
         }
+
         header {
-            background-color: #ffdac1; /* Светло-розовый фон для заголовка */
+            background-color: #ffdac1;
+            /* Светло-розовый фон для заголовка */
             padding: 20px;
             text-align: center;
-            border-bottom: 1px solid #f1a7a7; /* Тонкая розовая линия снизу */
+            border-bottom: 1px solid #f1a7a7;
+            /* Тонкая розовая линия снизу */
         }
+
         .container {
-            background-color: #ffffff; /* Белый фон записи */
-            border-radius: 8px; /* Закруглённые углы */
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Лёгкая тень */
-            max-width: 600px; /* Ограничение ширины */
+            background-color: #ffffff;
+            /* Белый фон записи */
+            border-radius: 8px;
+            /* Закруглённые углы */
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            /* Лёгкая тень */
+            max-width: 600px;
+            /* Ограничение ширины */
             width: 100%;
             padding: 20px;
             box-sizing: border-box;
             margin: auto;
         }
+
         main h2 {
-            margin-top: 5px; /* Уменьшенный отступ сверху для h2 */
+            margin-top: 5px;
+            /* Уменьшенный отступ сверху для h2 */
         }
 
         .content {
             font-size: 1em;
-            color: #666666; /* Более светлый текст для содержимого */
+            color: #666666;
+            /* Более светлый текст для содержимого */
             line-height: 1.6;
+            width: 100%;
+            /* Задает фиксированную ширину */
+            box-sizing: border-box;
+            /* Учитывает отступы и границы в ширине элемента */
+            overflow: hidden;
+            /* Отключает полосы прокрутки */
         }
+
         header h1 {
             display: inline-flex;
 
             margin: 0;
             font-size: 2.5em;
             color: #333333;
-            
         }
+
         nav {
-            margin-top: 5px; 
+            margin-top: 5px;
             text-align: center;
         }
+
         nav a {
             text-decoration: none;
-            color: #ff9a8b; /* Мягкий коралловый цвет для ссылок */
+            color: #ff9a8b;
+            /* Мягкий коралловый цвет для ссылок */
             font-weight: bold;
             margin: 0 15px;
             transition: color 0.3s;
         }
+
         nav a:hover {
-            color: #ff6f61; /* Цвет при наведении */
+            color: #ff6f61;
+            /* Цвет при наведении */
         }
+
         main {
             padding: 10px;
             max-width: 800px;
             margin: 0 auto;
             text-align: center;
         }
+
         main p {
             font-size: 1.2em;
             line-height: 1.6;
         }
+
         footer {
             background-color: #ffdac1;
             padding: 10px;
             text-align: center;
             border-top: 1px solid #f1a7a7;
         }
+
         footer p {
             margin: 0;
             font-size: 0.9em;
             color: #555555;
         }
 
-      /* Основной контейнер чекбокса */
-    .cute-checkbox {
-      display: inline-flex;
-      align-items: center;
-      margin-right: 20px; /* Добавляем отступ между чекбоксами */
-    }
+        /* Контейнер для заголовка и чекбокса */
+        .title-container {
+            display: flex;
+            align-items: center;
+            /* Вертикальное выравнивание по центру */
+            justify-content: space-between;
+            flex-wrap: wrap;
+            /* Позволяет элементам переходить на новую строку при необходимости */
 
-    /* Скрытый чекбокс */
-    .cute-checkbox input[type="checkbox"] {
-      display: none;
-    }
+            /* Пробел между заголовком и чекбоксом */
+        }
 
-    /* Стилизация для видимого квадратика */
-    .cute-checkbox label {
-      display: inline-block;
-      width: 24px;
-      height: 24px;
-      background-color: #f0f0f0;
-      border-radius: 5px;
-      border: 2px solid #ccc;
-      cursor: pointer;
-      position: relative;
-      top: 3px;
-      transition: background-color 0.3s, border-color 0.3s;
-    }
+        .title {
+            margin: 0;
+            font-size: 2em;
+            color: #333333;
+            flex-grow: 1;
+            /* Заголовок занимает всю доступную ширину */
+            flex-shrink: 1;
+        }
 
-    /* Стилизация для галочки */
-    .cute-checkbox label::after  {
-  content: '';
-  position: absolute;
-  width: 8px;
-  height: 14px;
-  border: solid #ffffff;
-  border-width: 0 3px 3px 0;
-  transform: rotate(45deg);
-  top: 3px; /* Здесь можно увеличить значение */
-  left: 7px;
-  opacity: 0;
-  transition: opacity 0.3s;
-}
+        .cute-checkbox {
+            display: inline-flex;
+            align-items: center;
+            margin-left: 10px;
+            /* Добавляем отступ между чекбоксом и заголовком */
+        }
 
-    /* Стилизация для текста */
-    .cute-checkbox span {
-      margin-left: 10px;
-      font-family: 'Arial', sans-serif;
-      color: #333;
-      font-size: 16px;
-    }
+        .cute-checkbox input[type="checkbox"] {
+            display: none;
+        }
 
-    /* Стили для активного состояния */
-    .cute-checkbox input[type="checkbox"]:checked + label {
-      background-color: #4caf50;
-      border-color: #4caf50;
-    }
+        .cute-checkbox label {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            border: 2px solid #ccc;
+            cursor: pointer;
+            position: relative;
+            top: 3px;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
 
-    /* Отображение галочки при активном состоянии */
-    .cute-checkbox input[type="checkbox"]:checked + label::after {
-      opacity: 1;
-    }
+        .cute-checkbox label::after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 14px;
+            border: solid #ffffff;
+            border-width: 0 3px 3px 0;
+            transform: rotate(45deg);
+            top: 3px;
+            left: 7px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
 
-    /* инпуты */
-    .editable-input {
-      display: block;
-      margin: 10px 0;
-      padding: 20px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      font-size: inherit; /* Сохраняем размер шрифта */
-      width: auto; /* Позволяет изменять ширину в зависимости от текста */
-      resize: auto; /* Отключаем возможность изменения размера вручную */
-      overflow: hidden; /* Отключаем отображение полос прокрутки */
-    }
+        .cute-checkbox input[type="checkbox"]:checked+label {
+            background-color: #4caf50;
+            border-color: #4caf50;
+        }
+
+        .cute-checkbox input[type="checkbox"]:checked+label::after {
+            opacity: 1;
+        }
     </style>
 </head>
+<!-- йомоайо -->
 <body>
     <header>
         <h1>to do list на сайте!</h1>
     </header>
     <nav>
         <a href="#" id="create_note">Создать запись</a> <!-- Ссылка для создания записи -->
-        
     </nav>
     <main>
-        <h2>Добавляйте что нужно отслеживать</h2>
-        
-        <div class="container_parent" id="container_parent">
-        
-    </div>
+        <div class="title-container">
+
+            <h2>Добавляйте что нужно отслеживать</h2>
+            <div class="container_parent" id="container_parent"></div>
+        </div>
+
     </main>
     <footer>
         <p>&copy; 2024 todolist. Все права защищены.</p>
     </footer>
-    <script src="js/main.js">
-       
+    <script>
+        var arr_note = [];
+        let count = 0;
+
+        function add_but() {
+            count++;
+            let newButton = document.createElement('div');
+            newButton.innerHTML = `
+                <div class="container" id="container_2">
+            <div class="title-container">
+                <h1 class="title">Название записи ${count}</h1>
+                <div class="cute-checkbox">
+                    <input type="checkbox" id="cuteCheckbox${count}">
+                    <label for="cuteCheckbox${count}"></label>
+                </div>
+            </div>
+            <p class="content">
+                Это содержимое записи. Здесь можно добавить текст, который будет отображаться в записи. Фон белый, 
+                а текст имеет светлый серый цвет для контраста. Ширина записи ограничена для лучшего отображения на 
+                экране. Вы можете заменить этот текст на свой собственный, сохраняя структуру и оформление.
+            </p>
+            <button class="button add_button">Добавить</button>
+            <button class="button del_button">Удалить</button>
+        </div>`;
+
+            // Удаление записи при нажатии на кнопку "Удалить"
+            let delButton = newButton.querySelector('.del_button');
+            delButton.addEventListener('click', () => {
+                newButton.remove();
+            });
+
+            // Вставка новой записи в контейнер
+            const container = document.getElementById('container_parent');
+            container.appendChild(newButton);
+
+            // Добавление функционала для редактирования текста при наведении
+            let content = newButton.querySelector('.content');
+            content.addEventListener('mouseenter', () => makeEditable(content));
+
+            // Добавление функционала для редактирования заголовка при наведении
+            let title = newButton.querySelector('.title');
+            title.addEventListener('mouseenter', () => makeEditable(title));
+
+            // Добавление обработчика события для кнопки "Добавить" внутри каждой записи
+            let addButton = newButton.querySelector('.add_button');
+            addButton.addEventListener('click', add_but);
+        }
+
+        function makeEditable(element) {
+            element.setAttribute('contenteditable', 'true');
+            element.focus();
+
+            // Функция для автоматического изменения высоты элемента
+            function autoResize(element) {
+                element.style.height = 'auto'; // Сбрасываем высоту
+                element.style.height = element.scrollHeight + 'px'; // Устанавливаем высоту в зависимости от содержимого
+            }
+
+            autoResize(element); // Устанавливаем высоту при начале редактирования
+
+            // Обновляем высоту при вводе текста
+            element.addEventListener('input', () => autoResize(element));
+
+            // Убираем редактирование при потере фокуса
+            element.addEventListener('blur', () => {
+                element.removeAttribute('contenteditable');
+            });
+        }
+
+        // Добавляем обработчик события на ссылку "Создать запись"
+        document.getElementById('create_note').addEventListener('click', (e) => {
+            e.preventDefault(); // Отменяем стандартное поведение ссылки
+            add_but();
+        });
+
+        // Создаем первую запись при загрузке страницы
+        add_but();
     </script>
 </body>
+
 </html>
