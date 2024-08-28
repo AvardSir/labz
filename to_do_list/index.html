@@ -91,6 +91,11 @@
             /* Учитывает отступы и границы в ширине элемента */
             overflow: hidden;
             /* Отключает полосы прокрутки */
+            text-align: left;
+            /* Левое выравнивание текста */
+            padding-left: 10px;
+            /* Добавляем небольшой отступ слева для улучшения визуального восприятия */
+            padding-right: 10px;/
         }
 
         header h1 {
@@ -148,13 +153,12 @@
         /* Контейнер для заголовка и чекбокса */
         .title-container {
             display: flex;
-            align-items: center;
-            /* Вертикальное выравнивание по центру */
-            justify-content: space-between;
             flex-wrap: wrap;
-            /* Позволяет элементам переходить на новую строку при необходимости */
-
-            /* Пробел между заголовком и чекбоксом */
+            /* Позволяет элементам переходить на новую строку */
+            align-items: center;
+            justify-content: space-between;
+            /* Разделяет элементы по горизонтали */
+            width: 100%;
         }
 
         .title {
@@ -162,15 +166,19 @@
             font-size: 2em;
             color: #333333;
             flex-grow: 1;
-            /* Заголовок занимает всю доступную ширину */
             flex-shrink: 1;
+            white-space: normal;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            line-height: 1.2;
+            min-width: 0;
+            /* Позволяет заголовку уменьшаться, чтобы переходить на новую строку */
         }
 
         .cute-checkbox {
-            display: inline-flex;
-            align-items: center;
+            flex-shrink: 0;
+            /* Отключает сжатие чекбокса */
             margin-left: 10px;
-            /* Добавляем отступ между чекбоксом и заголовком */
         }
 
         .cute-checkbox input[type="checkbox"] {
@@ -212,9 +220,35 @@
         .cute-checkbox input[type="checkbox"]:checked+label::after {
             opacity: 1;
         }
+
+        .container_parent {
+            display: flex;
+            flex-direction: column;
+            /* Располагает элементы по вертикали */
+            align-items: center;
+            /* Центрирует элементы по горизонтали */
+            justify-content: center;
+            /* Центрирует элементы по вертикали */
+        }
+
+        .title-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            /* Центрирует содержимое внутри */
+            align-items: center;
+            flex-wrap: wrap;
+            /* Позволяет заголовку и чекбоксу переходить на новую строку */
+        }
+
+        [contenteditable="true"] {
+            outline: none;
+            /* Убирает обводку вокруг редактируемого элемента */
+        }
     </style>
 </head>
 <!-- йомоайо -->
+
 <body>
     <header>
         <h1>to do list на сайте!</h1>
@@ -283,6 +317,7 @@
 
         function makeEditable(element) {
             element.setAttribute('contenteditable', 'true');
+            element.style.height = 'auto'; // Сбрасываем высоту при начале редактирования
             element.focus();
 
             // Функция для автоматического изменения высоты элемента
@@ -299,8 +334,10 @@
             // Убираем редактирование при потере фокуса
             element.addEventListener('blur', () => {
                 element.removeAttribute('contenteditable');
+                element.style.height = 'auto'; // Возвращаем высоту в исходное состояние
             });
         }
+
 
         // Добавляем обработчик события на ссылку "Создать запись"
         document.getElementById('create_note').addEventListener('click', (e) => {
