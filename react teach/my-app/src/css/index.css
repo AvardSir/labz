@@ -1,0 +1,136 @@
+/* Основные стили для body */
+body {
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f9;
+  color: #333;
+  line-height: 1.6;
+}
+
+/* Стили для заголовка */
+header {
+  background-color: #4CAF50;
+  color: white;
+  padding: 20px 10px;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+header:hover {
+  background-color: #3A7CA5;
+  color: #FFE4E1;
+}
+
+/* Стили для навигационного меню */
+nav {
+  background-color: #333;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+nav a {
+  color: white;
+  text-align: center;
+  padding: 14px 20px;
+  text-decoration: none;
+  transition: background-color 0.3s;
+}
+
+nav a:hover {
+  background-color: #575757;
+}
+
+/* Стили для контейнера */
+.container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 20px;
+}
+
+/* Стили для контента */
+.content {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.content .box {
+  background-color: #fff;
+  margin: 10px;
+  padding: 20px;
+  flex-basis: 30%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.content .box:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.content .box h2 {
+  margin-top: 0;
+  color: #3A7CA5;
+}
+
+.content .box p {
+  font-size: 1em;
+  color: #666;
+}
+
+/* Стили для футера */
+footer {
+  background-color: #333;
+  color: white;
+  text-align: center;
+  padding: 10px;
+  margin-top: 20px;
+  box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1);
+}
+
+footer p {
+  margin: 0;
+}
+
+/* Стили для приложения */
+.App {
+  display: flex;
+  flex-direction: column;
+  
+  align-items: center;
+  height: 100vh;
+  background-color: #F4F4F9;
+  color: #3A7CA5;
+  padding: 30px 20px 20px 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+}
+
+
+/* Стили для input */
+input {
+  font-size: 1.2em;
+  border: 2px solid #3A7CA5;
+  border-radius: 8px;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+  margin: 10px 0;
+}
+
+input:focus {
+  outline: none;
+  box-shadow: 0 0 10px rgba(58, 124, 165, 0.5);
+  transform: scale(1.05);
+}
+
+input::placeholder {
+  color: #888;
+}
+
+/* Стили для параграфов */
+p {
+  margin: 10px 0;
+}
