@@ -4,6 +4,7 @@ import  './css/index.css'
 
 import Image from './component/Image';
 import Input from './component/Input';
+import Button from './component/Button';
 
 
 
@@ -20,8 +21,9 @@ function App_() {
       <Input />
       
       <Image/>
-      <SampleText/>
-
+      {/* <SampleText/> */}
+      <Button />
+      <Button text='Кнопка не базовая'/>
       
     </div>
   );
