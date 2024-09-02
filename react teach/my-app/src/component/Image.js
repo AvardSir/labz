@@ -15,19 +15,26 @@ const imagePaths = [
   fun_cat_6
 ];
 
-class Image extends React.Component {
+class ImageGallery extends React.Component {
   render() {
-    const { imageIndex } = this.props;
-    const imagePath = imagePaths[imageIndex];
-    
-    return ( 
-      <img 
-        src={imagePath} // Используем src для изображения
-        alt={`Cute Image ${imageIndex }`} // Корректный alt текст
-        className="cute-image" 
-      />
+    return (
+      <div className='image-container'>
+        {imagePaths.map((imagePath, index) => (
+            
+
+          <img 
+            key={index} // Уникальный ключ для каждого элемента массива
+            src={imagePath} // Используем src для изображения
+            alt={`Cute Image ${index + 1}`} // Корректный alt текст
+            className="cute-image" 
+          />
+
+
+        ))}
+
+      </div>
     );
   }
 }
 
-export default Image;
+export default ImageGallery;

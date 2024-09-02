@@ -19,12 +19,8 @@ function App_() {
     <div className='App'>
       <Input />
       
-
-      <div className='image-container'>
-      {Array.from({ length: 6 }).map((_, index) => (
-        <Image key={index} imageIndex={index} />
-      ))}
-    </div>
+      <Image/>
+      <SampleText/>
 
       
     </div>
