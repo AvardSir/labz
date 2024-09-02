@@ -23,7 +23,7 @@ function App() {
       <Image/>
       {/* <SampleText/> */}
       <Button />
-      <Button text='Кнопка не базовая'/>
+      {/* <Button text='Кнопка не базовая'/> */}
       
     </div>
   );
