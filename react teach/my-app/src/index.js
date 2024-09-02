@@ -8,12 +8,12 @@ import Button from './component/Button';
 
 
 
-function SampleText() {
-  return (<p>Шаблон для вашего текста</p>);
-}
+// function SampleText() {
+//   return (<p>Шаблон для вашего текста</p>);
+// }
 
 
-function App_() {
+function App() {
   // const funCat = require('./img/fun_cat/fun_cat.jpg');
 
   return (
@@ -31,4 +31,4 @@ function App_() {
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<App_/>); // Рендерим компонент App
+root.render(<App/>); // Рендерим компонент App

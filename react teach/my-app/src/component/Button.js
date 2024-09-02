@@ -1,18 +1,8 @@
 import React from 'react';
-class Button extends React.Component {
-
-
-  render(props) {
-    
+const Button = ({ text = 'Кнопка' }) => {
     return (
-        
-        <button>{this.props.text}</button>
-
+      <button>{text}</button>
     );
-  }
-}
-Button.defaultProps={
-    text: "Кнопка"
-}
+  };
 
 export default Button
