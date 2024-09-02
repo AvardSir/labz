@@ -3,14 +3,14 @@ body {
   font-family: 'Arial', sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #f4f4f9;
+  background-color: #fff4e0; /* Светлый желто-рыжий фон */
   color: #333;
   line-height: 1.6;
 }
 
 /* Стили для заголовка */
 header {
-  background-color: #4CAF50;
+  background-color: #f29e38; /* Оранжевый цвет */
   color: white;
   padding: 20px 10px;
   text-align: center;
@@ -18,13 +18,13 @@ header {
 }
 
 header:hover {
-  background-color: #3A7CA5;
-  color: #FFE4E1;
+  background-color: #ffa500; /* Яркий оранжевый цвет при наведении */
+  color: #ffe4b5; /* Светло-желтый цвет текста при наведении */
 }
 
 /* Стили для навигационного меню */
 nav {
-  background-color: #333;
+  background-color: #cc7000; /* Темно-оранжевый цвет */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -40,7 +40,7 @@ nav a {
 }
 
 nav a:hover {
-  background-color: #575757;
+  background-color: #ff7f24; /* Оранжевый цвет при наведении */
 }
 
 /* Стили для контейнера */
@@ -58,7 +58,7 @@ nav a:hover {
 }
 
 .content .box {
-  background-color: #fff;
+  background-color: #fff7e0; /* Светлый желто-рыжий фон для блоков */
   margin: 10px;
   padding: 20px;
   flex-basis: 30%;
@@ -74,7 +74,7 @@ nav a:hover {
 
 .content .box h2 {
   margin-top: 0;
-  color: #3A7CA5;
+  color: #cc7000; /* Темно-оранжевый цвет заголовка */
 }
 
 .content .box p {
@@ -84,7 +84,7 @@ nav a:hover {
 
 /* Стили для футера */
 footer {
-  background-color: #333;
+  background-color: #cc7000; /* Темно-оранжевый цвет */
   color: white;
   text-align: center;
   padding: 10px;
@@ -100,21 +100,19 @@ footer p {
 .App {
   display: flex;
   flex-direction: column;
-  
   align-items: center;
   height: 100vh;
-  background-color: #F4F4F9;
-  color: #3A7CA5;
+  background-color: #fff4e0; /* Светлый желто-рыжий фон */
+  color: #cc7000; /* Темно-оранжевый цвет текста */
   padding: 30px 20px 20px 20px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   border-radius: 12px;
 }
 
-
 /* Стили для input */
 input {
   font-size: 1.2em;
-  border: 2px solid #3A7CA5;
+  border: 2px solid #cc7000; /* Темно-оранжевая граница */
   border-radius: 8px;
   transition: box-shadow 0.3s ease, transform 0.3s ease;
   margin: 10px 0;
@@ -122,69 +120,99 @@ input {
 
 input:focus {
   outline: none;
-  box-shadow: 0 0 10px rgba(58, 124, 165, 0.5);
+  box-shadow: 0 0 10px rgba(204, 112, 0, 0.5); /* Тень с оранжевым оттенком при фокусе */
   transform: scale(1.05);
 }
 
 input::placeholder {
-  color: #888;
+  color: #cc7000; /* Темно-оранжевый цвет текста-заполнителя */
 }
 
 /* Стили для параграфов */
 p {
   margin: 10px 0;
 }
+
 /* Стили для контейнера с изображениями */
 .image-container {
-  display: grid; /* Используем сетку для плитки */
-  grid-template-columns: repeat(3, 1fr); /* Три колонки, каждая с равной шириной */
-  gap: 20px; /* Расстояние между изображениями */
-  padding: 20px; /* Отступы вокруг плитки */
-  justify-content: center; /* Центрирование всей плитки по горизонтали */
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  padding: 20px;
+  justify-content: center;
 }
 
 /* Стили для изображений */
 .cute-image {
-  width: 100%; /* Ширина изображения будет соответствовать ширине колонок */
-  height: 200px; /* Высота изображения */
-  object-fit: cover; /* Обеспечивает, что изображение будет покрывать заданные размеры */
-  border-radius: 15px; /* Скругленные углы */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Мягкая тень */
-  border: 5px solid #4CAF50; /* Розовая рамка */
-  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Плавные переходы */
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border: 5px solid #f29e38; /* Оранжевая рамка */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 /* Эффект при наведении на изображение */
 .cute-image:hover {
-  transform: scale(1.05); /* Легкое увеличение при наведении */
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Более глубокая тень при наведении */
+  transform: scale(1.05);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
-
 
 /* Стили для кнопки */
 button {
-  font-size: 1em; /* Размер шрифта */
-  padding: 10px 20px; /* Внутренние отступы */
-  border: none; /* Без границы по умолчанию */
-  border-radius: 5px; /* Скругленные углы */
-  background-color: #4CAF50; /* Основной цвет фона */
-  color: white; /* Цвет текста */
-  cursor: pointer; /* Указатель курсора при наведении */
-  transition: background-color 0.3s ease, transform 0.3s ease; /* Плавные переходы */
-  margin: 5px
+  font-size: 1em;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #f29e38; /* Основной цвет кнопки - оранжевый */
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  margin: 5px;
 }
 
 button:hover {
-  background-color: #45a049; /* Цвет фона при наведении */
-  transform: scale(1.05); /* Легкое увеличение при наведении */
+  background-color: #ffa500; /* Яркий оранжевый при наведении */
+  transform: scale(1.05);
 }
 
 button:active {
-  background-color: #388e3c; /* Цвет фона при нажатии */
-  transform: scale(0.95); /* Легкое уменьшение при нажатии */
+  background-color: #cc7000; /* Темно-оранжевый цвет при нажатии */
+  transform: scale(0.95);
 }
 
 button:focus {
-  outline: none; /* Убираем стандартный фокус */
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* Тень при фокусе */
+  outline: none;
+  box-shadow: 0 0 5px rgba(204, 112, 0, 0.2); /* Тень с оранжевым оттенком при фокусе */
+}
+/* Основной контейнер для списка пользователей */
+/* Контейнер для всех карточек пользователей */
+.user-list {
+  display: flex;
+  flex-wrap: wrap; /* Обеспечивает перенос элементов на следующую строку */
+  justify-content: space-between; /* Равномерное распределение между карточками */
+  gap: 20px; /* Отступы между карточками */
+  padding: 20px;
+}
+
+/* Карточка пользователя */
+.user-card {
+  flex: 1 1 calc(25% - 20px); /* Каждая карточка занимает 25% ширины минус отступ */
+  box-sizing: border-box; /* Чтобы padding не влиял на ширину */
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+/* Стили для изображения пользователя */
+.user-card .user-image {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }

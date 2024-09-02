@@ -2,15 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom/client'; // Убедитесь, что импорт правильный
 import  './css/index.css'
 
-import Image from './component/Image';
 import Input from './component/Input';
-import Button from './component/Button';
 
+import Users  from './component/Users';
 
-
-// function SampleText() {
-//   return (<p>Шаблон для вашего текста</p>);
-// }
 
 
 function App() {
@@ -18,11 +13,8 @@ function App() {
 
   return (
     <div className='App'>
-      <Input />
-      
-      <Image/>
-      {/* <SampleText/> */}
-      <Button />
+      {/* <Input /> */}
+      <Users/>
       {/* <Button text='Кнопка не базовая'/> */}
       
     </div>
@@ -31,4 +23,5 @@ function App() {
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<App/>); // Рендерим компонент App
+root.render(<App/>); // Рендерим компонент Appexport default Users;
+
