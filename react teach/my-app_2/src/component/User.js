@@ -1,24 +1,30 @@
 import React from 'react';
-
+import 'bootstrap-icons/font/bootstrap-icons.css'; // Убедитесь, что стили Bootstrap Icons подключены
+import { IconName } from "react-icons/bs";
+import { Bs0CircleFill } from "react-icons/bs";
 export class User extends React.Component {
-  
   constructor(props) {
     super(props);
-    // Инициализация массива пользователей и других данных
-    this.user=this.props.user
+    this.user = this.props.user;
+  }
+  handleDelete = () => {
+    const { onDelete, user } = this.props;
+    if (onDelete) {
+      onDelete(user.id); // Передаем id пользователя в родительский компонент
     }
+  };
 
-  render(props) {
-    
+  render() {
     return (
-          
-            <div className="user-card"  >
-              <img src={this.user.image} alt={this.user.name} className="user-image" />
-              <h2>{this.user.name}</h2>
-              <p>{this.user.bio}</p>
-            </div>
-          )
-        
+      <div className="user-card">
+        {/* <i className="bi bi-x close-icon"  onClick={this.handleDelete}></i> Иконка закрытия */}
+        {/* <Bs0CircleFill className='close-icon'/> */}
+
+        <img src={this.user.image} alt={this.user.name} className="user-image" />
+        <h2>{this.user.name}</h2>
+        <p>{this.user.bio}</p>
+      </div>
+    );
   }
 }
 
