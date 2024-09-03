@@ -42,27 +42,28 @@ class App extends React.Component {
 
   componentDidMount() {
     const { imageLinks, names, bios } = this.state;
-
-    // Добавляем новых пользователей к существующим
+  
+    // Генерация уникальных id для новых пользователей
     const newUsers = imageLinks.map((image, index) => ({
+      id: Date.now() + index, // Генерация уникального id
       image: image,
       name: names[index],
       bio: bios[index]
     }));
-
+  
     this.setState(prevState => ({
       users: [
         ...prevState.users,
         ...newUsers
       ]
     }));
-  
   }
   addUser = (user) => {
     this.setState(prevState => ({
-      users: [...prevState.users, user]
+      users: [...prevState.users,  { ...user, id: Date.now() }]
     }));
   }
+
   handleDelete = (id) => {
     this.setState(prevState => ({
       users: prevState.users.filter(user => user.id !== id)
@@ -71,17 +72,20 @@ class App extends React.Component {
   render() {
     return (
       <div className='App'>
-        <Users users={this.state.users} />
+        <Users users={this.state.users}
+          onDelete={this.handleDelete} // Передаем функцию удаления в Users
+
+        />
         <aside>
           <Add_user onAddUser={this.addUser} />
         </aside>
       </div>
     );
   }
-  
 
 
-  
+
+
 }
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

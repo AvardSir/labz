@@ -13,7 +13,8 @@ export class Users extends React.Component {
       <div className="user-list">
         {
           this.props.users.map((el) => (
-            <User user={el} key={el.id} onDelete={this.handleDelete} />
+            <User user={el} key={el.id}               onDelete={this.props.onDelete} // Используем onDelete из props
+            />
           ))
         }
       </div>
