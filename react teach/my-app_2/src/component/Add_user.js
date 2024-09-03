@@ -3,7 +3,6 @@ import React from 'react';
 export class Add_user extends React.Component {
   constructor(props) {
     super(props);
-
     this.state = {
       name: "",
       bio: "",
@@ -14,8 +13,9 @@ export class Add_user extends React.Component {
 
   handleAddUser = () => {
     const { name, bio, image, isHappy } = this.state;
+    
+    console.log('ВАААУ')
     if (name && bio && image) {
-      // Вызываем функцию добавления пользователя, переданную через props
       this.props.onAddUser({
         id: Date.now(), // Генерация уникального ID для пользователя
         name,
@@ -24,7 +24,6 @@ export class Add_user extends React.Component {
         isHappy,
       });
 
-      // Сбрасываем форму после добавления
       this.setState({
         name: "",
         bio: "",

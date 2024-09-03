@@ -17,7 +17,6 @@ export class User extends React.Component {
   render() {
     return (
       <div className="user-card">
-        {/* <i className="bi bi-x close-icon"  onClick={this.handleDelete}></i> Иконка закрытия */}
         {/* <Bs0CircleFill className='close-icon'/> */}
 
         <img src={this.user.image} alt={this.user.name} className="user-image" />
