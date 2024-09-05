@@ -70,31 +70,13 @@ class App extends React.Component {
     }));
   }
   handleEdit = (id, updatedUser) => {
-    this.setState(prevState => {
-        const userToEdit = prevState.users.find(user => user.id === id);
-
-        // Выводим пользователя до изменений
-        console.log('User before edit:', userToEdit);
-        console.log('Updated user data:', updatedUser);
-
-        // Обновляем userToEdit, применяя updatedUser
-        const newUser = { ...userToEdit, ...updatedUser };
-
-        // Выводим обновленного пользователя
-        console.log('User after edit:', newUser);
-
-        // Возвращаем новый массив пользователей
-        const updatedUsers = prevState.users.map(user =>
-            user.id === id ? newUser : user
-        );
-
-        // Выводим обновленный массив
-        console.log('Updated users array:', updatedUsers);
-
-        return {
-            users: updatedUsers
-        };
-    });
+    this.setState(prevState => ({
+        users: prevState.users.map(user =>
+            user.id === id ? { ...user, ...updatedUser } : user
+        )
+        
+    })
+  )
 };
 
 
