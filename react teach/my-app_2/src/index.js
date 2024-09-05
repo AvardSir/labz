@@ -4,7 +4,7 @@ import './css/index.css'
 
 import Input from './component/Input';
 import Users from './component/Users';
-import Add_user from './component/Add_user';
+import AddUser from './component/AddUser';
 
 class App extends React.Component {
 
@@ -69,15 +69,47 @@ class App extends React.Component {
       users: prevState.users.filter(user => user.id !== id)
     }));
   }
+  handleEdit = (id, updatedUser) => {
+    this.setState(prevState => {
+        const userToEdit = prevState.users.find(user => user.id === id);
+
+        // Выводим пользователя до изменений
+        console.log('User before edit:', userToEdit);
+        console.log('Updated user data:', updatedUser);
+
+        // Обновляем userToEdit, применяя updatedUser
+        const newUser = { ...userToEdit, ...updatedUser };
+
+        // Выводим обновленного пользователя
+        console.log('User after edit:', newUser);
+
+        // Возвращаем новый массив пользователей
+        const updatedUsers = prevState.users.map(user =>
+            user.id === id ? newUser : user
+        );
+
+        // Выводим обновленный массив
+        console.log('Updated users array:', updatedUsers);
+
+        return {
+            users: updatedUsers
+        };
+    });
+};
+
+
+
+
   render() {
     return (
       <div className='App'>
         <Users users={this.state.users}
-          onDelete={this.handleDelete} // Передаем функцию удаления в Users
+          onEdit={this.handleEdit}
+          onDelete={this.handleDelete}
 
         />
         <aside>
-          <Add_user onAddUser={this.addUser} />
+          <AddUser onAddUser={this.addUser} />
         </aside>
       </div>
     );

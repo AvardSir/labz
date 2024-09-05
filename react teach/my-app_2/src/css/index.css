@@ -198,38 +198,59 @@ button:focus {
   gap: 20px; /* Отступы между карточками */
 }
 
-/* Карточка пользователя */
+/* Стили для контейнера карточки пользователя */
 .user-card {
-  flex: 1 1 calc(25% - 20px); 
-  box-sizing: border-box; /* Чтобы padding не влиял на ширину */
-  background-color: #fff;
-  padding: 20px;
+  /* position: relative; Необходимо для абсолютного позиционирования иконок */
+  width: fit-content;
+  padding: 20px; /* Добавляет внутренние отступы для карточки */
+  border: 1px solid #ddd;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  position: relative; /* Для абсолютного позиционирования иконки */
-}
-
-/* Стили для иконки закрытия */
-.close-icon {
-  position: absolute; /* Абсолютное позиционирование иконки */
-  top: 10px; /* Отступ от верхнего края */
-  right: 10px; /* Отступ от правого края */
-  cursor: pointer; /* Курсор указывает на интерактивность */
-  font-size: 1.5em; /* Размер иконки */
-  color: #ff0000; /* Цвет иконки */
-  z-index: 10; /* Чтобы иконка была поверх остальных элементов */
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* Стили для изображения пользователя */
 .user-image {
+  
   width: 100px;
   height: 100px;
   border-radius: 50%;
+  
   object-fit: cover;
   margin-bottom: 15px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
+.icon-container {
+  display: flex; /* Использование Flexbox */
+  justify-content: flex-end; /* Размещение иконок справа */
+  align-items: center; /* Центрирование иконок по вертикали */
+  gap: 5px; /* Расстояние между иконками */
+  padding-bottom: 5px;
+}
+
+.close-icon, .edit-icon {
+  cursor: pointer; /* Курсор указывает на интерактивность */
+  font-size: 1.2em; /* Размер иконок */
+  color: #f29e38; /* Цвет иконок */
+  transition: color 0.3s ease; /* Плавный переход цвета при наведении */
+}
+
+.close-icon:hover {
+  color: #ffa500; /* Яркий оранжевый цвет при наведении */
+}
+
+.close-icon:active {
+  color: #cc7000; /* Темно-оранжевый цвет при нажатии */
+}
+
+.edit-icon:hover {
+  color: #ffa500; /* Яркий оранжевый цвет при наведении */
+}
+
+.edit-icon:active {
+  color: #cc7000; /* Темно-оранжевый цвет при нажатии */
+}
+
 
 /* Стили для формы добавления пользователя */
 .Add-user {

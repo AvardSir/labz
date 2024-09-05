@@ -1,6 +1,6 @@
 import React from 'react';
 
-export class Add_user extends React.Component {
+class AddUser extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -14,7 +14,6 @@ export class Add_user extends React.Component {
   handleAddUser = () => {
     const { name, bio, image, isHappy } = this.state;
     
-    console.log('ВАААУ')
     if (name && bio && image) {
       this.props.onAddUser({
         id: Date.now(), // Генерация уникального ID для пользователя
@@ -70,4 +69,4 @@ export class Add_user extends React.Component {
   }
 }
 
-export default Add_user;
+export default AddUser;
