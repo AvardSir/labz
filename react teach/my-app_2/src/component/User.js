@@ -91,9 +91,9 @@ export class User extends React.Component {
               <BsFillPencilFill className='edit-icon' onClick={this.handleEdit} />
               <BsXCircle className='close-icon' onClick={this.handleDelete} />
             </div>
-            <img src={this.props.user.image} alt={this.props.user.name} className="user-image" />
-            <h2>{this.props.user.name}</h2>
-            <p>{this.props.user.bio}</p>
+            <img src={this.props.user.avatar} alt={this.props.user.name} className="user-image" />
+            <h2>{this.props.user.first_name} {this.props.user.last_name}</h2>
+            <p> {this.props.user.email}</p>
 
           </div>
         )}

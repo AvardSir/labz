@@ -12,19 +12,19 @@ class AddUser extends React.Component {
   }
 
   handleAddUser = () => {
-    const { name, bio, image, isHappy } = this.state;
+    const { name: first_name, bio, image, isHappy } = this.state;
     
-    if (name && bio && image) {
+    if (first_name && bio && image) {
       this.props.onAddUser({
         id: Date.now(), // Генерация уникального ID для пользователя
-        name,
+        first_name,
         bio,
         image,
         isHappy,
       });
 
       this.setState({
-        name: "",
+        first_name: "",
         bio: "",
         image: "",
         isHappy: false,

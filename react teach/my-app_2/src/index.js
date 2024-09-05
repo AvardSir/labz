@@ -5,12 +5,15 @@ import './css/index.css'
 import Input from './component/Input';
 import Users from './component/Users';
 import AddUser from './component/AddUser';
+import axios from 'axios';
 
+const baseUrl="https://reqres.in/api/users?page=1"
+const baseUrl2="https://reqres.in/api/users?page=3"
 class App extends React.Component {
 
   constructor(props) {
     super(props);
-    // Инициализация массива пользователей и других данных
+    
     this.state = {
       users: [
         { id: 1, bio: 'Love basket', name: 'Bil', image: 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fvjoy.cc%2Fwp-content%2Fuploads%2F2020%2F10%2F1523649151_1.jpg&f=1&nofb=1&ipt=486a127f4869a91a8c9d57b64aef0e7c505330d48573e4b50bcd67af15625729&ipo=images' },
@@ -42,7 +45,16 @@ class App extends React.Component {
 
   componentDidMount() {
     const { imageLinks, names, bios } = this.state;
-  
+    axios.get(baseUrl).then((res)=>{
+      this.setState({users: res.data.data})
+      console.log(res.data.data)
+    })
+    axios.get(baseUrl2).then((res)=>{
+      this.setState((prevState) => ({
+        users: [...prevState.users, ...res.data.data], // Добавляем новых пользователей к уже существующим
+      }));
+            console.log(res.data.data)
+    })
     // Генерация уникальных id для новых пользователей
     const newUsers = imageLinks.map((image, index) => ({
       id: Date.now() + index, // Генерация уникального id
