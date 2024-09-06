@@ -11,7 +11,7 @@ const App = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
+  useEffect(() => {//TODO: Остановился разбирать здесь. Что такое useEffect это встроенная функция Для чего-то
     const fetchFlights = async () => {
       try {
         // Пример параметров запроса, замените на реальные значения
