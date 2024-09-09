@@ -1,0 +1,359 @@
+/* Основные стили для body */
+body {
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #fff4e0; /* Светлый желто-рыжий фон */
+  color: #333;
+  line-height: 1.6;
+}
+
+/* Стили для заголовка */
+header {
+  background-color: #f29e38; /* Оранжевый цвет */
+  color: white;
+  padding: 20px 10px;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+header:hover {
+  background-color: #ffa500; /* Яркий оранжевый цвет при наведении */
+  color: #ffe4b5; /* Светло-желтый цвет текста при наведении */
+}
+
+/* Стили для навигационного меню */
+nav {
+  background-color: #cc7000; /* Темно-оранжевый цвет */
+  display: flex;
+  
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+nav a {
+  color: white;
+  text-align: center;
+  padding: 14px 20px;
+  text-decoration: none;
+  transition: background-color 0.3s;
+}
+
+nav a:hover {
+  background-color: #ff7f24; /* Оранжевый цвет при наведении */
+}
+
+/* Стили для контейнера */
+.container {
+  display: flex;
+  margin: auto;
+  padding: 20px;
+  max-width: 1200px;
+}
+
+/* Стили для основной области контента */
+.content {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+/* Стили для блоков контента */
+.content .box {
+  background-color: #fff7e0; /* Светлый желто-рыжий фон для блоков */
+  margin: 10px;
+  padding: 20px;
+  flex-basis: 30%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.content .box:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.content .box h2 {
+  margin-top: 0;
+  color: #cc7000; /* Темно-оранжевый цвет заголовка */
+}
+
+.content .box p {
+  font-size: 1em;
+  color: #666;
+}
+
+/* Стили для футера */
+footer {
+  background-color: #cc7000; /* Темно-оранжевый цвет */
+  color: white;
+  text-align: center;
+  padding: 10px;
+  margin-top: 20px;
+  box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1);
+}
+
+footer p {
+  margin: 0;
+}
+
+/* Стили для приложения */
+.App {
+  display: flex; /* Включаем Flexbox для горизонтального расположения элементов */
+  align-items: flex-start; /* Выравниваем элементы по верхнему краю */
+  gap: 20px; /* Отступ между боковой панелью и основным контентом */
+  padding: 20px; /* Отступ внутри контейнера */
+}
+
+/* Стили для input */
+input {
+  font-size: 1.2em;
+  border: 2px solid #cc7000; /* Темно-оранжевая граница */
+  border-radius: 8px;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+  margin: 10px 0;
+}
+
+input:focus {
+  outline: none;
+  box-shadow: 0 0 10px rgba(204, 112, 0, 0.5); /* Тень с оранжевым оттенком при фокусе */
+  transform: scale(1.05);
+}
+
+input::placeholder {
+  color: #cc7000; /* Темно-оранжевый цвет текста-заполнителя */
+}
+
+/* Стили для параграфов */
+p {
+  margin: 10px 0;
+}
+
+/* Стили для контейнера с изображениями */
+.image-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  padding: 20px;
+  justify-content: center;
+}
+
+/* Стили для изображений */
+.cute-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border: 5px solid #f29e38; /* Оранжевая рамка */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Эффект при наведении на изображение */
+.cute-image:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Стили для кнопки */
+button {
+  font-size: 1em;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #f29e38; /* Основной цвет кнопки - оранжевый */
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  margin: 5px;
+}
+
+button:hover {
+  background-color: #ffa500; /* Яркий оранжевый при наведении */
+  transform: scale(1.05);
+}
+
+button:active {
+  background-color: #cc7000; /* Темно-оранжевый цвет при нажатии */
+  transform: scale(0.95);
+}
+
+button:focus {
+  outline: none;
+  box-shadow: 0 0 5px rgba(204, 112, 0, 0.2); /* Тень с оранжевым оттенком при фокусе */
+}
+
+/* Основной контейнер для списка пользователей */
+.user-list {
+  flex: 1; /* Основной контент занимает оставшееся пространство */
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-wrap: wrap; 
+  justify-content: space-between; /* Равномерное распределение между карточками */
+  gap: 20px; /* Отступы между карточками */
+}
+
+/* Стили для контейнера карточки пользователя */
+.user-card {
+  /* position: relative; Необходимо для абсолютного позиционирования иконок */
+  width: fit-content;
+  padding: 20px; /* Добавляет внутренние отступы для карточки */
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Стили для изображения пользователя */
+.user-image {
+  
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  
+  object-fit: cover;
+  margin-bottom: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.icon-container {
+  display: flex; /* Использование Flexbox */
+  justify-content: flex-end; /* Размещение иконок справа */
+  align-items: center; /* Центрирование иконок по вертикали */
+  gap: 5px; /* Расстояние между иконками */
+  padding-bottom: 5px;
+}
+
+.close-icon, .edit-icon {
+  cursor: pointer; /* Курсор указывает на интерактивность */
+  font-size: 1.2em; /* Размер иконок */
+  color: #f29e38; /* Цвет иконок */
+  transition: color 0.3s ease; /* Плавный переход цвета при наведении */
+}
+
+.close-icon:hover {
+  color: #ffa500; /* Яркий оранжевый цвет при наведении */
+}
+
+.close-icon:active {
+  color: #cc7000; /* Темно-оранжевый цвет при нажатии */
+}
+
+.edit-icon:hover {
+  color: #ffa500; /* Яркий оранжевый цвет при наведении */
+}
+
+.edit-icon:active {
+  color: #cc7000; /* Темно-оранжевый цвет при нажатии */
+}
+
+
+/* Стили для формы добавления пользователя */
+.Add-user {
+  background-color: #fff7e0; /* Светлый желто-рыжий фон, аналогичный карточкам */
+  padding: 20px;
+  margin: 20px 0;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Стили для полей ввода */
+.Add-user input[type="text"],
+.Add-user textarea {
+  width: 100%;
+  max-width: 400px;
+  font-size: 1em;
+  padding: 10px;
+  margin: 10px 0;
+  border: 2px solid #cc7000; /* Темно-оранжевая граница */
+  border-radius: 8px;
+  box-sizing: border-box; /* Чтобы padding не влиял на ширину */
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.Add-user input[type="text"]:focus,
+.Add-user textarea:focus {
+  outline: none;
+  box-shadow: 0 0 10px rgba(204, 112, 0, 0.5); /* Тень с оранжевым оттенком при фокусе */
+  transform: scale(1.05);
+}
+
+.Add-user textarea {
+  resize: vertical; /* Позволяет изменять размер textarea только по вертикали */
+  height: 100px; /* Начальная высота для textarea */
+}
+
+/* Стили для чекбокса */
+.Add-user label {
+  margin: 10px 0 5px;
+  font-weight: bold;
+  color: #cc7000; /* Темно-оранжевый цвет текста */
+}
+
+.Add-user input[type="checkbox"] {
+  appearance: none; /* Убирает стандартный вид чекбокса */
+  width: 30px;
+  height: 30px;
+  border-radius: 50%; /* Делает чекбокс круглым */
+  background-color: #fff;
+  border: 2px solid #cc7000; /* Темно-оранжевая граница */
+  display: inline-block;
+  position: relative;
+  cursor: pointer;
+  margin-left: 10px;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Стили для состояния "checked" */
+.Add-user input[type="checkbox"]:checked {
+  background-color: #cc7000; /* Оранжевый цвет, когда чекбокс выбран */
+  box-shadow: 0 0 5px rgba(204, 112, 0, 0.5); /* Тень при выборе */
+}
+.main-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+/* Боковая панель */
+aside {
+  background-color: #fff7e0;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 300px;
+  flex-shrink: 0; /* Боковая панель не сжимается */
+}
+
+/* Основной контент */
+.main-content {
+  flex: 1; /* Основной контент занимает оставшееся пространство */
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+}
+/* Боковая панель (aside) */
+.App aside {
+  background-color: #fff7e0;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 300px; /* Фиксированная ширина для боковой панели */
+  flex-shrink: 0; /* Запрещаем сжиматься боковой панели */
+}
+
+.Users {
+  flex: 1; /* Основной контент занимает оставшееся пространство */
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
