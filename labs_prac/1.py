@@ -67,3 +67,4 @@ if __name__ == "__main__":
     app = IfThenApp(root)
     root.mainloop()
 fff
+fkfff
