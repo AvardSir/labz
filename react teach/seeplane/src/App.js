@@ -34,7 +34,8 @@ const App = () => {
         setLoading(false);
       }
     };
-
+// console.log('Всем привет')
+//TODO: вспомнить что делал
     fetchFlights();
   }, []);
 
