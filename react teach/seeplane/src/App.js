@@ -11,7 +11,7 @@ const App = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
+  useEffect(() => {//TODO: Остановился разбирать здесь. Что такое useEffect это встроенная функция Для чего-то
     const fetchFlights = async () => {
       try {
         // Пример параметров запроса, замените на реальные значения
@@ -26,10 +26,9 @@ const App = () => {
             Authorization: `Bearer ${API_KEY}`, // Ваш API ключ
           },
         });
-
         setFlights(response.data.data);
         setLoading(false);
-      } catch (error) { 
+      } catch (error) {
         console.error('Error fetching flights:', error);
         setError(error);
         setLoading(false);
@@ -37,8 +36,6 @@ const App = () => {
     };
 // console.log('Всем привет')
 //TODO: вспомнить что делал
-//стоит признать: проект -заброшен
-//ААААА
     fetchFlights();
   }, []);
 
