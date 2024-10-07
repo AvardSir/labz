@@ -97,8 +97,11 @@ export class User extends React.Component {
 
           </div>
         )}
-        {/* //TODO: 
-        
+        {/* //TODO: what i do in proj?
+        its airplanes inf app
+        what i must do?
+        I need to start site
+        TODO: start site, check what problems
         */}
        
       </div>
