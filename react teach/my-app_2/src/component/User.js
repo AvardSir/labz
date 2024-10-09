@@ -102,6 +102,7 @@ export class User extends React.Component {
         what i must do?
         I need to start site
         TODO: start site, check what problems
+        not now
         */}
        
       </div>
