@@ -4,8 +4,11 @@
   "description": "teach node js",
   "main": "index.js",
   "scripts": {
-    
+    "start": "node index.js"
   },
   "author": "Avard_sir",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "currency-converter-lt": "^2.0.1"
+  }
 }
