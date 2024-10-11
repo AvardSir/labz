@@ -9,6 +9,7 @@
   "author": "Avard_sir",
   "license": "ISC",
   "dependencies": {
-    "currency-converter-lt": "^2.0.1"
+    "currency-converter-lt": "^2.0.1",
+    "express": "^4.21.1"
   }
 }
