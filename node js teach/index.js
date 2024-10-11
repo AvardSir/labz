@@ -26,16 +26,19 @@
 const express=require('express')
 const app=express()
 
+app.set('view engine','ejs')
+
 app.get('/',(req,res)=>{
-    res.send('This home page')
+    res.render('index')
 })
 
-app.get('/user/:username/:id',(req,res)=>{
-    res.send(`This iser ${req.params.username} id is ${req.params.id}`)
+app.get('/user/:username',(req,res)=>{
+    let data = {username: req.params.username, hoby:['fotbal','socer','swiming']}
+    res.render('user',data)
 })
-
+ 
 app.get('/about',(req,res)=>{
-    res.send('пронас')
+    res.render('about')
 })
 PORT=3000
 app.listen(PORT,()=>{

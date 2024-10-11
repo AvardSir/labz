@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Зелёная Страница</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #e9f5e9; /* Светло-зелёный фон */
+            color: #333;
+            text-align: center;
+        }
+
+        header {
+            background-color: #4caf50; /* Тёмно-зелёный заголовок */
+            color: white;
+            padding: 20px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+
+        .container {
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #c8e6c9; /* Нежно-зелёный контейнер */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .username {
+            font-weight: bold;
+            font-size: 1.5em;
+            color: #4caf50; /* Выделение имени пользователя */
+        }
+
+        footer {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #4caf50;
+            color: white;
+            position: absolute;
+            width: 100%;
+            bottom: 0;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Добро пожаловать!</h1>
+</header>
+
+<div class="container">
+    <p>Привет, <span class="username"><%=username%></span>! Рад вас видеть на этой зелёной странице.</p>
+    <% if(username=='Ivan') { %>
+        <h3>haha ivan</h3>
+        <ul>
+            <%
+            hoby.forEach((el)=>{%>
+                <li><%=el %></li>
+            <%})
+            %>
+        </ul>
+        <%}
+    %>
+    <p>Здесь вы можете узнать больше о нашем проекте.</p>
+</div>
+
+<footer>
+    &copy; 2024 Зелёная Страница. Все права защищены.
+</footer>
+
+</body>
+</html>
