@@ -45,7 +45,12 @@ app.get('/about',(req,res)=>{
 
 app.post('/check-user',(req,res)=>{
     console.log(req.body)
-    
+    if (req.body.username==""){
+        res.redirect('/')
+    }
+    else{
+        res.redirect('/user/'+req.body.username)
+    }
 })
 
 PORT=3000
