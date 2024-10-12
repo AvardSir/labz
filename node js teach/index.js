@@ -27,6 +27,8 @@ const express=require('express')
 const app=express()
 
 app.set('view engine','ejs')
+app.use(express.urlencoded({extended:false}))
+app.use(express.static('public'))
 
 app.get('/',(req,res)=>{
     res.render('index')
@@ -40,6 +42,12 @@ app.get('/user/:username',(req,res)=>{
 app.get('/about',(req,res)=>{
     res.render('about')
 })
+
+app.post('/check-user',(req,res)=>{
+    console.log(req.body)
+    
+})
+
 PORT=3000
 app.listen(PORT,()=>{
     console.log(`server start localhost:${PORT}`)

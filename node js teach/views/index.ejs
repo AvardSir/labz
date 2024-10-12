@@ -4,90 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Жёлтая Страница</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #fffbe0; /* светло-желтый фон */
-            color: #333;
-        }
-
-        header {
-            background-color: #ffcc00; /* ярко-желтый заголовок */
-            color: white;
-            text-align: center;
-            padding: 20px;
-        }
-
-        h1 {
-            margin: 0;
-            font-size: 2.5em;
-        }
-
-        .container {
-            padding: 20px;
-            max-width: 900px;
-            margin: 0 auto;
-            background-color: #fff8b3; /* нежно-желтый для контейнера */
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        p {
-            font-size: 1.2em;
-            line-height: 1.6;
-        }
-
-        a {
-            text-decoration: none;
-        }
-
-        button {
-            background-color: #ffd700; /* золотистый желтый */
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            font-size: 1.1em;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        button:hover {
-            background-color: #ffcc00;
-        }
-
-        footer {
-            text-align: center;
-            padding: 10px;
-            background-color: #ffcc00;
-            color: white;
-            position: absolute;
-            width: 100%;
-            bottom: 0;
-        }
-    </style>
+    <!-- Подключаем внешний CSS файл -->
+    <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
 
-<header>
-    <h1>Добро пожаловать на жёлтую страницу</h1>
-</header>
-
+<!-- хедер -->
+<%- include('blocks/header') -%>
 <div class="container">
     <p>Эта страница создана с использованием жёлтых оттенков для создания яркой и позитивной атмосферы. Здесь вы можете прочитать информацию, вдохновиться ярким дизайном и почувствовать тепло солнечных тонов.</p>
     
     <p>Нажмите на кнопку ниже, чтобы узнать больше:</p>
-ааа
+    
     <!-- Кнопка-ссылка -->
-
-    <a href="about"><button>О нас </button>  </a>
+    <a href="about"><button>О нас</button></a>
     
 </div>
+<form action="/check-user" method="post">
+    <label for="username">Имя пользователя:</label>
+    <input type="text" id="username" name="username" required>
 
-<footer>
-    &copy; 2024 Жёлтая Страница. Все права защищены.
-</footer>
+    <label for="password">Пароль:</label>
+    <input type="password" id="password" name="password" required>
+
+    <label for="books">Предпочтения в книгах:</label>
+    <select id="books" name="books" required>
+        <option value="fiction">Художественная литература</option>
+        <option value="nonfiction">Нон-фикшн</option>
+        <option value="fantasy">Фантастика</option>
+        <option value="history">История</option>
+        <option value="science">Научная литература</option>
+    </select>
+
+    <button type="submit">Войти</button>
+</form>
+
+
+
 
 </body>
 </html>
