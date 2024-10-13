@@ -41,6 +41,32 @@
 
 
 
+<!-- Кнопка для отображения массива -->
+<button id="show-results-btn">Показать данные</button>
+
+<!-- Секция для отображения данных -->
+<div id="results-container" style="display:none;">
+   <ul style="background-color: #fffacd; padding: 10px; border-radius: 5px; list-style-type: none;">
+    <% results.forEach(function(result) { %>
+        <li style="background-color: #ffeb3b; margin: 5px 0; padding: 10px; border-radius: 3px; color: #333;">
+            ID: <%= result.idПользователи %>, Имя: <%= result.Имя %>, Жанр: <%= result.Жанры %>
+        </li>
+    <% }); %>
+</ul>
+
+</div>
+
+<script>
+    // Обработчик для отображения данных по клику
+    document.getElementById('show-results-btn').addEventListener('click', function() {
+        var resultsContainer = document.getElementById('results-container');
+        if (resultsContainer.style.display === "none") {
+            resultsContainer.style.display = "block"; // Показываем данные
+        } else {
+            resultsContainer.style.display = "none"; // Скрываем данные, если уже показаны
+        }
+    });
+</script>
 
 </body>
 </html>

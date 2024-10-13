@@ -38,33 +38,7 @@ const conn = mysql.createConnection({
 });
 
 // Подключаемся к базе данных
-conn.connect(err => {
-    if (err) {
-        console.log('Ошибка подключения к базе данных:', err);
-        return;
-    }
-    console.log('Соединение установлено');
 
-    // Выполняем SQL-запрос для получения пользователей и их любимых жанров
-    const query = `
-        SELECT пользователи.idПользователи, пользователи.Имя, жанры.idЖанры
-        FROM пользователи
-        JOIN жанры ON пользователи.Любимый жанр = жанры.idЖанры;
-    `;
-
-    conn.query(query, (err, results, fields) => {
-        if (err) {
-            console.log('Ошибка выполнения запроса:', err);
-            return;
-        }
-        
-        console.log('Список пользователей и их любимых жанров:');
-        console.log(results);
-
-        // Закрываем соединение после выполнения запроса
-        conn.end();
-    });
-});
 
 
 app.set('view engine','ejs')
@@ -72,7 +46,35 @@ app.use(express.urlencoded({extended:false}))
 app.use(express.static('public'))
 
 app.get('/',(req,res)=>{
-    res.render('index')
+    conn.connect(err => {
+        if (err) {
+            console.log('Ошибка подключения к базе данных:', err);
+            return;
+        }
+        console.log('Соединение установлено');
+    
+        // Выполняем SQL-запрос для получения пользователей и их любимых жанров
+        const query = `
+        SELECT mydb.пользователи.idПользователи, mydb.пользователи.Имя, mydb.жанры.Жанры
+        FROM mydb.пользователи
+        JOIN mydb.жанры ON mydb.пользователи.\`Любимый жанр\` = mydb.жанры.idЖанры;
+    `;
+    
+    
+        conn.query(query, (err, results, fields) => {
+            if (err) {
+                console.log('Ошибка выполнения запроса:', err);
+                return;
+            }
+            
+            console.log('Список пользователей и их любимых жанров:');
+            console.log(results);
+    
+            res.render('index',{results: results})
+            // Закрываем соединение после выполнения запроса
+            conn.end();
+        });
+    });
 })
 
 app.get('/user/:username',(req,res)=>{
