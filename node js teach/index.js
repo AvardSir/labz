@@ -26,6 +26,47 @@
 const express=require('express')
 const app=express()
 
+const mysql = require('mysql2');
+
+// Настройка соединения с базой данных
+const conn = mysql.createConnection({
+    host: 'localhost',
+    port: 3306,
+    user: 'root',
+    database: 'mydb',   // Укажи здесь свою базу данных
+    password: '1234'
+});
+
+// Подключаемся к базе данных
+conn.connect(err => {
+    if (err) {
+        console.log('Ошибка подключения к базе данных:', err);
+        return;
+    }
+    console.log('Соединение установлено');
+
+    // Выполняем SQL-запрос для получения пользователей и их любимых жанров
+    const query = `
+        SELECT пользователи.idПользователи, пользователи.Имя, жанры.idЖанры
+        FROM пользователи
+        JOIN жанры ON пользователи.Любимый жанр = жанры.idЖанры;
+    `;
+
+    conn.query(query, (err, results, fields) => {
+        if (err) {
+            console.log('Ошибка выполнения запроса:', err);
+            return;
+        }
+        
+        console.log('Список пользователей и их любимых жанров:');
+        console.log(results);
+
+        // Закрываем соединение после выполнения запроса
+        conn.end();
+    });
+});
+
+
 app.set('view engine','ejs')
 app.use(express.urlencoded({extended:false}))
 app.use(express.static('public'))
