@@ -1,102 +1,93 @@
-// const http=require('http')
-// const fs=require('fs')
-// let server = http.createServer((req,res)=>{
-//     res.writeHead(200,{'Content-Type':'text/html;charset=utf-8'})
-
-//     if (req.url === '/') {
-//         fs.createReadStream('templates/index.html').pipe(res);
-//     } else if (req.url === '/about') {
-//         fs.createReadStream('templates/about.html').pipe(res);
-//     }
-//     else 
-//    {
-//         fs.createReadStream('templates/error.html').pipe(res);
-//     }
-    
-//     // res.end('Hello <b>ddd<b>')
-// })
-
-// const PORT=3000
-// const HOST='localhost'
-
-// server.listen(PORT,HOST,()=>{
-//     console.log(`Сервер запущен ${PORT} и ${HOST}`)
-// }) 
-
-const express=require('express')
-const app=express()
-
+// Подключение к базе данных и настройка Express
+const express = require('express');
 const mysql = require('mysql2');
+const app = express();
+app.set('view engine', 'ejs');
+app.use(express.urlencoded({ extended: false }));
+app.use(express.static('public'));
 
-// Настройка соединения с базой данных
-const conn = mysql.createConnection({
-    host: 'localhost',
-    port: 3306,
-    user: 'root',
-    database: 'mydb',   // Укажи здесь свою базу данных
-    password: '1234'
+// Создание пула соединений с базой данных
+const pool = mysql.createPool({
+    host: "localhost",
+    user: "root",
+    database: "mydb",
+    password: "1234",
+    connectionLimit: 10 // Максимальное количество соединений
 });
 
-// Подключаемся к базе данных
-
-
-
-app.set('view engine','ejs')
-app.use(express.urlencoded({extended:false}))
-app.use(express.static('public'))
-
-app.get('/',(req,res)=>{
-    conn.connect(err => {
-        if (err) {
-            console.log('Ошибка подключения к базе данных:', err);
-            return;
-        }
-        console.log('Соединение установлено');
-    
-        // Выполняем SQL-запрос для получения пользователей и их любимых жанров
-        const query = `
+// Главная страница: отображение списка пользователей и жанров
+app.get('/', (req, res) => {
+    const queryUsers = `
         SELECT mydb.пользователи.idПользователи, mydb.пользователи.Имя, mydb.жанры.Жанры
         FROM mydb.пользователи
         JOIN mydb.жанры ON mydb.пользователи.\`Любимый жанр\` = mydb.жанры.idЖанры;
     `;
-    
-    
-        conn.query(query, (err, results, fields) => {
+
+    const queryGenres = `SELECT * FROM mydb.жанры;`; // Запрос для получения жанров
+
+    // Выполняем запрос для получения пользователей
+    pool.query(queryUsers, (err, usersResults) => {
+        if (err) {
+            console.log('Ошибка выполнения запроса:', err);
+            return;
+        }
+
+        // Выполняем запрос для получения жанров
+        pool.query(queryGenres, (err, genresResults) => {
             if (err) {
-                console.log('Ошибка выполнения запроса:', err);
+                console.log('Ошибка выполнения запроса жанров:', err);
                 return;
             }
-            
-            console.log('Список пользователей и их любимых жанров:');
-            console.log(results);
-    
-            res.render('index',{results: results})
-            // Закрываем соединение после выполнения запроса
-            conn.end();
+
+            // Отправляем результаты в шаблон index.ejs
+            res.render('index', { users: usersResults, genres: genresResults });
         });
     });
-})
+});
 
-app.get('/user/:username',(req,res)=>{
-    let data = {username: req.params.username, hoby:['fotbal','socer','swiming']}
-    res.render('user',data)
-})
- 
-app.get('/about',(req,res)=>{
-    res.render('about')
-})
+// Обработчик для добавления нового пользователя
+app.post('/add-user', (req, res) => {
+    const { username, favoriteGenre } = req.body; // Извлечение данных из тела запроса
 
-app.post('/check-user',(req,res)=>{
-    console.log(req.body)
-    if (req.body.username==""){
-        res.redirect('/')
-    }
-    else{
-        res.redirect('/user/'+req.body.username)
-    }
-})
+    const insertQuery = `
+        INSERT INTO mydb.пользователи (Имя, \`Любимый жанр\`)
+        VALUES (?, ?);
+    `;
 
-PORT=3000
-app.listen(PORT,()=>{
-    console.log(`server start localhost:${PORT}`)
-})
+    // Используем пул соединений
+    pool.query(insertQuery, [username, favoriteGenre], (err, result) => {
+        if (err) {
+            console.log('Ошибка добавления пользователя:', err);
+            return res.send('Ошибка добавления пользователя');
+        }
+
+        console.log('Пользователь добавлен успешно!');
+        res.redirect('/'); // Перенаправляем на главную страницу
+    });
+});
+
+
+// Обработчик для удаления пользователя
+app.post('/delete-user/:id', (req, res) => {
+    const userId = req.params.id; // Извлекаем ID пользователя из параметров маршрута
+
+    const deleteQuery = `DELETE FROM mydb.пользователи WHERE idПользователи = ?;`;
+
+    pool.query(deleteQuery, [userId], (err, result) => {
+        if (err) {
+            console.log('Ошибка удаления пользователя:', err);
+            return res.send('Ошибка удаления пользователя');
+        }
+
+        console.log('Пользователь удален успешно!');
+        res.redirect('/'); // Перенаправляем на главную страницу
+    });
+});
+
+
+
+// Запуск сервера
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Сервер запущен на порту ${PORT}`);
+});

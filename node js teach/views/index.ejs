@@ -41,32 +41,34 @@
 
 
 
-<!-- Кнопка для отображения массива -->
-<button id="show-results-btn">Показать данные</button>
+<h2>Добавить пользователя</h2>
+<form action="/add-user" method="POST">
+    <label for="username">Имя пользователя:</label>
+    <input type="text" id="username" name="username" required>
 
-<!-- Секция для отображения данных -->
-<div id="results-container" style="display:none;">
-   <ul style="background-color: #fffacd; padding: 10px; border-radius: 5px; list-style-type: none;">
-    <% results.forEach(function(result) { %>
-        <li style="background-color: #ffeb3b; margin: 5px 0; padding: 10px; border-radius: 3px; color: #333;">
-            ID: <%= result.idПользователи %>, Имя: <%= result.Имя %>, Жанр: <%= result.Жанры %>
+    <label for="favorite-genre">Любимый жанр:</label>
+    <select id="favorite-genre" name="favoriteGenre" required>
+        <% genres.forEach(function(genre) { %>
+            <option value="<%= genre.idЖанры %>"><%= genre.Жанры %></option>
+        <% }); %>
+    </select>
+
+    <button type="submit">Добавить</button>
+</form>
+
+<h2>Список пользователей</h2>
+<ul>
+    <% users.forEach(function(user) { %>
+        <li>
+            ID: <%= user.idПользователи %>, Имя: <%= user.Имя %>, Жанр: <%= user.Жанры %>
+            <form action="/delete-user/<%= user.idПользователи %>" method="POST" style="display:inline;">
+                <button type="submit">Удалить</button>
+            </form>
         </li>
     <% }); %>
 </ul>
 
-</div>
 
-<script>
-    // Обработчик для отображения данных по клику
-    document.getElementById('show-results-btn').addEventListener('click', function() {
-        var resultsContainer = document.getElementById('results-container');
-        if (resultsContainer.style.display === "none") {
-            resultsContainer.style.display = "block"; // Показываем данные
-        } else {
-            resultsContainer.style.display = "none"; // Скрываем данные, если уже показаны
-        }
-    });
-</script>
 
 </body>
 </html>
