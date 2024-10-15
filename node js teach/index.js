@@ -81,7 +81,7 @@ app.post('/delete-user/:id', (req, res) => {
 
         console.log('Пользователь удален успешно!');
         res.redirect('/'); // Перенаправляем на главную страницу
-    });//not today bruh
+    });//not today bruh. today university
 });
 
 
