@@ -1,12 +1,16 @@
+import matplotlib.pyplot as plt
 import math
 from math import cos, pi, sqrt
-
 def f(x):
     return cos(x - 2 * pi / 3)
+
+def f_neg(x):
+    return -f(x)
 
 a = -5 * pi / 3
 b = -2 * pi / 3
 epsilon = 2**(-16)
+N = 100
 
 def uniform_search(f, a, b, epsilon, N):
     n = N
@@ -25,7 +29,7 @@ def uniform_search(f, a, b, epsilon, N):
         if current_tin < epsilon:
             break
             
-    return min_x, min_f, max_tin
+    return min_x, min_f, max_tin, i
 
 def dichotomy_method(f, a, b, epsilon, N):
     delta = epsilon / 2
@@ -40,7 +44,7 @@ def dichotomy_method(f, a, b, epsilon, N):
             a = x1
         max_tin = min(max_tin, b - a)
         n += 1
-    return (a + b) / 2, f((a + b) / 2), max_tin
+    return (a + b) / 2, f((a + b) / 2), max_tin, n
 
 def fibonacci_method(f, a, b, epsilon, N):
     fib = [0, 1]
@@ -72,7 +76,7 @@ def fibonacci_method(f, a, b, epsilon, N):
             f1 = f(x1)
         max_tin = min(max_tin, b - a)
     
-    return (x1 + x2) / 2, f((x1 + x2) / 2), max_tin
+    return (x1 + x2) / 2, f((x1 + x2) / 2), max_tin, k
 
 def golden_section_search(f, a, b, epsilon, N):
     phi = (1 + sqrt(5)) / 2
@@ -102,9 +106,10 @@ def golden_section_search(f, a, b, epsilon, N):
         max_tin = min(max_tin, b - a)
         n += 1
     
-    return (a + b) / 2, f((a + b) / 2), max_tin
+    return (a + b) / 2, f((a + b) / 2), max_tin, n
 
-N = 100
+epsilon_values = [2**(-i) for i in range(1, 20)]
+iterations_list = []
 
 methods = [
     ("Метод равномерного поиска", uniform_search),
@@ -113,6 +118,31 @@ methods = [
     ("Метод золотого сечения", golden_section_search)
 ]
 
+results = []
+
 for name, method in methods:
-    result, value, max_tin = method(f, a, b, epsilon, N)
-    print(f"{name}: Минимум x = {result}, f(x) = {value}, Максимальная длина ТИН после {N} испытаний = {max_tin}")
+    iterations_per_epsilon = []
+    for eps in epsilon_values:
+        result, value, max_tin, iterations = method(f_neg, a, b, eps, N)  # Используем f_neg
+        iterations_per_epsilon.append(iterations)
+    
+    result, value, max_tin, iterations = method(f_neg, a, b, epsilon, N)
+    results.append((name, result, -value, max_tin, iterations))  # Инвертируем значение обратно
+    iterations_list.append(iterations_per_epsilon)
+
+plt.figure(figsize=(10, 6))
+
+for i, (name, _) in enumerate(methods):
+    plt.plot(epsilon_values, iterations_list[i], label=name)
+
+plt.xscale('log')
+plt.yscale('log')
+plt.xlabel('Эпсилон')
+plt.ylabel('Итерации')
+plt.title('Зависимость числа итераций от погрешности')
+plt.legend()
+plt.grid(True)
+plt.show()
+
+for name, result, value, max_tin, iterations in results:
+    print(f"{name}:\tМаксимум x = {result:.6f}\tf(x) = {value:.6f}\tМаксимальная длина ТИН = {max_tin:.6f}\tИтерации = {iterations}")
