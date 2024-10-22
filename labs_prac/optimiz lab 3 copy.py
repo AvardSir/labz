@@ -61,7 +61,6 @@ def fibonacci_method(f, a, b, epsilon, N):
     max_tin = b - a
     
 
-    # аалал
     while k < n - 2 and (b - a) > epsilon:
         k += 1
         if f1 > f2:
