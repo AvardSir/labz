@@ -59,8 +59,7 @@ def fibonacci_method(f, a, b, epsilon, N):
     f1 = f(x1)
     f2 = f(x2)
     max_tin = b - a
-    # фллл
-# лалала
+    # дадада
     while k < n - 2 and (b - a) > epsilon:
         k += 1
         if f1 > f2:
