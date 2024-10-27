@@ -62,6 +62,7 @@ def fibonacci_method(f, a, b, epsilon, N):
     # дадада
 
     # flfl
+    # дада ничего не делаю сегодня всем пока
     while k < n - 2 and (b - a) > epsilon:
         k += 1
         if f1 > f2:
