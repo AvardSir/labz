@@ -60,7 +60,7 @@ def fibonacci_method(f, a, b, epsilon, N):
     f2 = f(x2)
     max_tin = b - a
     # дадада
-
+    # уфуфу
     # flfl
     # дада ничего не делаю сегодня всем пока
     while k < n - 2 and (b - a) > epsilon:
