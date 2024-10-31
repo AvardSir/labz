@@ -8,7 +8,7 @@ function countMovedWeights(n, connections) {
   const queue = [1];
   visited.add(1);
   let count = 0;
-
+// jqjqj
   while (queue.length > 0) {
     const current = queue.shift(); // Извлекаем из начала очереди
     count++;
