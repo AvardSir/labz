@@ -11,6 +11,7 @@ function countMovedWeights(n, connections) {
 // jqjqj
 // Не сегодня
 // эххх не сейчас
+// еххе
   while (queue.length > 0) {
     const current = queue.shift(); // Извлекаем из начала очереди
     count++;
