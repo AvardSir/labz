@@ -32,7 +32,7 @@ function countMovedWeights(n, connections) {
   return count;
 }
 
-
+// йомайо
 
 function testInput(testCases) {
   let failedTests = 0;
