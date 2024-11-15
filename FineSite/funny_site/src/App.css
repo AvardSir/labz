@@ -1,38 +1,99 @@
-.App {
+/* Основной стиль */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #4a148c, #7b1fa2);
+  color: #fff;
+}
+
+.main-container {
+  padding: 20px;
+}
+
+/* Шапка */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.logo {
+  font-size: 2rem;
+}
+
+.navigation a {
+  color: #fff;
+  text-decoration: none;
+  margin: 0 10px;
+  font-weight: bold;
+  transition: color 0.3s;
+}
+
+.navigation a:hover {
+  color: #c5cae9;
+}
+
+/* Регистрация */
+.registration {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.registration h2 {
+  margin-bottom: 20px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.registration input {
+  width: 80%;
+  margin: 10px 0;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.registration button {
+  padding: 10px 20px;
+  background: #6a1b9a;
+  border: none;
+  color: #fff;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.registration button:hover {
+  background: #8e24aa;
+}
+
+/* Поиск */
+.search {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.search h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.search-options {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  justify-content: space-between;
 }
 
-.App-link {
-  color: #61dafb;
+.search-box {
+  width: 48%;
+  text-align: center;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.search-box input {
+  width: 90%;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
 }
