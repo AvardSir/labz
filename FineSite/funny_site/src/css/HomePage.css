@@ -1,0 +1,201 @@
+/* Основной стиль */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #4a148c, #7b1fa2);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100vh;
+  padding-left: 250px; /* Отступ слева для контента */
+
+  text-shadow: 1px 1px 2px black; /* Черная обводка для текста */
+}
+
+/* Основной контейнер */
+.main-container {
+  padding: 20px;
+  width: 100%;
+  margin-top: 20px;
+}
+
+/* Шапка */
+.header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+.logo {
+  font-size: 1.5rem;
+  margin-right: 20px;
+ 
+}
+
+.navigation {
+  display: flex;
+  align-items: center;
+}
+
+.navigation a {
+  color: #fff;
+  text-decoration: none;
+  margin: 0 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  transition: color 0.3s;
+  
+}
+
+.navigation a:hover {
+  color: #c5cae9;
+}
+
+/* Боковая панель (sidebar) */
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 20px;
+  width: 240px;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 8px;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 0.9rem;
+  
+}
+
+/* Регистрация */
+.registration {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 10px;
+  border-radius: 8px;
+  width: 100%;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.registration h2 {
+  margin-bottom: 8px;
+  font-size: 1rem;
+  text-shadow: 1px 1px 2px black; /* Черная обводка для текста */
+}
+
+.registration input, .search input {
+  width: 80%;
+  margin: 6px 0;
+  padding: 8px;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: 5px;
+}
+
+/* Поиск */
+.search {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 10px;
+  border-radius: 8px;
+  width: 100%;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.search h2 {
+  margin-bottom: 8px;
+  font-size: 1rem;
+  text-shadow: 1px 1px 2px black; /* Черная обводка для текста */
+}
+
+.search-options {
+  display: flex;
+  justify-content: space-between;
+}
+
+.search-box {
+  width: 48%;
+  text-align: center;
+}
+
+/* Мобильная адаптивность */
+@media (max-width: 768px) {
+  body {
+    padding-left: 0;
+  }
+
+  .sidebar {
+    width: 100%;
+    position: relative;
+    top: 0;
+    left: 0;
+  }
+
+  .registration, .search {
+    width: 90%;
+    margin-bottom: 15px;
+  }
+}
+
+/* Основной контейнер списка */
+ul {
+  list-style-type: none; /* Убираем стандартные маркеры */
+  padding: 0;
+  margin: 20px 0;
+  background-color: #e0bbe4; /* Тёмно-фиолетовый фон для списка */
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Стили для каждого элемента списка */
+.list-item {
+  padding: 12px;
+  margin: 8px;
+  background-color: #d1a7d3; /* Более насыщенный фиолетовый для элементов */
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  margin-bottom: 8px; /* Добавляем отступ снизу для разделения */
+  border-bottom: 2px solid #b58ab7; /* Черта между элементами */
+}
+
+/* При наведении меняем цвет фона */
+.list-item:hover {
+  background-color: #c58bce; /* Более темный фиолетовый при наведении */
+  transform: translateY(-2px); /* Легкий подъем элемента */
+}
+
+/* Стили для текста внутри элементов */
+.list-item p {
+  margin: 4px 0;
+  color: black; /* Черный цвет для текста */
+  font-size: 16px;
+  line-height: 1.5;
+  text-shadow: 1px 1px 2px black; /* Черная обводка для текста */
+}
+
+/* Заголовки внутри элементов */
+.list-item strong {
+  color: #7a4b88; /* Немного светлее фиолетовый для заголовков */
+  font-weight: 600;
+  text-shadow: 1px 1px 2px black; /* Черная обводка для текста */
+}
+
+/* Убираем нижнюю границу для последнего элемента */
+.list-item:last-child {
+  border-bottom: none; /* Убираем границу у последнего элемента */
+}
+
+/* Стили для каждого типа (анекдоты или мероприятия) */
+.anecdote-item {
+  background-color: #d1a7d3; /* Цвет для анекдотов */
+}
+
+.event-item {
+  background-color: #b487c6; /* Цвет для мероприятий */
+}

@@ -10,7 +10,7 @@ import "../css/HomePage.css";
 const EventsPage = () => {
   return (
     <div className="main-container">
-      <HomePage />
+      <HomePage what='events'/>
     </div>
   );
 };

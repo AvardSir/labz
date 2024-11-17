@@ -44,24 +44,31 @@ app.get('/api/events', async (req, res) => {
 });
 
 
-const getAnecdotesByType = async (req, res) => {
-    const { idTypeAnecdote } = req.query; // Получаем параметр из запроса
-  
+
+app.get('/api/anecdotes/types', async (req, res) => {
     try {
-      let pool = await sql.connect(config);
+      // Подключаемся к базе данных
+      let pool = await sql.connect(dbConfig);
+      
+      // Выполняем запрос на получение типов анекдотов (используем хранимую процедуру)
       let result = await pool
         .request()
-        .input("IdTypeAnecdote", sql.Int, idTypeAnecdote)
-        .execute("GetAnecdotesByType");
+        .execute("GetAnecdotes"); // Запрос на получение типов анекдотов
   
-      res.status(200).json(result.recordset); // Возвращаем анекдоты клиенту
+      // Преобразуем результат в нужный формат (Id и название типа анекдота)
+      const types = result.recordset.map(item => ({
+        id: item.IdTypeAnecdote,
+        name: item.AnecdoteType
+      }));
+  
+      // Отправляем данные клиенту в формате JSON
+      res.status(200).json(types);
     } catch (err) {
-      console.error(err);
-      res.status(500).send("Ошибка сервера");
+      // Обрабатываем ошибку, если запрос не удался
+      console.error("Ошибка получения типов анекдотов:", err);
+      res.status(500).send("Ошибка при получении типов анекдотов");
     }
-  };
-  
-  module.exports = getAnecdotesByType;
+  });
   
 
   app.get('/api/anecdotes/by-type', async (req, res) => {
@@ -82,6 +89,50 @@ const getAnecdotesByType = async (req, res) => {
 });
 
 
+app.get('/api/events/types', async (req, res) => {
+    try {
+      let pool = await sql.connect(dbConfig);
+      
+      // Выполняем запрос на получение типов мероприятий
+      let result = await pool
+        .request()
+        .execute("GetEventDetails"); // Запрос для получения всех типов мероприятий
+  
+      // Преобразуем результат в нужный формат (EventTypeId и название типа мероприятия)
+      const eventTypes = result.recordset.map(item => ({
+        id: item.EventTypeId,
+        name: item.ТипМероприятия
+      }));
+  
+      // Отправляем данные клиенту в формате JSON
+      res.status(200).json(eventTypes);
+    } catch (err) {
+      console.error("Ошибка получения типов мероприятий:", err);
+      res.status(500).send("Ошибка при получении типов мероприятий");
+    }
+  });
+  
+  app.get('/api/events/by-type', async (req, res) => {
+    const { idTypeEvent } = req.query; // Получаем параметр типа мероприятия из запроса
+  
+    try {
+      // Подключаемся к базе данных
+      let pool = await sql.connect(dbConfig);
+  
+      // Выполняем запрос, передавая параметр для типа мероприятия
+      let result = await pool
+        .request()
+        .input("EventTypeId", sql.Int, idTypeEvent) // Вводим параметр @EventTypeId
+        .execute("[dbo].[GetEventDetailsByType]"); // Выполняем хранимую процедуру
+  
+      // Возвращаем результат в формате JSON
+      res.status(200).json(result.recordset);  
+    } catch (err) {
+      console.error("Ошибка при получении мероприятий по типу:", err);
+      res.status(500).send("Ошибка при получении мероприятий");
+    }
+  });
+  
 
 // Запуск сервера
 const PORT = 5000;
