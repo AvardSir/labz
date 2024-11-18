@@ -1,7 +1,7 @@
 import React from "react";
-import { Header } from "./Header"; // Используем именованный импорт
-import { RegistrationForm } from "./RegistrationForm"; // Используем именованный импорт
-import { SearchSection } from "./SearchSection"; // Используем именованный импорт
+import { Header } from "../components/Header"; // Используем именованный импорт
+import { RegistrationForm } from "../components/RegistrationForm"; // Используем именованный импорт
+import { SearchSection } from "../components/SearchSection"; // Используем именованный импорт
 
 import "../css/HomePage.css"; // Простой импорт стилей
 

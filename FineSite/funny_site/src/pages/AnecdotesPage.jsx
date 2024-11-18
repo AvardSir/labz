@@ -1,8 +1,8 @@
 import React from "react";
-import { Header } from "./Header.jsx";
-import { RegistrationForm } from "./RegistrationForm.jsx";
-import { SearchSection } from "./SearchSection.jsx";
-import { FoundAnecdotes } from "./FoundAnecdotes.jsx";
+import { Header } from "../components/Header.jsx";
+import { RegistrationForm } from "../components/RegistrationForm.jsx";
+import { SearchSection } from "../components/SearchSection.jsx";
+import { FoundAnecdotes } from "../components/FoundAnecdotes.jsx";
 import HomePage from "./HomePage.jsx";
 
 import "../css/HomePage.css";

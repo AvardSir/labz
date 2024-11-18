@@ -58,7 +58,8 @@ export const SearchSection = ({ what ='anecdote'}) => {
   useEffect(() => {
     
     // {console.log(showEvents)}
-    if (what === "event") {
+    if (what === "events") {
+      
       handleSearchEvents();
       fetchEvents();
       
@@ -67,7 +68,7 @@ export const SearchSection = ({ what ='anecdote'}) => {
       fetchAnecdotes();
       // setShowAnecdotes(true); // Показываем анекдоты
     }
-  }, [what]); // Зависимость от what для динамического обновления
+  }, [what]) ; // Зависимость от what для динамического обновления
 
   
   return (

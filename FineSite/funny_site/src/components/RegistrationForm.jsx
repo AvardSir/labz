@@ -19,7 +19,7 @@ export const RegistrationForm = () => {
 
     // Делаем запрос на сервер для получения списка пользователей и их прав
     try {
-      const response = await fetch('http://localhost:5000/api/users/rights', {
+      const response = await fetch('/api/users/rights', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -32,7 +32,6 @@ export const RegistrationForm = () => {
       const user = result.find(
         (user) => user.Name === loginData.login && user.Password === loginData.password
       );
-
       if (user) {
         // Пользователь найден
         setIsLoggedIn(true); // Успешная авторизация

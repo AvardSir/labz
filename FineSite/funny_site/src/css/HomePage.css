@@ -6,25 +6,27 @@ body {
   color: #fff;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: center; /* Центрирование по горизонтали */
   justify-content: flex-start;
   height: 100vh;
-  padding-left: 250px; /* Отступ слева для контента */
-
+  padding: 0; /* Убираем padding слева, чтобы использовать 100% ширины */
   text-shadow: 1px 1px 2px black; /* Черная обводка для текста */
+  overflow-x: hidden; /* Отключаем горизонтальный скролл */
 }
 
 /* Основной контейнер */
 .main-container {
   padding: 20px;
   width: 100%;
+  max-width: 1200px; /* Ограничение максимальной ширины */
   margin-top: 20px;
+  box-sizing: border-box; /* Включаем padding в расчет ширины */
 }
 
 /* Шапка */
 .header {
   display: flex;
-  justify-content: flex-start;
+  justify-content: center; /* Центрируем содержимое хедера */
   align-items: center;
   margin-bottom: 10px;
   width: 100%;
@@ -33,7 +35,6 @@ body {
 .logo {
   font-size: 1.5rem;
   margin-right: 20px;
- 
 }
 
 .navigation {
@@ -48,7 +49,6 @@ body {
   font-size: 1rem;
   font-weight: bold;
   transition: color 0.3s;
-  
 }
 
 .navigation a:hover {
@@ -69,7 +69,6 @@ body {
   flex-direction: column;
   align-items: center;
   font-size: 0.9rem;
-  
 }
 
 /* Регистрация */
@@ -150,6 +149,9 @@ ul {
   background-color: #e0bbe4; /* Тёмно-фиолетовый фон для списка */
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 1200px; /* Ограничиваем максимальную ширину списка */
+  box-sizing: border-box; /* Включаем padding в расчет ширины */
 }
 
 /* Стили для каждого элемента списка */
