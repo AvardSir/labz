@@ -56,9 +56,9 @@ export const SearchSection = ({ what ='anecdote'}) => {
 
   // Выполняем запросы при загрузке компонента, с учетом параметра what
   useEffect(() => {
+    
+    // {console.log(showEvents)}
     if (what === "event") {
-      
-      {console.log('2')}
       handleSearchEvents();
       fetchEvents();
       
@@ -80,19 +80,22 @@ export const SearchSection = ({ what ='anecdote'}) => {
           setFoundAnecdotes={setFoundAnecdotes}
           handleSearchAnecdotes={handleSearchAnecdotes}  // Передаем handleSearchAnecdotes
         />
+        
+        {/*  TODO: перекинь этот див ниже ивентов после уборки с ивентами */}
         <EventSearch
           searchData={searchData}
           setSearchData={setSearchData}
           setFoundEvents={setFoundEvents}
           handleSearchEvents={handleSearchEvents}  // Передаем handleSearchEvents
         />
+      
       </div>
-
+{/* Отображение найденных мероприятий */}
+{showEvents && <FoundEvents events={foundEvents} />}
       {/* Отображение найденных анекдотов */}
       {showAnecdotes && <FoundAnecdotes anecdotes={foundAnecdotes} />}
 
-      {/* Отображение найденных мероприятий */}
-      {showEvents && <FoundEvents events={foundEvents} />}
+      
     </section>
   );
 };
