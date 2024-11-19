@@ -3,6 +3,8 @@ const express = require('express');
 const sql = require('mssql');
 
 const app = express();
+const bodyParser = require('body-parser');
+app.use(bodyParser.json()); // Для обработки JSON-запросов
 
 // Настройки подключения к SQL Server
 const dbConfig = {
@@ -158,7 +160,7 @@ app.get('/api/events/types', async (req, res) => {
 
 
 
-  app.get('/api/users/rights', async (req, res) => {
+  app.get('/api/users/users', async (req, res) => {
     try {
         let pool = await sql.connect(dbConfig);
 
@@ -173,6 +175,61 @@ app.get('/api/events/types', async (req, res) => {
     }
 });
 
+
+app.post('/api/users', async (req, res) => {
+    const { Name, Password, Email, Bio, IdRights } = req.body;
+  
+    try {
+      // Подключение к базе данных
+      const pool = await sql.connect(dbConfig);
+  
+      // Вызов хранимой процедуры
+      const result = await pool.request()
+        .input('Name', sql.NVarChar(255), Name)
+        .input('Password', sql.NVarChar(255), Password)
+        .input('Email', sql.NVarChar(255), Email)
+        .input('Bio', sql.NVarChar(sql.MAX), Bio)
+        .input('IdRights', sql.Int, IdRights)
+        .execute('ДобавитьПользователя'); // Имя хранимой процедуры
+  
+      // Успешный ответ
+      res.status(200).json({
+        message: 'Пользователь успешно добавлен!',
+        data: result.recordset,
+      });
+    } catch (error) {
+      // Обработка ошибок
+      console.error('Ошибка при добавлении пользователя:', error.message);
+      res.status(500).json({
+        message: 'Ошибка при добавлении пользователя',
+        error: error.message,
+      });
+    }
+  });
+  
+
+  app.put('/api/update-user', async (req, res) => {
+    const { IdUser, Name, Password, Email, Bio } = req.body;
+  
+    try {
+      const pool = await sql.connect(dbConfig);
+  
+      const result = await pool.request()
+        .input('IdUser', sql.Int, IdUser)
+        .input('Name', sql.NVarChar(255), Name)
+        .input('Password', sql.NVarChar(255), Password)
+        .input('Email', sql.NVarChar(255), Email)
+        .input('Bio', sql.NVarChar(sql.MAX), Bio)
+        .execute('UpdateUserInfo'); // Вызываем хранимую процедуру
+  
+      res.status(200).json({ message: 'Данные успешно обновлены!' });
+    } catch (error) {
+      console.error('Ошибка при обновлении данных:', error);
+      res.status(500).json({ message: 'Ошибка сервера', error: error.message });
+    }
+  });
+  
+  
 
 // Запуск сервера
 const PORT = 5000;
