@@ -408,32 +408,36 @@ app.get("/api/IdByUsername", (req, res) => {
 });
 
 
-app.get('/api/get-comments-for-event/:EventId', async (req, res) => {
-  const eventId = parseInt(req.params.EventId, 10); // Преобразуем в целое число
+app.get('/api/get-comments-for-event', (req, res) => {
+  const { eventId } = req.query;  // Получаем параметр eventId из строки запроса
 
-  // Проверка на наличие параметра
+  // Проверка на наличие параметра eventId
   if (!eventId) {
-      return res.status(400).json({ error: 'Параметр EventId обязателен.' });
+      return res.status(400).json({ error: "Параметр eventId обязателен." });
   }
 
-  try {
-      // Создаем запрос и вызываем хранимую процедуру с параметром EventId
-      const request = new sql.Request();
-      request.input('EventId', sql.Int, eventId); // Передаем параметр в хранимую процедуру
-      const result = await request.execute('GetCommentsForEventByIdEvent'); // Выполнение процедуры
+  // Вызов хранимой процедуры
+  const query = "EXEC GetCommentsForEventByIdEvent @EventId = @EventId";
+  const request = new sql.Request();
+  request.input("EventId", sql.Int, eventId); // Передаем параметр в хранимую процедуру
+
+  request.query(query, (err, result) => {
+      if (err) {
+          console.error("Ошибка выполнения запроса:", err);
+          return res.status(500).json({ error: "Ошибка сервера." });
+      }
 
       // Если нет результатов, возвращаем ошибку
       if (result.recordset.length === 0) {
-          return res.status(404).json({ message: 'Комментарии для этого события не найдены.' });
+          return res.status(404).json({ message: "Комментарии для этого события не найдены." });
       }
 
       // Возвращаем успешный результат
       res.status(200).json(result.recordset);
-  } catch (err) {
-      console.error('Ошибка api/get-comments-for-event при выполнении запроса:', err);
-      res.status(500).json({ error: 'Ошибка сервера при получении комментариев.' });
-  }
+  });
 });
+
+
 
 
 app.get('/event-details/:IdEvent', async (req, res) => {

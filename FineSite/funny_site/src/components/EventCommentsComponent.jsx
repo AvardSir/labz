@@ -30,18 +30,18 @@ export const EventCommentsComponent = () => {
       .catch((err) => console.error("Ошибка загрузки комментариев:", err));
 
     // Запрос на получение ID пользователя по имени из контекста
-    if (loginData && loginData.login) {
-      fetch(`/api/IdByUsername?Name=${encodeURIComponent(loginData.login)}`)
-        .then((res) => res.json())
-        .then((data) => {
-          if (data && data.IdUser) {
-            setUserId(data.IdUser); // Сохраняем IdUser
-          } else {
-            console.error("Не удалось получить IdUser.");
-          }
-        })
-        .catch((err) => console.error("Ошибка при получении IdUser:", err));
-    }
+    // if (loginData && loginData.login) {
+    //   fetch(`/api/IdByUsername?Name=${encodeURIComponent(loginData.login)}`)
+    //     .then((res) => res.json())
+    //     .then((data) => {
+    //       if (data && data.IdUser) {
+    //         setUserId(data.IdUser); // Сохраняем IdUser
+    //       } else {
+    //         console.error("Не удалось получить IdUser.");
+    //       }
+    //     })
+    //     .catch((err) => console.error("Ошибка при получении IdUser:", err));
+    // }
   }, [eventId, loginData]);
 
   const handleAddComment = () => {
