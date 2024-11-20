@@ -202,7 +202,7 @@ app.get('/api/comments-anecdote', async (req, res) => {
       const pool = await sql.connect(dbConfig);
   
       const result = await pool.request()
-        .input('IdUser', sql.Int, IdUser)
+      .input('IdUser', sql.Int, IdUser)
         .input('Name', sql.NVarChar(255), Name)
         .input('Password', sql.NVarChar(255), Password)
         .input('Email', sql.NVarChar(255), Email)
@@ -285,33 +285,43 @@ app.get('/api/comments-anecdote', async (req, res) => {
   
   // Добавление комментария к анекдоту
   app.post("/api/add-comment-anecdote", (req, res) => {
-    const { Text, IdUser, IdAnecdote } = req.body;
-  
+    const { Text, IdUser, IdAnecdote } = req.body;  // Получаем данные из тела запроса
+
     // Проверка на наличие всех обязательных параметров
     if (!Text || !IdUser || !IdAnecdote) {
-      return res.status(400).json({ error: "Все поля (Text, IdUser, IdAnecdote) обязательны для заполнения." });
+        return res.status(400).json({ error: "Все поля (Text, IdUser, IdAnecdote) обязательны для заполнения." });
     }
-  
-    // Вызов хранимой процедуры
-    db.query(
-      "EXEC AddComment @Text = ?, @IdUser = ?, @IdAnecdote = ?",
-      [Text, IdUser, IdAnecdote],
-      (err, result) => {
-        if (err) {
-          console.error("Ошибка при добавлении комментария:", err);
-          return res.status(500).json({ error: "Ошибка сервера при добавлении комментария." });
-        }
-  
-        res.status(201).json({ message: "Комментарий успешно добавлен", result });
-      }
-    );
-  });
+
+    // Создание SQL-запроса через sql.request()
+    new sql.Request()
+        .input('Text', sql.NVarChar, Text)
+        .input('IdUser', sql.Int, IdUser)
+        .input('IdAnecdote', sql.Int, IdAnecdote)
+        .execute('AddComment') // Вызов хранимой процедуры
+        .then((result) => {
+            // Проверка на успешное добавление комментария
+            if (result.rowsAffected[0] === 0) {
+                return res.status(500).json({ error: "Комментарий не был добавлен." });
+            }
+
+            res.status(200).json({ message: "Комментарий успешно добавлен", result });
+        })
+        .catch((err) => {
+            console.error("Ошибка при добавлении комментария:", err);
+            return res.status(500).json({ error: "Ошибка сервера при добавлении комментария." });
+        });
+});
+
+
+
+
   
 
   // В серверной части, используя Express
   // Запрос для логина (POST /api/login)
 app.post('/api/GetUserDetailsByNameAndPassword', async (req, res) => {
   const { login, password } = req.body;
+  
   try {
     const result = await sql.query`EXEC [dbo].[GetUserDetailsByNameAndPassword] @Name=${login}, @Password=${password}`;
     
@@ -353,6 +363,72 @@ app.get('/api/users/:id', async (req, res) => {
 
 
 
+
+app.get('/api/comments', async (req, res) => {
+  try {
+    const pool = await sql.connect(dbConfig); // Соединяемся с БД
+    const result = await pool.request().execute('GetCommentsWithAuthors'); // Выполняем хранимую процедуру
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset);  // Возвращаем данные комментариев
+    } else {
+      res.status(404).send('Комментариев не найдено');
+    }
+  } catch (err) {
+    console.error('Ошибка при получении комментариев:', err);
+    res.status(500).send('Ошибка сервера');
+  }
+});
+
+
+app.get("/api/IdByUsername", (req, res) => {
+  const { Name } = req.query; // Получаем параметр Name из строки запроса
+
+  if (!Name) {
+      return res.status(400).json({ error: "Параметр Name обязателен." });
+  }
+  
+  // Вызов хранимой процедуры
+  const query = "EXEC GetUserIdByName @Name = @Name";
+  const request = new sql.Request();
+  request.input("Name", sql.NVarChar, Name);
+
+  request.query(query, (err, result) => {
+      if (err) {
+          console.error("Ошибка выполнения запроса:", err);
+          return res.status(500).json({ error: "Ошибка сервера." });
+      }
+
+      if (result.recordset.length === 0) {
+          return res.status(404).json({ error: "Пользователь не найден." });
+      }
+
+      res.status(200).json(result.recordset[0]); // Возвращаем первый найденный результат
+  });
+});
+
+
+app.get('/api/get-comments-for-event/:EventId', async (req, res) => {
+  const eventId = req.params.EventId; // Получаем EventId из параметра URL
+
+  try {
+      // Создаем запрос и вызываем хранимую процедуру с параметром EventId
+      const request = new sql.Request();
+      request.input('EventId', sql.Int, eventId); // Передаем параметр в хранимую процедуру
+      const result = await request.execute('GetCommentsForEventByIdEvent'); // Выполнение процедуры
+
+      // Если нет результатов, возвращаем ошибку
+      if (result.recordset.length === 0) {
+          return res.status(404).json({ message: 'Комментарии для этого события не найдены.' });
+      }
+
+      // Возвращаем успешный результат
+      res.status(200).json(result.recordset);
+  } catch (err) {
+      console.error('Ошибка при выполнении запроса:', err);
+      res.status(500).json({ error: 'Ошибка сервера при получении комментариев.' });
+  }
+});
 
 // Запуск сервера
 const PORT = 5000;

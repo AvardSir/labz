@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 export const FoundEvents = ({ events }) => {
   return (
@@ -17,6 +18,11 @@ export const FoundEvents = ({ events }) => {
               <p><strong>Количество свободных мест:</strong> {event.HowManyFreeSeats}</p>
               <p><strong>Проведено:</strong> {event.Проведено_Строка}</p>
               <p><strong>Тип мероприятия:</strong> {event.ТипМероприятия}</p>
+              
+              {/* Ссылка для перехода к комментариям события */}
+              <Link to={`/event-comments/${event.IdEvent}`} className="comment-link">
+                Перейти к комментариям
+              </Link>
             </li>
           ))}
         </ul>
