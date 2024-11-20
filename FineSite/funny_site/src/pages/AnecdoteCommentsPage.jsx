@@ -4,16 +4,17 @@ import { RegistrationForm } from "../components/Autification.jsx";
 import { SearchSection } from "../components/SearchSection.jsx";
 import { FoundAnecdotes } from "../components/FoundAnecdotes.jsx";
 import HomePage from "./HomePage.jsx";
+import { AnecdoteCommentsСomponent } from "../components/AnecdoteCommentsСomponent.jsx";
 
-import "../css/HomePage.css";
 
-const EventsPage = () => {
+const AnecdoteCommentsPage = () => {
   return (
     <div className="main-container">
       <HomePage/>
-      <SearchSection what={'events'} />
+      <AnecdoteCommentsСomponent  />
     </div>
   );
 };
 
-export default EventsPage;
+export default AnecdoteCommentsPage;
+//

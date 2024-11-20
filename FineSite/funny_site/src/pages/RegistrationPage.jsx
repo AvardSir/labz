@@ -13,23 +13,11 @@ const RegistrationPage = () => {
   
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const [passwordVisible, setPasswordVisible] = useState(false); // Состояние для видимости пароля
   const navigate = useNavigate(); // Для навигации
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-     //внутри e есть name: имя
-  //   email: имейл 
-  //   био: лалалал
-
-  //   и так мы создаем объект [[
-  //     имя: иван
-  //     имел: иван@аоао
-  //     био:харош
-  //   ],
-  //   [ имя: Слава
-  //     имел: Слаан@аоао
-  //     био:Мегахарош]
-  // ]
     setFormData({ ...formData, [name]: value });
   };
 
@@ -46,6 +34,10 @@ const RegistrationPage = () => {
     } catch (err) {
       setError(err.response?.data?.message || 'Ошибка сервера');
     }
+  };
+
+  const togglePasswordVisibility = () => {
+    setPasswordVisible(!passwordVisible); // Переключаем видимость пароля
   };
 
   return (
@@ -68,14 +60,30 @@ const RegistrationPage = () => {
         <div style={{ marginBottom: '10px' }}>
           <label>
             Пароль:
-            <input
-              type="password"
-              name="Password"
-              value={formData.Password}
-              onChange={handleChange}
-              required
-              style={{ width: '100%', padding: '8px', marginTop: '5px' }}
-            />
+            <div style={{ position: 'relative' }}>
+              <input
+                type={passwordVisible ? "text" : "password"} // Переключаем тип поля
+                name="Password"
+                value={formData.Password}
+                onChange={handleChange}
+                required
+                style={{ width: '100%', padding: '8px', marginTop: '5px' }}
+              />
+              <button
+                type="button"
+                onClick={togglePasswordVisibility}
+                style={{
+                  position: 'absolute',
+                  right: '10px',
+                  top: '10px',
+                  background: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                }}
+              >
+                {passwordVisible ? "Скрыть" : "Показать"}
+              </button>
+            </div>
           </label>
         </div>
         <div style={{ marginBottom: '10px' }}>

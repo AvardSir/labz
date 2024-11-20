@@ -11,7 +11,7 @@ const HomePage = ({ what = 'anecdote' }) => {
     <div className="main-container">
       <Header />
       <Autification />
-      <SearchSection what={what} />
+      
     </div>
   );
 };

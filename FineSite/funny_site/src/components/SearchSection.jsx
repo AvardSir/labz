@@ -1,6 +1,6 @@
 // SearchSection.jsx
 import React, { useState, useEffect } from "react";
-import "../css/SearchSection.css";
+
 import { FoundAnecdotes } from "./FoundAnecdotes";
 import { FoundEvents } from "./FoundEvents";
 import { AnecdoteSearch } from "./AnecdoteSearch";

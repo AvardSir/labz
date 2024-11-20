@@ -176,37 +176,24 @@ app.get('/api/events/types', async (req, res) => {
 });
 
 
-app.post('/api/users', async (req, res) => {
-    const { Name, Password, Email, Bio, IdRights } = req.body;
-  
-    try {
-      // Подключение к базе данных
-      const pool = await sql.connect(dbConfig);
-  
-      // Вызов хранимой процедуры
-      const result = await pool.request()
-        .input('Name', sql.NVarChar(255), Name)
-        .input('Password', sql.NVarChar(255), Password)
-        .input('Email', sql.NVarChar(255), Email)
-        .input('Bio', sql.NVarChar(sql.MAX), Bio)
-        .input('IdRights', sql.Int, IdRights)
-        .execute('ДобавитьПользователя'); // Имя хранимой процедуры
-  
-      // Успешный ответ
-      res.status(200).json({
-        message: 'Пользователь успешно добавлен!',
-        data: result.recordset,
-      });
-    } catch (error) {
-      // Обработка ошибок
-      console.error('Ошибка при добавлении пользователя:', error.message);
-      res.status(500).json({
-        message: 'Ошибка при добавлении пользователя',
-        error: error.message,
-      });
-    }
-  });
-  
+app.get('/api/comments-anecdote', async (req, res) => {
+  const anecdoteId = req.query.anecdoteId;
+
+  if (!anecdoteId) {
+    return res.status(400).json({ error: "Параметр anecdoteId обязателен." });
+  }
+
+  try {
+    const result = await sql.query(`EXEC [dbo].[GetCommentsForAnecdote] @AnecdoteId = ${anecdoteId}`);
+    res.json(result.recordset);
+  } catch (err) {
+    console.error('Ошибка получения комментариев:', err);
+    res.status(500).send('Ошибка сервера');
+  }
+});
+
+
+
 
   app.put('/api/update-user', async (req, res) => {
     const { IdUser, Name, Password, Email, Bio } = req.body;
@@ -230,6 +217,120 @@ app.post('/api/users', async (req, res) => {
   });
   
   
+
+  app.get("/api/check-name", async (req, res) => {
+    const { name } = req.query; // Извлекаем имя из параметров запроса
+    const userId = req.query.userId; // Извлекаем ID пользователя, если нужно исключить его из проверки
+  
+    if (!name) {
+      return res.status(400).json({ message: "Имя не может быть пустым" });
+    }
+  
+    try {
+      // Устанавливаем соединение с базой данных
+      await sql.connect(config);
+  
+      // SQL запрос для проверки уникальности имени
+      const result = await sql.query`
+        SELECT COUNT(*) AS UserCount
+        FROM Users
+        WHERE Name = ${name} AND IdUser != ${userId}
+      `;
+  
+      // Проверяем, есть ли другие пользователи с таким же именем
+      if (result.recordset[0].UserCount > 0) {
+        return res.json({ isUnique: false });
+      } else {
+        return res.json({ isUnique: true });
+      }
+    } catch (err) {
+      console.error("Ошибка при проверке имени:", err);
+      res.status(500).json({ message: "Ошибка сервера при проверке имени" });
+    } finally {
+      // Закрытие соединения с базой данных
+      await sql.close();
+    }
+  });
+
+
+
+  
+
+  //2 версия эпопея коментов
+  app.get("/api/comments-anecdote", async (req, res) => {
+    const anecdoteId = req.query.anecdoteId;
+  
+    if (!anecdoteId) {
+      return res.status(400).json({ error: "Параметр anecdoteId обязателен." });
+    }
+  
+    try {
+      const result = await pool.request()
+        .input('AnecdoteId', sql.Int, anecdoteId)  // Передаем параметр в запрос
+        .execute('GetCommentsForAnecdote');  // Хранимая процедура
+  
+      if (result.recordset.length === 0) {
+        return res.status(404).json({ message: "Комментарии не найдены." });
+      }
+  
+      res.status(200).json(result.recordset);  // Возвращаем результат
+    } catch (err) {
+      console.error('Ошибка при получении комментариев:', err);
+      res.status(500).send("Ошибка сервера");
+    }
+  });
+  
+  
+
+  
+  // Добавление комментария к анекдоту
+  app.post("/api/add-comment-anecdote", (req, res) => {
+    const { Text, IdUser, IdAnecdote } = req.body;
+  
+    // Проверка на наличие всех обязательных параметров
+    if (!Text || !IdUser || !IdAnecdote) {
+      return res.status(400).json({ error: "Все поля (Text, IdUser, IdAnecdote) обязательны для заполнения." });
+    }
+  
+    // Вызов хранимой процедуры
+    db.query(
+      "EXEC AddComment @Text = ?, @IdUser = ?, @IdAnecdote = ?",
+      [Text, IdUser, IdAnecdote],
+      (err, result) => {
+        if (err) {
+          console.error("Ошибка при добавлении комментария:", err);
+          return res.status(500).json({ error: "Ошибка сервера при добавлении комментария." });
+        }
+  
+        res.status(201).json({ message: "Комментарий успешно добавлен", result });
+      }
+    );
+  });
+  
+
+  // В серверной части, используя Express
+app.post('/api/login', async (req, res) => {
+  const { login, password } = req.body;
+
+  try {
+    const result = await sql.query(`
+      SELECT [IdUser], [Name], [Password], [Email], [Bio], [IdRights]
+      FROM [FunnySite].[dbo].[Пользователь]
+      WHERE [Name] = @login AND [Password] = @password
+    `, [login, password]);
+
+    if (result.recordset.length > 0) {
+      const user = result.recordset[0];
+      res.json({ success: true, user });
+    } else {
+      res.json({ success: false });
+    }
+  } catch (err) {
+    console.error('Ошибка авторизации:', err);
+    res.status(500).send('Ошибка сервера');
+  }
+});
+
 
 // Запуск сервера
 const PORT = 5000;

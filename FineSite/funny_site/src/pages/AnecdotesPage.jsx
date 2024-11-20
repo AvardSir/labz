@@ -11,6 +11,7 @@ const EventsPage = () => {
   return (
     <div className="main-container">
       <HomePage />
+      <SearchSection />
     </div>
   );
 };

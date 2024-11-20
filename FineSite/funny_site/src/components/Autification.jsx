@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useContext } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { AuthContext } from "./AuthContext"; // Подключаем AuthContext
-import "../css/RegistrationForm.css";
+
 
 export const Autification = () => {
   const location = useLocation();
@@ -19,11 +19,14 @@ export const Autification = () => {
     setLoginData((prevData) => ({ ...prevData, [name]: value }));
   };
 
+  // Основная логика для авторизации
   const handleLoginSubmit = useCallback(
     async (e) => {
       if (e) e.preventDefault();
-      setError("");
-      setIsSubmitting(false);
+      setError(""); // Сброс ошибок перед новым запросом
+      setIsSubmitting(true); // Инициализация отправки данных
+
+      console.log("Submitting login:", loginData.login, loginData.password); // Логируем login и password в консоль
 
       try {
         const response = await fetch("/api/users/users", {
@@ -41,7 +44,8 @@ export const Autification = () => {
         );
 
         if (user) {
-          login(); // Устанавливаем авторизацию через контекст
+          console.log("Logged in with:", loginData.login, loginData.password); // Логируем успешный вход
+          login(loginData.login, loginData.password); // Устанавливаем авторизацию через контекст
           navigate("/"); // Переход на главную страницу
         } else {
           setError("Неверный логин или пароль");
@@ -49,17 +53,21 @@ export const Autification = () => {
       } catch (err) {
         setError("Ошибка связи с сервером");
         console.error("Ошибка авторизации:", err);
+      } finally {
+        setIsSubmitting(false); // Завершаем процесс отправки
       }
     },
-    [loginData, navigate, login]
+    [loginData, login, navigate]
   );
 
+  // Логика выхода
   const handleLogout = () => {
     logout(); // Вызываем logout из AuthContext
     setLoginData({ login: "", password: "" }); // Очищаем данные
     navigate("/"); // Переход на главную
   };
 
+  // Переход в личный кабинет
   const handleLK = () => {
     navigate("/personal_cabinet");
   };
@@ -67,7 +75,7 @@ export const Autification = () => {
   // Автоматическая авторизация при данных из state
   useEffect(() => {
     if (loginData.login && loginData.password && !isLoggedIn) {
-      setIsSubmitting(true);
+      setIsSubmitting(true); // Если есть данные, то сразу начать попытку входа
     }
   }, [loginData, isLoggedIn]);
 
@@ -77,6 +85,7 @@ export const Autification = () => {
     }
   }, [isSubmitting, handleLoginSubmit]);
 
+  // Если уже авторизован
   if (isLoggedIn) {
     return (
       <section className="registration">
@@ -105,7 +114,9 @@ export const Autification = () => {
           value={loginData.password}
           onChange={handleLoginChange}
         />
-        <button type="submit">Войти</button>
+        <button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? "Авторизация..." : "Войти"}
+        </button>
       </form>
       <div>
         <p>Нет аккаунта? 
