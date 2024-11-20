@@ -17,6 +17,19 @@ const RegistrationPage = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+     //внутри e есть name: имя
+  //   email: имейл 
+  //   био: лалалал
+
+  //   и так мы создаем объект [[
+  //     имя: иван
+  //     имел: иван@аоао
+  //     био:харош
+  //   ],
+  //   [ имя: Слава
+  //     имел: Слаан@аоао
+  //     био:Мегахарош]
+  // ]
     setFormData({ ...formData, [name]: value });
   };
 
@@ -28,7 +41,6 @@ const RegistrationPage = () => {
     try {
       const response = await axios.post('/api/users', formData);
       setMessage(response.data.message);
-      
       // Навигация на страницу аутентификации с передачей данных
       navigate('/', { state: { login: formData.Name, password: formData.Password } });
     } catch (err) {

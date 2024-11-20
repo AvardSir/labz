@@ -1,70 +1,81 @@
-
-import {  Link } from "react-router-dom"; // Импортируем Link для навигации
-
-import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom"; // Для навигации и получения данных
+import React, { useState, useEffect, useCallback, useContext } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { AuthContext } from "./AuthContext"; // Подключаем AuthContext
 import "../css/RegistrationForm.css";
 
 export const Autification = () => {
-  const location = useLocation(); // Получаем данные из URL
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { isLoggedIn, login, logout } = useContext(AuthContext); // Получаем функции из AuthContext
+
   const [loginData, setLoginData] = useState({
-    login: location.state?.login || "", // Если данные переданы, используем их
+    login: location.state?.login || "",
     password: location.state?.password || "",
   });
-  const [error, setError] = useState(""); // Состояние для ошибок
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Состояние для проверки авторизации
-  const navigate = useNavigate(); // Инициализация хука для навигации
+  const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleLoginChange = ({ target: { name, value } }) => {
     setLoginData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const handleLoginSubmit = async (e) => {
-    e.preventDefault();
-    setError(""); // Очищаем старые ошибки перед отправкой данных
+  const handleLoginSubmit = useCallback(
+    async (e) => {
+      if (e) e.preventDefault();
+      setError("");
+      setIsSubmitting(false);
 
-    // Делаем запрос на сервер для получения списка пользователей и их прав
-    try {
-      const response = await fetch('/api/users/users', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      try {
+        const response = await fetch("/api/users/users", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
 
-      const result = await response.json();
+        const result = await response.json();
 
-      // Проверка на успешный запрос и поиск пользователя с соответствующим login и паролем
-      const user = result.find(
-        (user) => user.Name === loginData.login && user.Password === loginData.password
-      );
-      if (user) {
-        // Пользователь найден
-        setIsLoggedIn(true); // Успешная авторизация
-        navigate('/home'); // Перенаправление на домашнюю страницу
-      } else {
-        setError("Неверный логин или пароль"); // Ошибка авторизации
+        const user = result.find(
+          (user) =>
+            user.Name === loginData.login && user.Password === loginData.password
+        );
+
+        if (user) {
+          login(); // Устанавливаем авторизацию через контекст
+          navigate("/"); // Переход на главную страницу
+        } else {
+          setError("Неверный логин или пароль");
+        }
+      } catch (err) {
+        setError("Ошибка связи с сервером");
+        console.error("Ошибка авторизации:", err);
       }
-    } catch (err) {
-      setError("Ошибка связи с сервером");
-      console.error("Ошибка авторизации:", err);
-    }
-  };
+    },
+    [loginData, navigate, login]
+  );
 
   const handleLogout = () => {
-    setIsLoggedIn(false); // Разлогинивание
-    setLoginData({ login: "", password: "" }); // Очистка формы
+    logout(); // Вызываем logout из AuthContext
+    setLoginData({ login: "", password: "" }); // Очищаем данные
+    navigate("/"); // Переход на главную
   };
+
   const handleLK = () => {
-    navigate('/personal_cabinet'); // Переход на страницу личного кабинета
+    navigate("/personal_cabinet");
   };
-  
-  // Автоматически вызываем handleLoginSubmit при передаче данных из регистрации
+
+  // Автоматическая авторизация при данных из state
   useEffect(() => {
-    if (loginData.login && loginData.password) {
-      handleLoginSubmit(new Event("submit")); // Имитация отправки формы
+    if (loginData.login && loginData.password && !isLoggedIn) {
+      setIsSubmitting(true);
     }
-  }, [loginData, handleLoginSubmit]); // Отправляем форму при изменении данных
+  }, [loginData, isLoggedIn]);
+
+  useEffect(() => {
+    if (isSubmitting) {
+      handleLoginSubmit();
+    }
+  }, [isSubmitting, handleLoginSubmit]);
 
   if (isLoggedIn) {
     return (
@@ -72,7 +83,6 @@ export const Autification = () => {
         <h2>Вы успешно авторизованы!</h2>
         <button onClick={handleLogout}>Выйти</button>
         <button onClick={handleLK}>В личный кабинет</button>
-
       </section>
     );
   }
@@ -98,27 +108,30 @@ export const Autification = () => {
         <button type="submit">Войти</button>
       </form>
       <div>
-  <p>Нет аккаунта? 
-    <button style={{
-      backgroundColor: '#007BFF',
-      color: '#fff',
-      border: 'none',
-      padding: '10px 20px',
-      cursor: 'pointer',
-      textDecoration: 'none',
-      borderRadius: '4px',
-    }}>
-      <Link to="/registration" style={{
-        color: 'inherit', 
-        textDecoration: 'none', // Убираем стандартное подчеркивание
-      }}>
-        Зарегистрируйтесь
-      </Link>
-    </button>
-  </p>
-</div>
-
-      {error && <p className="error-message">{error}</p>} {/* Выводим ошибку, если есть */}
+        <p>Нет аккаунта? 
+          <button
+            style={{
+              backgroundColor: "#007BFF",
+              color: "#fff",
+              border: "none",
+              padding: "10px 20px",
+              cursor: "pointer",
+              borderRadius: "4px",
+            }}
+          >
+            <Link
+              to="/registration"
+              style={{
+                color: "inherit",
+                textDecoration: "none",
+              }}
+            >
+              Зарегистрируйтесь
+            </Link>
+          </button>
+        </p>
+      </div>
+      {error && <p className="error-message">{error}</p>}
     </section>
   );
 };
