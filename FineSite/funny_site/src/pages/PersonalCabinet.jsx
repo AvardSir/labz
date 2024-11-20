@@ -157,6 +157,8 @@ export const PersonalCabinet = () => {
           />
         </div>
         <button type="submit">Сохранить изменения</button>
+        <button onClick={() => navigate('/')}>Назад</button>
+
       </form>
       {error && <p className="error-message">{error}</p>}
     </div>
