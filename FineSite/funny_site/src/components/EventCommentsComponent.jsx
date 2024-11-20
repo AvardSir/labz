@@ -11,12 +11,17 @@ export const EventCommentsComponent = () => {
   const [userId, setUserId] = useState(null); // Состояние для ID пользователя
 
   useEffect(() => {
-    console.log('s')
+    
     // Запрос на получение события
-    fetch(`/api/events/${eventId}`)  // Вы можете изменить URL в зависимости от вашего API
-      .then((res) => res.json())
-      .then((data) => setEvent(data))
-      .catch((err) => console.error("Ошибка загрузки события:", err));
+    fetch(`/event-details/${eventId}`)  // URL с использованием параметра eventId
+  .then((res) => {
+    if (!res.ok) {
+      throw new Error('Ошибка сети');
+    }
+    return res.json();
+  })
+  .then((data) => setEvent(data[0]))
+  .catch((err) => console.error('Ошибка загрузки события:', err));
 
     // Получение комментариев для текущего события
     fetch(`/api/get-comments-for-event/${eventId}`)

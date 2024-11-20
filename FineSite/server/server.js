@@ -409,7 +409,12 @@ app.get("/api/IdByUsername", (req, res) => {
 
 
 app.get('/api/get-comments-for-event/:EventId', async (req, res) => {
-  const eventId = req.params.EventId; // Получаем EventId из параметра URL
+  const eventId = parseInt(req.params.EventId, 10); // Преобразуем в целое число
+
+  // Проверка на наличие параметра
+  if (!eventId) {
+      return res.status(400).json({ error: 'Параметр EventId обязателен.' });
+  }
 
   try {
       // Создаем запрос и вызываем хранимую процедуру с параметром EventId
@@ -425,10 +430,35 @@ app.get('/api/get-comments-for-event/:EventId', async (req, res) => {
       // Возвращаем успешный результат
       res.status(200).json(result.recordset);
   } catch (err) {
-      console.error('Ошибка при выполнении запроса:', err);
+      console.error('Ошибка api/get-comments-for-event при выполнении запроса:', err);
       res.status(500).json({ error: 'Ошибка сервера при получении комментариев.' });
   }
 });
+
+
+app.get('/event-details/:IdEvent', async (req, res) => {
+  const { IdEvent } = req.params;
+
+  try {
+    await sql.connect(dbConfig);
+    const result = await sql.query`EXEC GetEventDetailsByIdEvent @EventId = ${IdEvent}`;
+    
+    // Если нет данных
+    if (result.recordset.length === 0) {
+      return res.status(404).send('Event not found');
+    }
+
+    res.json(result.recordset);
+  } catch (err) {
+    console.error('Error executing query:', err.message);
+    res.status(500).send(`Server error: ${err.message}`);
+  } finally {
+    await sql.close();
+  }
+});
+
+
+
 
 // Запуск сервера
 const PORT = 5000;
