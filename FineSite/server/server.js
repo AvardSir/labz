@@ -309,27 +309,49 @@ app.get('/api/comments-anecdote', async (req, res) => {
   
 
   // В серверной части, используя Express
-app.post('/api/login', async (req, res) => {
+  // Запрос для логина (POST /api/login)
+app.post('/api/GetUserDetailsByNameAndPassword', async (req, res) => {
   const { login, password } = req.body;
-
   try {
-    const result = await sql.query(`
-      SELECT [IdUser], [Name], [Password], [Email], [Bio], [IdRights]
-      FROM [FunnySite].[dbo].[Пользователь]
-      WHERE [Name] = @login AND [Password] = @password
-    `, [login, password]);
-
+    const result = await sql.query`EXEC [dbo].[GetUserDetailsByNameAndPassword] @Name=${login}, @Password=${password}`;
+    
     if (result.recordset.length > 0) {
-      const user = result.recordset[0];
-      res.json({ success: true, user });
+      res.json(result.recordset[0]);  // Если пользователь найден, возвращаем его данные
     } else {
-      res.json({ success: false });
+      res.status(401).send('Неверные логин или пароль');
     }
   } catch (err) {
     console.error('Ошибка авторизации:', err);
     res.status(500).send('Ошибка сервера');
   }
 });
+
+// Запрос для получения данных пользователя (GET /api/users/:id)
+app.get('/api/users/:id', async (req, res) => {
+  const { id } = req.params;
+  
+  // Преобразуем id в целое число
+  const userId = parseInt(id, 10);
+  
+  if (isNaN(userId)) {
+    return res.status(400).send('Некорректный ID пользователя');
+  }
+
+  try {
+    const result = await sql.query`EXEC [dbo].[GetUserDetailsById] @IdUser=${userId}`;
+    
+    if (result.recordset.length > 0) {
+      res.json(result.recordset[0]); // Возвращаем данные пользователя по ID
+    } else {
+      res.status(404).send('Пользователь не найден');
+    }
+  } catch (err) {
+    console.error('Ошибка при получении данных пользователя:', err);
+    res.status(500).send('Ошибка сервера');
+  }
+});
+
+
 
 
 // Запуск сервера

@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback, useContext } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { AuthContext } from "./AuthContext"; // Подключаем AuthContext
-
+import { AuthContext } from "./context/AuthContext"; // Подключаем AuthContext
 
 export const Autification = () => {
   const location = useLocation();
@@ -22,7 +21,7 @@ export const Autification = () => {
   // Основная логика для авторизации
   const handleLoginSubmit = useCallback(
     async (e) => {
-      if (e) e.preventDefault();
+      e.preventDefault();  // Предотвращаем стандартное поведение формы
       setError(""); // Сброс ошибок перед новым запросом
       setIsSubmitting(true); // Инициализация отправки данных
 
@@ -38,7 +37,7 @@ export const Autification = () => {
 
         const result = await response.json();
 
-        const user = result.find(
+        const user = result?.find(
           (user) =>
             user.Name === loginData.login && user.Password === loginData.password
         );
@@ -71,19 +70,6 @@ export const Autification = () => {
   const handleLK = () => {
     navigate("/personal_cabinet");
   };
-
-  // Автоматическая авторизация при данных из state
-  useEffect(() => {
-    if (loginData.login && loginData.password && !isLoggedIn) {
-      setIsSubmitting(true); // Если есть данные, то сразу начать попытку входа
-    }
-  }, [loginData, isLoggedIn]);
-
-  useEffect(() => {
-    if (isSubmitting) {
-      handleLoginSubmit();
-    }
-  }, [isSubmitting, handleLoginSubmit]);
 
   // Если уже авторизован
   if (isLoggedIn) {

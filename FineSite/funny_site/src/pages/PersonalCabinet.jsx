@@ -1,43 +1,51 @@
-import React, { useState, useEffect, useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../components/AuthContext"; // Укажите правильный путь до AuthContext
+import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../components/context/AuthContext';
 
 export const PersonalCabinet = () => {
-  const { isLoggedIn, loginData } = useContext(AuthContext); // Получаем данные авторизации из контекста
+  const { isLoggedIn, loginData } = useContext(AuthContext); 
   const navigate = useNavigate();
 
   const [userData, setUserData] = useState({
-    IdUser: null,  // Добавляем IdUser
+    IdUser: null,
     Name: "",
     Password: "",
     Email: "",
     Bio: "",
-    initialName: "",  // Добавляем поле для инициализации имени
+    initialName: "",
   });
 
   const [error, setError] = useState("");
-  const [passwordVisible, setPasswordVisible] = useState(false); // Состояние для видимости пароля
+  const [passwordVisible, setPasswordVisible] = useState(false);
 
-  // Инициализация данных пользователя из AuthContext и получение данных с сервера
+  // Получаем данные пользователя после входа
   useEffect(() => {
-    if (isLoggedIn && loginData) {
-      // Делаем запрос к серверу для получения данных о пользователе
+    if (isLoggedIn && loginData?.login) {
       const fetchUserData = async () => {
         try {
-          const response = await fetch(`/api/user?login=${loginData.login}&password=${loginData.password}`);
+          const response = await fetch('/api/GetUserDetailsByNameAndPassword', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              login: loginData.login,
+              password: loginData.password,
+            }),
+          });
+
           if (response.ok) {
             const data = await response.json();
             setUserData({
-              IdUser: data.IdUser,  // Получаем IdUser с сервера
+              IdUser: data.IdUser,
               Name: data.Name,
               Password: data.Password,
               Email: data.Email,
               Bio: data.Bio,
-              initialName: data.Name,  // Инициализируем initialName
+              initialName: data.Name,
             });
           } else {
-            const result = await response.json();
-            setError(result.message || "Ошибка при получении данных");
+            setError("Ошибка при получении данных");
           }
         } catch (err) {
           setError("Ошибка связи с сервером");
@@ -47,149 +55,109 @@ export const PersonalCabinet = () => {
 
       fetchUserData();
     } else {
-      navigate("/"); // Если пользователь не авторизован, перенаправляем на страницу входа
+      navigate('/'); // Перенаправление на страницу входа
     }
   }, [isLoggedIn, loginData, navigate]);
 
-  // Обработчик изменений в форме
   const handleInputChange = ({ target: { name, value } }) => {
     setUserData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  // Функция для проверки уникальности имени пользователя
-  const checkNameUniqueness = async (name) => {
-    try {
-      const response = await fetch(`/api/check-name?name=${name}`);
-      if (response.ok) {
-        const data = await response.json();
-        return data.isUnique; // Возвращаем булево значение, если имя уникально
-      } else {
-        const result = await response.json();
-        setError(result.message || "Ошибка при проверке уникальности имени");
-        return false;
-      }
-    } catch (err) {
-      setError("Ошибка связи с сервером");
-      console.error("Ошибка проверки имени:", err);
-      return false;
-    }
-  };
-
-  // Отправка данных на сервер
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError(""); // Очищаем старые ошибки
-
-    // Если имя изменилось, проверяем его уникальность
-    if (userData.Name !== userData.initialName) {
-      console.log(userData.Name);
-      console.log(userData.initialName);
-      const isNameUnique = await checkNameUniqueness(userData.Name);
-      if (!isNameUnique) {
-        setError("Имя пользователя уже занято.");
-        return;
-      }
-    }
-
-    try {
-      const response = await fetch("/api/update-user", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          IdUser: userData.IdUser, // Добавляем IdUser в запрос
-          Name: userData.Name,
-          Password: userData.Password,
-          Email: userData.Email,
-          Bio: userData.Bio,
-        }), // Отправляем обновленные данные с IdUser
-      });
-
-      const result = await response.json();
-      if (response.ok) {
-        alert(result.message); // Сообщение об успешном обновлении
-      } else {
-        setError(result.message || "Ошибка при обновлении данных");
-      }
-    } catch (err) {
-      setError("Ошибка связи с сервером");
-      console.error("Ошибка обновления:", err);
-    }
-  };
-
-  // Переключение видимости пароля
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
   };
 
+  // Обработчик отправки данных на сервер
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch('/api/update-user', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          IdUser: userData.IdUser,
+          Name: userData.Name,
+          Password: userData.Password,
+          Email: userData.Email,
+          Bio: userData.Bio,
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        alert(data.message); // Показываем сообщение об успехе
+      } else {
+        setError("Ошибка при сохранении данных");
+      }
+    } catch (err) {
+      setError("Ошибка связи с сервером");
+      console.error("Ошибка запроса:", err);
+    }
+  };
+
+  if (!userData.IdUser) {
+    return <div>Загрузка...</div>;
+  }
+
   return (
     <div className="personal-cabinet">
       <h2>Личный кабинет</h2>
-
       <form onSubmit={handleSubmit}>
         <div>
-          <label>
-            Имя:
+          <label>Имя:</label>
+          <input
+            type="text"
+            name="Name"
+            value={userData.Name}
+            onChange={handleInputChange}
+          />
+        </div>
+        <div>
+          <label>Пароль:</label>
+          <div style={{ position: 'relative' }}>
             <input
-              type="text"
-              name="Name"
-              value={userData.Name}
+              type={passwordVisible ? "text" : "password"}
+              name="Password"
+              value={userData.Password}
               onChange={handleInputChange}
             />
-          </label>
+            <button
+              type="button"
+              onClick={togglePasswordVisibility}
+              style={{
+                position: 'absolute',
+                right: '10px',
+                top: '10px',
+                background: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+              }}
+            >
+              {passwordVisible ? "Скрыть" : "Показать"}
+            </button>
+          </div>
         </div>
         <div>
-          <label>
-            Пароль:
-            <div style={{ position: 'relative' }}>
-              <input
-                type={passwordVisible ? "text" : "password"} // Переключаем тип поля
-                name="Password"
-                value={userData.Password}
-                onChange={handleInputChange}
-              />
-              <button
-                type="button"
-                onClick={togglePasswordVisibility}
-                style={{
-                  position: 'absolute',
-                  right: '10px',
-                  top: '10px',
-                  background: 'transparent',
-                  border: 'none',
-                  cursor: 'pointer',
-                }}
-              >
-                {passwordVisible ? "Скрыть" : "Показать"}
-              </button>
-            </div>
-          </label>
+          <label>Email:</label>
+          <input
+            type="email"
+            name="Email"
+            value={userData.Email}
+            onChange={handleInputChange}
+          />
         </div>
         <div>
-          <label>
-            Email:
-            <input
-              type="email"
-              name="Email"
-              value={userData.Email}
-              onChange={handleInputChange}
-            />
-          </label>
-        </div>
-        <div>
-          <label>
-            Биография:
-            <textarea
-              name="Bio"
-              value={userData.Bio}
-              onChange={handleInputChange}
-            />
-          </label>
+          <label>Биография:</label>
+          <textarea
+            name="Bio"
+            value={userData.Bio}
+            onChange={handleInputChange}
+          />
         </div>
         <button type="submit">Сохранить изменения</button>
       </form>
-
       {error && <p className="error-message">{error}</p>}
     </div>
   );
