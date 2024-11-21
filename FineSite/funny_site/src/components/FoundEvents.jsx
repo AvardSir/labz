@@ -1,7 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
-
+import { useNavigate } from 'react-router-dom';
 export const FoundEvents = ({ events }) => {
+  const navigate = useNavigate();
+
   return (
     <div className="found-events">
       <h3>Найденные мероприятия</h3>
@@ -20,9 +22,10 @@ export const FoundEvents = ({ events }) => {
               <p><strong>Тип мероприятия:</strong> {event.ТипМероприятия}</p>
               
               {/* Ссылка для перехода к комментариям события */}
-              <Link to={`/event-comments/${event.IdEvent}`} className="comment-link">
-                Перейти к комментариям
-              </Link>
+              <button onClick={() => navigate(`/event-comments/${event.IdEvent}`)} className="comment-button">
+      Перейти к комментариям
+    </button>
+
             </li>
           ))}
         </ul>

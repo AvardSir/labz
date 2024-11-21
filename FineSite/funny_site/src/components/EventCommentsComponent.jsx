@@ -24,24 +24,26 @@ export const EventCommentsComponent = () => {
   .catch((err) => console.error('Ошибка загрузки события:', err));
 
     // Получение комментариев для текущего события
-    fetch(`/api/get-comments-for-event/${eventId}`)
+    fetch(`/api/get-comments-for-event?eventId=${eventId}`)
       .then((res) => res.json())
       .then((data) => setComments(data))
       .catch((err) => console.error("Ошибка загрузки комментариев:", err));
 
     // Запрос на получение ID пользователя по имени из контекста
-    // if (loginData && loginData.login) {
-    //   fetch(`/api/IdByUsername?Name=${encodeURIComponent(loginData.login)}`)
-    //     .then((res) => res.json())
-    //     .then((data) => {
-    //       if (data && data.IdUser) {
-    //         setUserId(data.IdUser); // Сохраняем IdUser
-    //       } else {
-    //         console.error("Не удалось получить IdUser.");
-    //       }
-    //     })
-    //     .catch((err) => console.error("Ошибка при получении IdUser:", err));
-    // }
+    console.log(loginData.login)
+    
+    if (loginData && loginData.login) {
+      fetch(`/api/IdByUsername_forEvents?Name=${encodeURIComponent(loginData.login)}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data && data.IdUser) {
+            setUserId(data.IdUser); // Сохраняем IdUser
+          } else {
+            console.error("Не удалось получить IdUser.");
+          }
+        })
+        .catch((err) => console.error("Ошибка при получении IdUser:", err));
+    }
   }, [eventId, loginData]);
 
   const handleAddComment = () => {
@@ -50,31 +52,33 @@ export const EventCommentsComponent = () => {
     }
 
     // Проверяем, есть ли данные о пользователе в контексте
+    
     if (!loginData || !loginData.login || !userId) {
       return alert("Пожалуйста, войдите в систему, чтобы добавить комментарий.");
     }
 
     // Добавление нового комментария
-    fetch(`/api/add-comment-for-event`, {
+    fetch(`/api/add-comment`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        Text: newComment,
-        IdUser: userId,
-        IdEvent: eventId,
+        text: newComment, // Соответствует параметру `@Text`
+        idUser: userId,   // Соответствует параметру `@IdUser`
+        idEvent: eventId, // Соответствует параметру `@IdEvent`
       }),
     })
       .then((res) => res.json())
       .then((data) => {
-        if (data.message === "Комментарий успешно добавлен") {
+        if (data.message === "Комментарий успешно добавлен.") {
+          // Добавляем новый комментарий в список
           setComments([
             ...comments,
             {
-              Text: newComment,
-              Date: new Date().toISOString(),
-              AuthorName: loginData.login, // Используем имя пользователя из контекста
+              CommentText: newComment, // Совпадает с отображением на UI
+              Date: new Date().toISOString(), // Добавляем текущую дату
+              AuthorName: loginData.login,    // Имя пользователя из контекста
             },
           ]);
           setNewComment(""); // Очищаем поле ввода
@@ -82,7 +86,10 @@ export const EventCommentsComponent = () => {
           console.error("Ошибка при добавлении комментария:", data.error);
         }
       })
-      .catch((err) => console.error("Ошибка добавления комментария:", err));
+      .catch((err) => {
+        console.error("Ошибка добавления комментария:", err);
+      });
+    
   };
 
   return (
@@ -103,8 +110,8 @@ export const EventCommentsComponent = () => {
         {comments.length > 0 ? (
           comments.map((comment, index) => (
             <li key={index}>
-              <p>{comment.Text}</p>
-              <p><strong>{comment.AuthorName}</strong> ({new Date(comment.Date).toLocaleDateString()})</p>
+              <p>{comment.CommentText}</p>
+              <p><strong>{comment.AuthorName}</strong> ({new Date(comment.CommentDate).toLocaleDateString()})</p>
             </li>
           ))
         ) : (

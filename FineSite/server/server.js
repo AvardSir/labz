@@ -23,6 +23,20 @@ sql.connect(dbConfig).then(() => {
     console.log('Подключено к базе данных!');
 }).catch(err => console.error('Ошибка подключения к БД:', err));
 
+const poolPromise = new sql.ConnectionPool(dbConfig)
+    .connect()
+    .then(pool => {
+        console.log('Подключено к базе данных!');
+        return pool;
+    })
+    .catch(err => {
+        console.error('Ошибка подключения к БД:', err);
+        process.exit(1); // Завершаем процесс при ошибке подключения
+    });
+
+
+
+
 // Эндпоинт для получения анекдотов
 app.get('/api/anecdotes', async (req, res) => {
     try {
@@ -408,34 +422,70 @@ app.get("/api/IdByUsername", (req, res) => {
 });
 
 
-app.get('/api/get-comments-for-event', (req, res) => {
-  const { eventId } = req.query;  // Получаем параметр eventId из строки запроса
+app.get("/api/IdByUsername_forEvents", async (req, res) => {
+  const { Name } = req.query; // Получаем параметр Name из строки запроса
 
-  // Проверка на наличие параметра eventId
-  if (!eventId) {
-      return res.status(400).json({ error: "Параметр eventId обязателен." });
+  if (!Name) {
+    return res.status(400).json({ error: "Параметр Name обязателен." });
   }
 
-  // Вызов хранимой процедуры
-  const query = "EXEC GetCommentsForEventByIdEvent @EventId = @EventId";
-  const request = new sql.Request();
-  request.input("EventId", sql.Int, eventId); // Передаем параметр в хранимую процедуру
+  try {
+    // Подключаемся к пулу соединений
+    const pool = await poolPromise;
 
-  request.query(query, (err, result) => {
-      if (err) {
-          console.error("Ошибка выполнения запроса:", err);
-          return res.status(500).json({ error: "Ошибка сервера." });
-      }
+    // Выполняем запрос с использованием параметра
+    const result = await pool
+      .request()
+      .input("Name", sql.NVarChar, Name)
+      .query("EXEC GetUserIdByName @Name");
 
-      // Если нет результатов, возвращаем ошибку
-      if (result.recordset.length === 0) {
-          return res.status(404).json({ message: "Комментарии для этого события не найдены." });
+    // Если пользователь не найден, возвращаем соответствующий статус
+    if (result.recordset.length === 0) {
+      return res.status(404).json({ error: "Пользователь не найден." });
+    }
+
+    // Возвращаем успешный результат
+    res.status(200).json(result.recordset[0]); // Возвращаем первый найденный результат
+  } catch (err) {
+    console.error("Ошибка выполнения запроса:", err);
+    res.status(500).json({ error: "Ошибка сервера." });
+  }
+});
+
+
+
+app.get('/api/get-comments-for-event', async (req, res) => {
+  // Получение параметра eventId из строки запроса
+  const { eventId } = req.query;
+
+  // Проверка на наличие и валидность eventId
+  const parsedEventId = Number(eventId); // Преобразование в число
+  if (!parsedEventId || isNaN(parsedEventId)) {
+      return res.status(400).json({ error: 'Параметр eventId обязателен и должен быть числом.' });
+  }
+
+  try {
+      const pool = await poolPromise; // Используем глобальный пул соединений
+
+      // Вызов хранимой процедуры
+      const result = await pool.request()
+          .input('EventId', sql.Int, parsedEventId) // Передаем параметр в запрос
+          .execute('GetCommentsForEventByIdEvent'); // Хранимая процедура
+
+      // Проверка на наличие результатов
+      if (!result.recordset || result.recordset.length === 0) {
+          return res.status(404).json({ message: 'Комментарии для этого события не найдены.' });
       }
 
       // Возвращаем успешный результат
       res.status(200).json(result.recordset);
-  });
+  } catch (err) {
+      console.error('Ошибка выполнения запроса:', err.message, err.stack);
+      res.status(500).json({ error: 'Ошибка сервера.' });
+  }
 });
+
+
 
 
 
@@ -462,7 +512,31 @@ app.get('/event-details/:IdEvent', async (req, res) => {
 });
 
 
+app.post('/api/add-comment', async (req, res) => {
+  const { text, idEvent, idUser } = req.body; // Получаем данные из тела запроса
 
+  // Проверяем наличие всех необходимых параметров
+  if (!text || !idEvent || !idUser) {
+      return res.status(400).json({ error: 'Параметры text, idEvent и idUser обязательны.' });
+  }
+
+  try {
+      const pool = await poolPromise; // Используем глобальный пул соединений
+
+      // Вызов хранимой процедуры
+      await pool.request()
+          .input('Text', sql.NVarChar(sql.MAX), text)
+          .input('IdEvent', sql.Int, idEvent)
+          .input('IdUser', sql.Int, idUser)
+          .execute('AddCommentEvent'); // Имя вашей хранимой процедуры
+
+      // Успешный ответ
+      res.status(201).json({ message: 'Комментарий успешно добавлен.' });
+  } catch (err) {
+      console.error('Ошибка выполнения запроса:', err.message, err.stack);
+      res.status(500).json({ error: 'Ошибка сервера.' });
+  }
+});
 
 // Запуск сервера
 const PORT = 5000;
