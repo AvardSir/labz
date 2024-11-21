@@ -77,7 +77,7 @@ export const EventCommentsComponent = () => {
             ...comments,
             {
               CommentText: newComment, // Совпадает с отображением на UI
-              Date: new Date().toISOString(), // Добавляем текущую дату
+              CommentDate: new Date().toISOString(), // Добавляем текущую дату
               AuthorName: loginData.login,    // Имя пользователя из контекста
             },
           ]);

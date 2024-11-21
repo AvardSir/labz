@@ -41,8 +41,8 @@ export const Autification = () => {
           (user) =>
             user.Name === loginData.login && user.Password === loginData.password
         );
-
-        if (user) {
+        console.log(user&&true)
+        if (user&&true) {
           console.log("Logged in with:", loginData.login, loginData.password); // Логируем успешный вход
           login(loginData.login, loginData.password); // Устанавливаем авторизацию через контекст
           navigate("/"); // Переход на главную страницу

@@ -1,8 +1,15 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from "react-router-dom";
+import { SignUpButton } from "./SignUpButton";
+
 export const FoundEvents = ({ events }) => {
   const navigate = useNavigate();
+
+  const handleSignUp = (eventId) => {
+    // Здесь можно отправить запрос на сервер для записи пользователя
+    console.log(`Пользователь записался на мероприятие с ID: ${eventId}`);
+    alert("Вы успешно записались на мероприятие!");
+  };
 
   return (
     <div className="found-events">
@@ -22,10 +29,15 @@ export const FoundEvents = ({ events }) => {
               <p><strong>Тип мероприятия:</strong> {event.ТипМероприятия}</p>
               
               {/* Ссылка для перехода к комментариям события */}
-              <button onClick={() => navigate(`/event-comments/${event.IdEvent}`)} className="comment-button">
-      Перейти к комментариям
-    </button>
+              <button
+                onClick={() => navigate(`/event-comments/${event.IdEvent}`)}
+                className="comment-button"
+              >
+                Перейти к комментариям
+              </button>
 
+              {/* Кнопка записаться на мероприятие */}
+              {/* <SignUpButton eventId={event.IdEvent} onSignUp={handleSignUp} /> */}
             </li>
           ))}
         </ul>

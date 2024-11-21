@@ -538,6 +538,35 @@ app.post('/api/add-comment', async (req, res) => {
   }
 });
 
+
+
+
+
+
+
+
+app.post("/api/add-entry", async (req, res) => {
+  const { IdEvent, IdUser } = req.body;
+
+  if (!IdEvent || !IdUser) {
+    return res.status(400).json({ error: "Параметры IdEvent и IdUser обязательны." });
+  }
+
+  try {
+    // Выполнение хранимой процедуры AddEntryAndDecrementSeats
+    const request = new sql.Request();
+    request.input("IdEvent", sql.Int, IdEvent);
+    request.input("IdUser", sql.Int, IdUser);
+
+    const result = await request.execute("AddEntryAndDecrementSeats");
+
+    // Если процедура выполнена успешно, отправляем успешный ответ
+    res.status(200).json({ message: "Вы успешно записались на мероприятие." });
+  } catch (err) {
+    console.error("Ошибка выполнения процедуры:", err);
+    res.status(500).json({ error: "Ошибка сервера." });
+  }
+});
 // Запуск сервера
 const PORT = 5000;
 app.listen(PORT, () => {

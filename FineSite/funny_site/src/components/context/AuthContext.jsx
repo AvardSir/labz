@@ -16,7 +16,7 @@ export const AuthProvider = ({ children }) => {
   // Логин пользователя
   const login = async (login, password) => {
     try {
-      const response = await fetch('/api/login', {
+      const response = await fetch('/api/GetUserDetailsByNameAndPassword', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
