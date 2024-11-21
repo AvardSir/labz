@@ -4,17 +4,18 @@ import { RegistrationForm } from "../components/Autification.jsx";
 import { SearchSection } from "../components/SearchSection.jsx";
 import { FoundAnecdotes } from "../components/FoundAnecdotes.jsx";
 import HomePage from "./HomePage.jsx";
-import { AnecdoteCommentsСomponent } from "../components/AnecdoteCommentsСomponent.jsx";
-import Registration from "../components/Registration.jsx";
 
-const RegistrationPage = () => {
+import PersonalCabinet from "./PersonalCabinet.jsx";
+
+import "../css/HomePage.css";
+
+const PersonalCabinetPage = () => {
   return (
     <div className="main-container">
       <Header/>
-      <Registration  />
+      <PersonalCabinet  />
     </div>
   );
 };
 
-export default RegistrationPage;
-//
+export default PersonalCabinetPage;
