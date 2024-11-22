@@ -26,10 +26,10 @@ const GetUserIdByLogin = ({ loginData, onUserIdFetched }) => {
     }
   }, [loginData, onUserIdFetched]);
 
-  if (loading) return <p>Загрузка...</p>;
+  // if (loading) return <p>Загрузка...</p>;
   if (error) return <p>{error}</p>;
 
-  return <div>{userId}</div>;
+  // return <div>{userId}</div>;
 };
 
 export default GetUserIdByLogin;

@@ -7,8 +7,8 @@ export const FoundEvents = ({ events }) => {
 
   const handleSignUp = (eventId) => {
     // Здесь можно отправить запрос на сервер для записи пользователя
-    console.log(`Пользователь записался на мероприятие с ID: ${eventId}`);
-    alert("Вы успешно записались на мероприятие!");
+    // console.log(`Пользователь записался на мероприятие с ID: ${eventId}`);
+    // alert("Вы успешно записались на мероприятие!");
   };
 
   return (
@@ -37,8 +37,9 @@ export const FoundEvents = ({ events }) => {
               </button>
 
               {/* Кнопка записаться на мероприятие */}
-              {/* <SignUpButton eventId={event.IdEvent} onSignUp={handleSignUp} /> */}
-            </li>
+              {/* {console.log(event.IdEvent)} */}
+              <SignUpButton eventId={event.IdEvent} onSignUp={handleSignUp} />
+              </li>
           ))}
         </ul>
       )}

@@ -552,21 +552,33 @@ app.post("/api/add-entry", async (req, res) => {
     return res.status(400).json({ error: "Параметры IdEvent и IdUser обязательны." });
   }
 
+  if (isNaN(IdEvent) || isNaN(IdUser)) {
+    return res.status(400).json({ error: "IdEvent и IdUser должны быть числами." });
+  }
+
   try {
-    // Выполнение хранимой процедуры AddEntryAndDecrementSeats
     const request = new sql.Request();
     request.input("IdEvent", sql.Int, IdEvent);
     request.input("IdUser", sql.Int, IdUser);
 
     const result = await request.execute("AddEntryAndDecrementSeats");
 
-    // Если процедура выполнена успешно, отправляем успешный ответ
+    if (result.returnValue !== 0) {
+      return res.status(400).json({ error: "Не удалось записаться на мероприятие. Возможно, мест больше нет." });
+    }
+
     res.status(200).json({ message: "Вы успешно записались на мероприятие." });
   } catch (err) {
-    console.error("Ошибка выполнения процедуры:", err);
+    console.error("Ошибка выполнения процедуры:", {
+      message: err.message,
+      stack: err.stack,
+    });
     res.status(500).json({ error: "Ошибка сервера." });
   }
 });
+
+
+
 // Запуск сервера
 const PORT = 5000;
 app.listen(PORT, () => {
