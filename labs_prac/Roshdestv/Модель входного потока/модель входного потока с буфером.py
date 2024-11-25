@@ -48,7 +48,7 @@ def simulate_with_buffer(lambda_rate, mu_rate, N, K, time_steps):
     for t in range(time_steps):
         # Освобождаем каналы, у которых завершилось обслуживание
         busy_channels = [end_time for end_time in busy_channels if end_time > t]
-
+#
         # Генерация новых заявок
         arrivals = np.random.poisson(lambda_rate)
         for _ in range(arrivals):
