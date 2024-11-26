@@ -37,7 +37,7 @@ def simulate_with_retry(lambda_rate, mu_rate, N, time_steps):
 
     return lost_requests, avg_processing_time
 
-
+#йомайо
 def simulate_with_buffer(lambda_rate, mu_rate, N, K, time_steps):
     """Моделирование системы с буфером и повторными попытками обработки заявок."""
     busy_channels = []  # Список времени завершения работы каналов
