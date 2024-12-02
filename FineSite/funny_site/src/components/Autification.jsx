@@ -41,7 +41,7 @@ export const Autification = () => {
           (user) =>
             user.Name === loginData.login && user.Password === loginData.password
         );
-        console.log(user&&true)
+        console.log(user.IdRights)
         if (user&&true) {
           console.log("Logged in with:", loginData.login, loginData.password); // Логируем успешный вход
           login(loginData.login, loginData.password); // Устанавливаем авторизацию через контекст

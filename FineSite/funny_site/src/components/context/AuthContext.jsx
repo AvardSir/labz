@@ -1,6 +1,5 @@
 // src/context/AuthContext.js
 import React, { createContext, useState, useEffect } from "react";
-import { useContext } from "react";
 
 // Создаем контекст
 export const AuthContext = createContext();
@@ -10,6 +9,7 @@ export const AuthProvider = ({ children }) => {
   const [loginData, setLoginData] = useState({
     login: "",
     password: "",
+    IdRights: null, // Добавляем IdRights
   });
   const [userDetails, setUserDetails] = useState(null); // Состояние для хранения данных о пользователе
 
@@ -27,13 +27,18 @@ export const AuthProvider = ({ children }) => {
       if (response.ok) {
         const data = await response.json();
         setUserDetails(data); // Сохраняем данные пользователя
-        setLoginData({ login, password }); // Обновляем loginData
+        setLoginData({
+          login,
+          password,
+          IdRights: data.IdRights, // Обновляем IdRights
+        }); 
         setIsLoggedIn(true); // Устанавливаем, что пользователь вошел
 
         // Сохраняем в localStorage
         localStorage.setItem('user', JSON.stringify(data));
         localStorage.setItem('login', login);
         localStorage.setItem('password', password);
+        localStorage.setItem('IdRights', data.IdRights); // Сохраняем IdRights
       } else {
         alert('Неверные логин или пароль');
       }
@@ -45,12 +50,13 @@ export const AuthProvider = ({ children }) => {
 
   // Выход пользователя
   const logout = () => {
-    setLoginData({ login: "", password: "" });
+    setLoginData({ login: "", password: "", IdRights: null }); // Очищаем IdRights
     setIsLoggedIn(false);
     setUserDetails(null); // Очищаем данные пользователя
     localStorage.removeItem('user');
     localStorage.removeItem('login');
     localStorage.removeItem('password');
+    localStorage.removeItem('IdRights'); // Удаляем IdRights
   };
 
   useEffect(() => {
@@ -58,10 +64,15 @@ export const AuthProvider = ({ children }) => {
     const savedUser = localStorage.getItem('user');
     const savedLogin = localStorage.getItem('login');
     const savedPassword = localStorage.getItem('password');
+    const savedIdRights = localStorage.getItem('IdRights'); // Восстанавливаем IdRights
 
-    if (savedUser && savedLogin && savedPassword) {
+    if (savedUser && savedLogin && savedPassword && savedIdRights) {
       setUserDetails(JSON.parse(savedUser));
-      setLoginData({ login: savedLogin, password: savedPassword });
+      setLoginData({
+        login: savedLogin,
+        password: savedPassword,
+        IdRights: savedIdRights, // Устанавливаем IdRights
+      });
       setIsLoggedIn(true);
     }
   }, []);
