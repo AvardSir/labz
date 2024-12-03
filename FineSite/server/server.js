@@ -579,7 +579,7 @@ app.post("/api/add-entry", async (req, res) => {
 
 
 
-app.post('/add-anecdote', async (req, res) => {
+app.post('/api/add-anecdote', async (req, res) => {
   const { Text, Rate, IdUser, IdTypeAnecdote } = req.body;
 
   if (!Text || Rate == null || !IdUser || !IdTypeAnecdote) {
@@ -602,18 +602,6 @@ app.post('/add-anecdote', async (req, res) => {
   }
 });
 
-// Получение списка типов анекдотов
-app.get('/anecdote-types', async (req, res) => {
-  try {
-      const pool = await poolPromise;
-      const result = await pool.request().query('SELECT IdTypeAnecdote, TypeAnecdote FROM [FunnySite].[dbo].[Тип_анекдота]');
-      
-      res.status(200).json(result.recordset);
-  } catch (error) {
-      console.error('Ошибка при получении типов анекдотов:', error);
-      res.status(500).json({ error: 'Ошибка сервера' });
-  }
-});
 
 // Запуск сервера
 const PORT = 5000;

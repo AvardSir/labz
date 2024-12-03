@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { AuthContext } from "./context/AuthContext";
+
 export const AddAnecdoteComponent = () => {
   const { loginData } = useContext(AuthContext); // Получаем данные пользователя
   const navigate = useNavigate();
@@ -15,55 +16,70 @@ export const AddAnecdoteComponent = () => {
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
 
-  // Загрузка типов анекдотов
+  // Загрузка типов анекдотов при загрузке компонента
   useEffect(() => {
     const fetchAnecdoteTypes = async () => {
-        try {
-            console.log("Запрос типов анекдотов..."); // Добавить лог
-            const response = await fetch("http://localhost:5000/anecdote-types");
-            console.log("Ответ сервера:", response); // Проверка ответа
-            const types = await response.json();
-            console.log("Типы анекдотов:", types); // Проверка данных
-            setAnecdoteTypes(types);
-        } catch (err) {
-            console.error("Ошибка загрузки типов анекдотов:", err);
-            setError("Не удалось загрузить типы анекдотов");
+      try {
+        const response = await fetch("/api/anecdotes/types"); // URL должен соответствовать рабочему примеру
+        const result = await response.json();
+        setAnecdoteTypes(result);
+  
+        // Установка первого типа по умолчанию, если он есть
+        if (result.length > 0) {
+          setFormData((prevData) => ({
+            ...prevData,
+            IdTypeAnecdote: result[0].id, // Устанавливаем значение первого типа
+          }));
+        } else {
+          setFormData((prevData) => ({
+            ...prevData,
+            IdTypeAnecdote: "", // Если нет типов, устанавливаем пустое значение
+          }));
         }
+      } catch (error) {
+        console.error("Ошибка при получении типов анекдотов:", error);
+        setError("Не удалось загрузить типы анекдотов");
+      }
     };
-
-
+  
     fetchAnecdoteTypes();
   }, []);
+  
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+  const handleChange = ({ target: { name, value } }) => {
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Добавляем IdUser из контекста
-    const requestData = { ...formData, IdUser: loginData.IdUser };
+  
+    // Преобразование значений в числа
+    const requestData = {
+      ...formData,
+      Rate: Number(formData.Rate),       // Преобразуем в число
+      IdTypeAnecdote: Number(formData.IdTypeAnecdote), // Преобразуем в число
+      IdUser: loginData.login,
+    };
+    console.log("Form data being sent:", loginData);
 
     try {
-      const response = await fetch("http://localhost:5000/add-anecdote", {
+      const response = await fetch("/api/add-anecdote", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(requestData),
       });
-
+  
       const result = await response.json();
-
+  
       if (!response.ok) {
         throw new Error(result.error || "Не удалось добавить анекдот");
       }
-
+  
       setSuccessMessage("Анекдот успешно добавлен!");
       setError(null);
-
+  
       // Через 2 секунды перенаправляем обратно
       setTimeout(() => navigate("/"), 2000);
     } catch (err) {
@@ -71,6 +87,8 @@ export const AddAnecdoteComponent = () => {
       setSuccessMessage(null);
     }
   };
+  
+  
 
   return (
     <div className="add-anecdote">
@@ -111,10 +129,9 @@ export const AddAnecdoteComponent = () => {
             onChange={handleChange}
             required
           >
-            <option value="">Выберите тип</option>
             {anecdoteTypes.map((type) => (
-              <option key={type.IdTypeAnecdote} value={type.IdTypeAnecdote}>
-                {type.TypeAnecdote}
+              <option key={type.id} value={type.id}>
+                {type.name}
               </option>
             ))}
           </select>
