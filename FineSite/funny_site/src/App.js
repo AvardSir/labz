@@ -9,6 +9,7 @@ import PersonalCabinet from "./pages/PersonalCabinet";
 import AnecdoteCommentsPage from "./pages/AnecdoteCommentsPage";
 import EventCommentsPage from "./pages/EventCommentsPage"; // Путь к странице комментариев
 import PersonalCabinetPage from "./pages/PersonalCabinetPage";
+import AddAnecdotePage from "./pages/AddAnecdotePage";
 function App() {
   return (
     <AuthProvider>
@@ -21,6 +22,8 @@ function App() {
           <Route path="/personal_cabinet" element={<PersonalCabinetPage />} />
           <Route path="/anecdote-comments/:anecdoteId" element={<AnecdoteCommentsPage />} />
           <Route path="/event-comments/:eventId" element={<EventCommentsPage />} />
+          <Route path="/add-anecdote" element={<AddAnecdotePage />} />
+
 
          
 

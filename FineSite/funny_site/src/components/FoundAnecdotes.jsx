@@ -1,11 +1,18 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { AuthContext } from "./context/AuthContext"; // Импортируем AuthContext
+import { AddAnecdote } from "../pages/AddAnecdotePage";
 export const FoundAnecdotes = ({ anecdotes }) => {
   const navigate = useNavigate();
+  const { loginData } = useContext(AuthContext); // Достаем loginData из контекста
 
   return (
     <div className="found-anecdotes">
+      {/* Условие отображения кнопки */}
+      {loginData.IdRights !== 1 && (
+        <button onClick={() => navigate("/add-anecdote")}>Добавить анекдот</button>
+      )}
+
       <h3>Найденные анекдоты</h3>
       {anecdotes.length === 0 ? (
         <p>Ничего не найдено</p>

@@ -579,6 +579,42 @@ app.post("/api/add-entry", async (req, res) => {
 
 
 
+app.post('/add-anecdote', async (req, res) => {
+  const { Text, Rate, IdUser, IdTypeAnecdote } = req.body;
+
+  if (!Text || Rate == null || !IdUser || !IdTypeAnecdote) {
+      return res.status(400).json({ error: 'Все поля обязательны для заполнения' });
+  }
+
+  try {
+      const pool = await poolPromise;
+      await pool.request()
+          .input('Text', sql.NVarChar(sql.MAX), Text)
+          .input('Rate', sql.Int, Rate)
+          .input('IdUser', sql.Int, IdUser)
+          .input('IdTypeAnecdote', sql.Int, IdTypeAnecdote)
+          .execute('AddNewAnecdote');
+
+      res.status(200).json({ message: 'Анекдот успешно добавлен!' });
+  } catch (error) {
+      console.error('Ошибка при выполнении запроса:', error);
+      res.status(500).json({ error: 'Ошибка сервера' });
+  }
+});
+
+// Получение списка типов анекдотов
+app.get('/anecdote-types', async (req, res) => {
+  try {
+      const pool = await poolPromise;
+      const result = await pool.request().query('SELECT IdTypeAnecdote, TypeAnecdote FROM [FunnySite].[dbo].[Тип_анекдота]');
+      
+      res.status(200).json(result.recordset);
+  } catch (error) {
+      console.error('Ошибка при получении типов анекдотов:', error);
+      res.status(500).json({ error: 'Ошибка сервера' });
+  }
+});
+
 // Запуск сервера
 const PORT = 5000;
 app.listen(PORT, () => {
