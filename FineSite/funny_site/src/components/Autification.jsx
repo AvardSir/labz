@@ -44,7 +44,7 @@ export const Autification = () => {
         console.log(user.IdRights)
         if (user&&true) {
           console.log("Logged in with:", loginData.login, loginData.password); // Логируем успешный вход
-          login(loginData.login, loginData.password); // Устанавливаем авторизацию через контекст
+          login(loginData.login, loginData.password,user.IdRights); // Устанавливаем авторизацию через контекст
           navigate("/"); // Переход на главную страницу
         } else {
           setError("Неверный логин или пароль");
@@ -75,12 +75,16 @@ export const Autification = () => {
   if (isLoggedIn) {
     return (
       <section className="registration">
-        <h2>Вы успешно авторизованы!</h2>
+        <h2>
+          Вы успешно авторизованы!
+          {loginData.IdRights !== 1 && " Добро пожаловать, администратор!"}
+        </h2>
         <button onClick={handleLogout}>Выйти</button>
         <button onClick={handleLK}>В личный кабинет</button>
       </section>
     );
   }
+  
 
   return (
     <section className="registration">
