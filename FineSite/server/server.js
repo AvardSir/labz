@@ -602,6 +602,179 @@ app.post('/api/add-anecdote', async (req, res) => {
   }
 });
 
+app.put('/api/update-anecdote', async (req, res) => {
+  const { IdAnecdote, NewText, NewRate, NewIdTypeAnecdote } = req.body;
+
+  // Проверка, что все необходимые данные переданы
+  if (!IdAnecdote || !NewText || NewRate == null || !NewIdTypeAnecdote) {
+    return res.status(400).json({ error: 'Все поля должны быть заполнены' });
+  }
+
+  try {
+    // Подключение к базе данных
+    let pool = await sql.connect(dbConfig);
+
+    // Вызов хранимой процедуры
+    await pool
+      .request()
+      .input('IdAnecdote', sql.Int, IdAnecdote)
+      .input('NewText', sql.NVarChar(sql.MAX), NewText)
+      .input('NewRate', sql.Int, NewRate)
+      .input('NewIdTypeAnecdote', sql.Int, NewIdTypeAnecdote)
+      .execute('UpdateAnecdote');
+
+    res.status(200).json({ message: 'Анекдот успешно обновлен' });
+  } catch (error) {
+    console.error('Ошибка при обновлении анекдота:', error);
+    res.status(500).json({ error: 'Произошла ошибка на сервере' });
+  } finally {
+    sql.close(); // Закрытие подключения
+  }
+});
+
+
+app.get('/api/anecdotes/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Подключение к базе данных
+    let pool = await sql.connect(dbConfig);
+
+    // Вызов хранимой процедуры
+    const result = await pool
+      .request()
+      .input('IdAnecdote', sql.Int, id)
+      .execute('GetAnecdoteById');
+
+    const anecdote = result.recordset[0]; // Предполагаем, что возвращается одна запись
+    if (!anecdote) {
+      return res.status(404).json({ error: 'Анекдот не найден' });
+    }
+
+    res.status(200).json(anecdote); // Отправляем данные анекдота
+  } catch (error) {
+    console.error('Ошибка при получении анекдота:', error);
+    res.status(500).json({ error: 'Произошла ошибка на сервере' });
+  } finally {
+    sql.close(); // Закрытие подключения
+  }
+});
+
+app.post('/api/add_events', async (req, res) => {
+  const { description, cost, howManyFreeSeats, name, conducted, eventTypeId } = req.body;
+
+  try {
+    // Подключение к базе данных
+    let pool = await sql.connect(dbConfig);
+
+    // Вызов хранимой процедуры
+    await pool
+      .request()
+      .input('Description', sql.NVarChar, description)
+      .input('Стоимость', sql.Decimal(10, 2), cost)
+      .input('HowManyFreeSeats', sql.Int, howManyFreeSeats)
+      .input('Name', sql.NVarChar, name)
+      .input('Проведено', sql.Bit, conducted)
+      .input('EventTypeId', sql.Int, eventTypeId)
+      .execute('AddEvent');
+
+    res.status(201).json({ message: 'Мероприятие успешно добавлено' });
+  } catch (error) {
+    console.error('Ошибка при добавлении мероприятия:', error);
+    res.status(500).json({ error: 'Произошла ошибка на сервере' });
+  } finally {
+    sql.close(); // Закрытие подключения
+  }
+});
+
+app.put('/api/update_event', async (req, res) => {
+  const { idEvent, description, cost, howManyFreeSeats, name, conducted, eventTypeId } = req.body;
+
+  if (
+    !idEvent || 
+    !description || 
+    isNaN(cost) || 
+    isNaN(howManyFreeSeats) || 
+    !name || 
+    typeof conducted !== 'boolean' || 
+    isNaN(eventTypeId)
+  ) {
+    return res.status(400).json({ error: "Некорректные входные данные" });
+  }
+
+  try {
+    let pool = await sql.connect(dbConfig);
+    console.log("Параметры запроса:", { idEvent, description, cost, howManyFreeSeats, name, conducted, eventTypeId });
+
+    await pool
+      .request()
+      .input('IdEvent', sql.Int, idEvent)
+      .input('Description', sql.NVarChar, description)
+      .input('Cost', sql.Decimal(10, 2), cost)
+      .input('HowManyFreeSeats', sql.Int, howManyFreeSeats)
+      .input('Name', sql.NVarChar, name)
+      .input('Conducted', sql.Bit, conducted ? 1 : 0)  // Преобразуем conducted в 1 (true) или 0 (false)
+      .input('EventTypeId', sql.Int, eventTypeId)
+      .execute('UpdateEvent');
+
+    res.status(200).json({ message: 'Мероприятие успешно обновлено' });
+  } catch (error) {
+    console.error("Ошибка при обновлении мероприятия:", error.message, error.stack);
+    res.status(500).json({ error: 'Произошла ошибка на сервере' });
+  } finally {
+    sql.close();
+  }
+});
+
+
+app.get('/api/event-types', async (req, res) => {
+  try {
+    // Подключаемся к базе данных
+    let pool = await sql.connect(dbConfig);
+    
+    // Выполняем запрос для получения всех типов мероприятий
+    const result = await pool.request().query('SELECT Id, EventTypeName FROM EventTypeId');
+    
+    // Отправляем результат на клиент
+    res.json(result.recordset);
+  } catch (err) {
+    console.error('Ошибка при загрузке типов мероприятий:', err.message);
+    res.status(500).json({ error: 'Ошибка при загрузке типов мероприятий' });
+  } finally {
+    // Закрытие соединения с базой данных
+    sql.close();
+  }
+});
+
+app.delete("/api/delete_anecdote", async (req, res) => {
+  const { idAnecdote } = req.body;  // Получаем ID анекдота из тела запроса
+
+  // Проверка, если ID анекдота не передан или не является числом
+  if (!idAnecdote || isNaN(idAnecdote)) {
+    return res.status(400).json({ error: 'Некорректный ID анекдота' });
+  }
+
+  try {
+    // Подключаемся к базе данных
+    let pool = await sql.connect(dbConfig);
+
+    // Выполняем вызов процедуры удаления анекдота
+    await pool
+      .request()
+      .input('IdAnecdote', sql.Int, idAnecdote)  // Передаем ID анекдота в процедуру
+      .execute('DeleteAnecdote');  // Имя процедуры для удаления анекдота
+
+    // Возвращаем успешный ответ
+    res.status(200).json({ message: 'Анекдот успешно удален' });
+  } catch (error) {
+    // Логируем ошибку и отправляем ответ с ошибкой
+    console.error("Ошибка при удалении анекдота:", error.message, error.stack);
+    res.status(500).json({ error: 'Произошла ошибка на сервере' });
+  } finally {
+    // Закрываем соединение с базой данных
+    sql.close();
+  }
+});
 
 // Запуск сервера
 const PORT = 5000;

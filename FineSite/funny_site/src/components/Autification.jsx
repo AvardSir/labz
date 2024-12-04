@@ -5,27 +5,26 @@ import { AuthContext } from "./context/AuthContext"; // Подключаем Aut
 export const Autification = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { isLoggedIn, login, logout } = useContext(AuthContext); // Получаем функции из AuthContext
+  const { isLoggedIn, login, logout, loginData } = useContext(AuthContext); // Получаем данные и функции из AuthContext
 
-  const [loginData, setLoginData] = useState({
-    login: location.state?.login || "",
-    password: location.state?.password || "",
+  const [localLoginData, setLocalLoginData] = useState({
+    login: location.state?.login || loginData?.login || "",
+    password: location.state?.password || loginData?.password || "",
   });
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleLoginChange = ({ target: { name, value } }) => {
-    setLoginData((prevData) => ({ ...prevData, [name]: value }));
+    setLocalLoginData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  // Основная логика для авторизации
   const handleLoginSubmit = useCallback(
     async (e) => {
-      e.preventDefault();  // Предотвращаем стандартное поведение формы
+      e.preventDefault();
       setError(""); // Сброс ошибок перед новым запросом
       setIsSubmitting(true); // Инициализация отправки данных
 
-      console.log("Submitting login:", loginData.login, loginData.password); // Логируем login и password в консоль
+      console.log("Submitting login:", localLoginData.login, localLoginData.password); // Логируем login и password в консоль
 
       try {
         const response = await fetch("/api/users/users", {
@@ -39,12 +38,13 @@ export const Autification = () => {
 
         const user = result?.find(
           (user) =>
-            user.Name === loginData.login && user.Password === loginData.password
+            user.Name === localLoginData.login &&
+            user.Password === localLoginData.password
         );
-        console.log(user.IdRights)
-        if (user&&true) {
-          console.log("Logged in with:", loginData.login, loginData.password); // Логируем успешный вход
-          login(loginData.login, loginData.password,user.IdRights); // Устанавливаем авторизацию через контекст
+
+        if (user) {
+          console.log("Logged in with:", localLoginData.login, localLoginData.password);
+          login(localLoginData.login, localLoginData.password, user.IdRights); // Авторизация через контекст
           navigate("/"); // Переход на главную страницу
         } else {
           setError("Неверный логин или пароль");
@@ -56,52 +56,47 @@ export const Autification = () => {
         setIsSubmitting(false); // Завершаем процесс отправки
       }
     },
-    [loginData, login, navigate]
+    [localLoginData, login, navigate]
   );
 
-  // Логика выхода
   const handleLogout = () => {
-    logout(); // Вызываем logout из AuthContext
-    setLoginData({ login: "", password: "" }); // Очищаем данные
+    logout(); // Выход через AuthContext
     navigate("/"); // Переход на главную
   };
 
-  // Переход в личный кабинет
   const handleLK = () => {
-    navigate("/personal_cabinet");
+    navigate("/personal_cabinet"); // Переход в личный кабинет
   };
 
-  // Если уже авторизован
   if (isLoggedIn) {
     return (
       <section className="registration">
         <h2>
           Вы успешно авторизованы!
-          {loginData.IdRights !== 1 && " Добро пожаловать, администратор!"}
+          {loginData?.IdRights !== 1 && " Добро пожаловать, администратор!"}
         </h2>
         <button onClick={handleLogout}>Выйти</button>
         <button onClick={handleLK}>В личный кабинет</button>
       </section>
     );
   }
-  
 
   return (
     <section className="registration">
       <h2>Авторизация</h2>
       <form onSubmit={handleLoginSubmit}>
-        <input
+      <input
           type="text"
           name="login"
           placeholder="Логин"
-          value={loginData.login}
+          value={localLoginData.login}
           onChange={handleLoginChange}
         />
         <input
           type="password"
           name="password"
           placeholder="Пароль"
-          value={loginData.password}
+          value={localLoginData.password}
           onChange={handleLoginChange}
         />
         <button type="submit" disabled={isSubmitting}>

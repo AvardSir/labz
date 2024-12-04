@@ -9,7 +9,7 @@ export const AuthProvider = ({ children }) => {
   const [loginData, setLoginData] = useState({
     login: "",
     password: "",
-    IdRights: null, // Добавляем IdRights
+    IdRights: 1, // Добавляем IdRights
   });
   const [userDetails, setUserDetails] = useState(null); // Состояние для хранения данных о пользователе
 
@@ -32,6 +32,7 @@ export const AuthProvider = ({ children }) => {
           password,
           IdRights: data.IdRights, // Обновляем IdRights
         }); 
+        
         setIsLoggedIn(true); // Устанавливаем, что пользователь вошел
 
         // Сохраняем в localStorage
@@ -50,7 +51,7 @@ export const AuthProvider = ({ children }) => {
 
   // Выход пользователя
   const logout = () => {
-    setLoginData({ login: "", password: "", IdRights: null }); // Очищаем IdRights
+    setLoginData({ login: "", password: "", IdRights: 1 }); // Очищаем IdRights
     setIsLoggedIn(false);
     setUserDetails(null); // Очищаем данные пользователя
     localStorage.removeItem('user');
