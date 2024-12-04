@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
-
+import { Header } from "../components/Header"; // Используем именованный импорт
 const EditEventPage = () => {
   const { id } = useParams(); // Извлекаем IdEvent из параметров маршрута
   const [event, setEvent] = useState({
@@ -88,6 +88,7 @@ const EditEventPage = () => {
 
   return (
     <div>
+      <Header/>
       {console.log(event)}
       <h1>Редактировать мероприятие</h1>
       <form onSubmit={handleSubmit}>

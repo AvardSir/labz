@@ -26,6 +26,7 @@ export const AuthProvider = ({ children }) => {
 
       if (response.ok) {
         const data = await response.json();
+        console.log(data.IdRights)
         setUserDetails(data); // Сохраняем данные пользователя
         setLoginData({
           login,

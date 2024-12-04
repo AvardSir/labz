@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { Header } from "../components/Header";
 export const AddEventPage = () => {
   const navigate = useNavigate();
   
@@ -83,6 +83,7 @@ export const AddEventPage = () => {
 
   return (
     <div className="add-event">
+      <Header/>
       <h2>Добавить мероприятие</h2>
       {error && <p className="error">{error}</p>}
       {successMessage && <p className="success">{successMessage}</p>}

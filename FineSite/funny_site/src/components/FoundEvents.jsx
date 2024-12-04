@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { SignUpButton } from "./SignUpButton";
 import { AuthContext } from "./context/AuthContext";
+import axios from "axios";
 
 export const FoundEvents = ({ events }) => {
   const navigate = useNavigate();
@@ -13,9 +14,23 @@ export const FoundEvents = ({ events }) => {
     // alert("Вы успешно записались на мероприятие!");
   };
 
+  const handleDelete = async (eventId) => {
+    try {
+      // Отправляем запрос на удаление мероприятия
+      const response = await axios.delete('/api/delete_event', {
+        data: { idEvent: eventId },
+      });
+      alert(response.data.message); // Сообщение от сервера
+      window.location.reload(); // Перезагружаем страницу после удаления
+    } catch (error) {
+      console.error("Ошибка при удалении мероприятия:", error);
+      alert("Ошибка при удалении мероприятия.");
+    }
+  };
+
   return (
     <div className="found-events">
-      {loginData.IdRights !== 1 && (
+      {loginData.IdRights != 1 && (
         <button onClick={() => navigate(`/add-event`)}>
           Добавить мероприятие
         </button>
@@ -37,7 +52,7 @@ export const FoundEvents = ({ events }) => {
               <p><strong>Тип мероприятия:</strong> {event.ТипМероприятия}</p>
 
               {/* Кнопка изменения мероприятия, если IdRights !== 1 */}
-              {loginData.IdRights !== 1 && (
+              {loginData.IdRights != 1 && (
                 <button
                   onClick={() => navigate(`/edit-event/${event.IdEvent}`)}
                   className="edit-button"
@@ -56,6 +71,16 @@ export const FoundEvents = ({ events }) => {
 
               {/* Кнопка записаться на мероприятие */}
               <SignUpButton eventId={event.IdEvent} onSignUp={handleSignUp} />
+
+              {/* Кнопка удаления мероприятия */}
+              {loginData.IdRights != 1 && (
+                <button
+                  onClick={() => handleDelete(event.IdEvent)}
+                  className="delete-button"
+                >
+                  Удалить
+                </button>
+              )}
             </li>
           ))}
         </ul>

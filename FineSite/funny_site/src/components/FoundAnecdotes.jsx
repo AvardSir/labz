@@ -32,7 +32,7 @@ export const FoundAnecdotes = ({ anecdotes }) => {
   return (
     <div className="found-anecdotes">
       {/* Условие отображения кнопки */}
-      {loginData.IdRights !== 1 && (
+      {loginData.IdRights != 1 && (
         <button onClick={() => navigate("/add-anecdote")}>Добавить анекдот</button>
       )}
 
@@ -52,13 +52,13 @@ export const FoundAnecdotes = ({ anecdotes }) => {
                 Перейти к комментариям
               </button>
               {/* Условие отображения кнопки "Изменить" */}
-              {loginData.IdRights !== 1 && (
+              {loginData.IdRights != 1 && (
                 <button onClick={() => navigate(`/edit-anecdote/${anecdote.IdAnecdote}`)}>
                   Изменить
                 </button>
               )}
               {/* Условие отображения кнопки "Удалить" */}
-              {loginData.IdRights !== 1 && (
+              {loginData.IdRights != 1 && (
                 <button onClick={() => handleDelete(anecdote.IdAnecdote)}>
                   Удалить
                 </button>

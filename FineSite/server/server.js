@@ -775,6 +775,44 @@ app.delete("/api/delete_anecdote", async (req, res) => {
     sql.close();
   }
 });
+app.delete("/api/delete_event", async (req, res) => {
+  const { idEvent } = req.body;  // Получаем ID мероприятия из тела запроса
+
+  // Проверка на корректность ID
+  if (!idEvent || isNaN(idEvent)) {
+    return res.status(400).json({ error: 'Некорректный ID мероприятия' });
+  }
+
+  try {
+    // Подключаемся к базе данных
+    const pool = await sql.connect(dbConfig);
+
+    // Проверка на наличие мероприятия с таким ID
+    const checkEvent = await pool
+      .request()
+      .input("IdEvent", sql.Int, idEvent)
+      .query("SELECT 1 FROM [dbo].[Мероприятие] WHERE [IdEvent] = @IdEvent");
+
+    if (checkEvent.recordset.length === 0) {
+      return res.status(404).json({ error: 'Мероприятие не найдено' });
+    }
+
+    // Выполнение процедуры удаления
+    await pool
+      .request()
+      .input("IdEvent", sql.Int, idEvent)
+      .execute("DeleteEventById"); // Имя вашей процедуры удаления
+
+    // Отправляем успешный ответ
+    res.status(200).json({ message: "Мероприятие успешно удалено" });
+  } catch (error) {
+    console.error("Ошибка при удалении мероприятия:", error);
+    res.status(500).json({ error: 'Произошла ошибка при удалении мероприятия' });
+  } finally {
+    // Закрываем соединение с базой данных
+    sql.close();
+  }
+});
 
 // Запуск сервера
 const PORT = 5000;

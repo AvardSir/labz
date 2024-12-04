@@ -72,8 +72,9 @@ export const Autification = () => {
     return (
       <section className="registration">
         <h2>
+        {console.log(loginData.IdRights!=1)}
           Вы успешно авторизованы!
-          {loginData?.IdRights !== 1 && " Добро пожаловать, администратор!"}
+          {loginData?.IdRights != 1 && " Добро пожаловать, администратор!"}
         </h2>
         <button onClick={handleLogout}>Выйти</button>
         <button onClick={handleLK}>В личный кабинет</button>
