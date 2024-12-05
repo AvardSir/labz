@@ -35,7 +35,7 @@ export const FoundEvents = ({ events }) => {
           Добавить мероприятие
         </button>
       )}
-
+{/* so much to do so mucj to say */}
       <h3>Найденные мероприятия</h3>
       {events.length === 0 ? (
         <p>Ничего не найдено</p>
