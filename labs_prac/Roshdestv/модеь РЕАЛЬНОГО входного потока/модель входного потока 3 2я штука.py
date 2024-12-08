@@ -22,3 +22,4 @@ plt.title('Модель пуассоновского потока')
 plt.grid()
 plt.legend()
 plt.show()
+аоаоаоа
