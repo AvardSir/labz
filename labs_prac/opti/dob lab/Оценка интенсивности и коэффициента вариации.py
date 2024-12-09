@@ -11,7 +11,7 @@ def calculate_vals(k_param, lyambd, N):
         lmbd_old, nu_old = lmbd_new, nu_new
         u = np.random.gamma(k_param, 1 / lyambd, N)
         m_u = np.mean(u)  # мат. ожидание
-        sigma_u = np.std(u, ddof=1)  # стандартное отклонение
+        sigma_u = np.std(u, ddof=1)  # стандартное отклонение ddof=1 отклонение для выборочной
         lmbd_new = 1 / m_u  # интенсивность потока
         nu_new = sigma_u / m_u  # коэффициент вариации потока
         lmbds.append(lmbd_new)
@@ -20,8 +20,8 @@ def calculate_vals(k_param, lyambd, N):
 
     return lmbds, nus, Ns
 
-def plot_results(mass_N, mass_l, mass_v, k, lmbda):
-    lambda_t = lmbda / k 
+def plot_results(mass_N, mass_l, mass_v, k, lyambd):
+    lambda_t = lyambd / k 
     nu_t = 1 / np.sqrt(k) 
 
     plt.figure(figsize=(16, 7))
@@ -30,7 +30,7 @@ def plot_results(mass_N, mass_l, mass_v, k, lmbda):
     ax1 = plt.subplot(1, 2, 1)
     ax1.axhline(lambda_t, color='red', linestyle='--', label='Теоретическое значение')
     ax1.plot(mass_N, mass_l, label='Рассчитанное значение')
-    ax1.set_title(f'Интенсивность потока при k = {k} и λ = {lmbda}')
+    ax1.set_title(f'Интенсивность потока при k = {k} и λ = {lyambd}')
     ax1.set_xlabel('Размер выборки')
     ax1.set_ylabel('Оценка интенсивности')
     ax1.legend()
@@ -40,7 +40,7 @@ def plot_results(mass_N, mass_l, mass_v, k, lmbda):
     ax2 = plt.subplot(1, 2, 2)
     ax2.axhline(nu_t, color='red', linestyle='--', label='Теоретическое значение')
     ax2.plot(mass_N, mass_v, label='Рассчитанное значение')
-    ax2.set_title(f'Коэффициент вариации при k = {k} и λ = {lmbda}')
+    ax2.set_title(f'Коэффициент вариации при k = {k} и λ = {lyambd}')
     ax2.set_xlabel('Размер выборки')
     ax2.set_ylabel('Коэффициент вариации')
     ax2.legend()
@@ -51,9 +51,9 @@ def plot_results(mass_N, mass_l, mass_v, k, lmbda):
 
 # Задайте параметры
 k = 1  # Пример значения k
-l = 1  # Пример значения λ
+lyambd = 1  # Пример значения λ
 N_start = 10000
 
 # Выполнение расчетов и построение графиков
-mass_l, mass_v, mass_N = calculate_vals(k, l, N_start)
-plot_results(mass_N, mass_l, mass_v, k, l)
+mass_l, mass_v, mass_N = calculate_vals(k, lyambd, N_start)
+plot_results(mass_N, mass_l, mass_v, k, lyambd)
