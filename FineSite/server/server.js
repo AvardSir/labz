@@ -18,11 +18,6 @@ const dbConfig = {
     },
 };
 
-// Подключение к базе данных
-sql.connect(dbConfig).then(() => {
-    console.log('Подключено к базе данных!');
-}).catch(err => console.error('Ошибка подключения к БД:', err));
-
 const poolPromise = new sql.ConnectionPool(dbConfig)
     .connect()
     .then(pool => {
