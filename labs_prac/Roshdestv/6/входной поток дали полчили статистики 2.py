@@ -52,14 +52,27 @@ variance_inter_arrival_time_output = np.var(inter_arrival_times_output) if len(i
 print(f"Среднее межприбытие заявок на выходе: {mean_inter_arrival_time_output:.3f} сек")
 print(f"Дисперсия межприбытия заявок на выходе: {variance_inter_arrival_time_output:.3f}")
 
-# График входного и принятого потоков
-plt.figure(figsize=(10, 6))
-plt.scatter(arrival_times, [1] * len(arrival_times), color='red', label="Пропущенные заявки", alpha=0.6)
-plt.scatter(accepted_times, [1] * len(accepted_times), color='green', label="Принятые заявки", alpha=0.6)
-plt.scatter(finish_times, [1] * len(finish_times), color='blue', label="Окончание обслуживания", alpha=0.6)
+# Графики
+plt.figure(figsize=(12, 6))
+
+# Первый график (входной поток)
+plt.subplot(1, 2, 1)
+plt.plot(arrival_times, np.ones(len(arrival_times)), 'ro', label='Входной поток (прибытие заявок)', alpha=0.6)
 plt.xlabel("Время (сек)")
 plt.ylabel("Событие")
 plt.legend()
-plt.title("Моделирование СМО M/D/1 с отказами")
-plt.grid()
+plt.title("Входной поток (прибытие заявок)")
+plt.grid(True)
+
+# Второй график (обслуженные заявки)
+plt.subplot(1, 2, 2)
+plt.plot(finish_times, np.ones(len(finish_times)), 'go', label='Поток обслуженных заявок', alpha=0.6)
+plt.xlabel("Время (сек)")
+plt.ylabel("Событие")
+plt.legend()
+plt.title("Поток обслуженных заявок")
+plt.grid(True)
+
+# Отображение графиков
+plt.tight_layout()
 plt.show()
