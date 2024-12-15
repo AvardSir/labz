@@ -144,7 +144,7 @@ export const EditAnecdotePage = () => {
               ))}
             </select>
           </div>
-
+{/* атутут */}
           <button type="submit" disabled={loading}>
             {loading ? "Сохранение..." : "Сохранить изменения"}
           </button>
