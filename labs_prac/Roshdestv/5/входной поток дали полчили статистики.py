@@ -19,6 +19,7 @@ start_service_times = []  # времена начала обслуживания
 finish_service_times = []  # времена завершения обслуживания
 
 # Генерация пуассоновского входного потока
+current_time = 0
 while current_time < simulation_time:
     inter_arrival_time = np.random.exponential(1 / lambda_rate)
     current_time += inter_arrival_time
