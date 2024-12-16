@@ -86,7 +86,7 @@ buffer_times = [t for t in accepted_times if t not in arrival_times]
 plt.scatter(buffer_times, np.ones_like(buffer_times) * 3, color='orange', label="Заявки из буфера", alpha=0.6)
 plt.scatter(finish_times, np.ones_like(finish_times) * 4, color='blue', label="Окончание обслуживания", alpha=0.6)
 
-# Настройки графика
+# Настройки графика ададад
 plt.xlabel("Время (сек)")
 plt.ylabel("Событие")
 plt.yticks([1, 2, 3, 4], ['Прибывшие заявки', 'Принятые заявки', 'Заявки из буфера', 'Завершение обслуживания'])
