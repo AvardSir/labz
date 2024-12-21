@@ -139,6 +139,7 @@ lambda_rate_output = k / mean_inter_arrival_time_output if mean_inter_arrival_ti
 d_stat, p_value = kstest(inter_arrival_times_output, 'erlang', args=(k, 0, 1 / lambda_rate_output))
 
 # аа.а
+# хах
 # Вывод результатов
 print(f"Коэффициент вариации (вход): {cv_input:.3f}")
 print(f"Коэффициент вариации (выход): {cv_output:.3f}")
