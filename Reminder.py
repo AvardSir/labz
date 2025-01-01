@@ -3,7 +3,7 @@ import random
 
 def close_window():
     root.destroy()
-
+# аажажаж
 def create_circle(canvas, x, y, size, color):
     """Создает круг на холсте."""
     return canvas.create_oval(
