@@ -5,7 +5,7 @@ export const UserView = ({ user, onUpdate }) => {
     const { name, value } = e.target;
     onUpdate({ [name]: value });
   };
-
+// йойойо
   return (
     <div>
       <h1>User Profile</h1>
