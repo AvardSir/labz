@@ -1,19 +1,39 @@
+
+
 /**
  * @param {string} s
  * @return {boolean}
  */
-let bad_bracket=[')',']','}']
-let good_bracket=[]
+
+// console.log(good_bracket)
+var isValid = function(s) {
+    let bad_bracket=[')',']','}']
+let good_bracket=['(','[','{']
+
+const bracket_dict={}
 for (let i = 0; i < bad_bracket.length; i++) {
     const element = bad_bracket[i];
-    good_bracket[i]=bad_bracket[i].reverse
+    bracket_dict[good_bracket[i]]=bad_bracket[i]
 }
 
-console.log(good_bracket)
-var isValid = function(s) {
-    for (let i = 0; i < array.length; i++) {
+// console.log(bracket_dict)
+cache=[]
+    for (let i = 0; i < s.length; i++) {
         const element = s[i];
-        if (element==')'){}
+        if (bad_bracket.includes(element) && cache[cache.length-1]!=element){
+
+            return false
+        }
+        if (bad_bracket.includes(element) && cache[cache.length-1]==element){
+            s[i]='|'
+            cache.pop();
+        }
+        if (good_bracket.includes(element)){
+            cache.push(element)
+        }
     }
+    return true
 };
 
+
+console.log(isValid('()'))
