@@ -1,4 +1,4 @@
-console.log('f')
+// console.log('ff')
 
 /**
  * @param {string} s
@@ -29,11 +29,13 @@ for (let i = 0; i < s.length; i++) {
         cache.pop();
     }
     if (left_bracket.includes(element)){
-        cache.push(element)
+        cache.push(bracket_dict[element])
     }
 }
 return true
 };
 
 
-console.log(isValid('()'))
+s='(([]))'
+
+console.log(isValid(s))
