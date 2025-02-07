@@ -95,4 +95,3 @@ function substrings(s) {
 let s= 'abcd'
 let a=substrings(s)
 
-let ab=3
