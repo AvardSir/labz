@@ -45,3 +45,20 @@ const nums=[31,-41,59,26,-53,58,97,-93,-23,84]
 console.log((maxSubArray(nums)))
 
 
+// чужое решение
+var maxSubArray = function(nums) {
+    let res = nums[0];
+    let total = 0;
+
+    for (let n of nums) {
+        if (total < 0) {
+            total = 0;
+        }
+
+        total += n;
+        res = Math.max(res, total);
+    }
+    
+    return res;    
+};
+
