@@ -9,7 +9,7 @@ audio_file = 'output.mp3'
 y, sr = librosa.load(audio_file, sr=None, mono=False)  # Загрузка стерео-аудио
 
 # Функция для визуализации амплитудного спектра для обоих каналов
-def plot_amplitude_spectrum_combined(y_left, y_right):
+def plot_amplitude_spectrum_combined(y_left, y_right, sr):
     Spectr_left = np.fft.fft(y_left)  # БПФ для левого канала
     Spectr_right = np.fft.fft(y_right)  # БПФ для правого канала
     AS_left = np.abs(Spectr_left)  # Модуль спектра левого канала
@@ -19,12 +19,8 @@ def plot_amplitude_spectrum_combined(y_left, y_right):
     S_dB_left = librosa.amplitude_to_db(AS_left, ref=np.max)
     S_dB_right = librosa.amplitude_to_db(AS_right, ref=np.max)
 
-    # Убираем значения ниже -10 дБ
-    # S_dB_left[S_dB_left < -10] = np.nan
-    # S_dB_right[S_dB_right < -10] = np.nan
-
     # Набор частот для оси X
-    f = np.arange(0, sr / 2, sr / len(S_dB_left))
+    f = np.linspace(0, sr / 2, len(S_dB_left))  # Частоты от 0 до Nyquist частоты
     S_dB_left = S_dB_left[:len(f)]  # Выравниваем длины
     S_dB_right = S_dB_right[:len(f)]  # Выравниваем длины
 
@@ -33,6 +29,9 @@ def plot_amplitude_spectrum_combined(y_left, y_right):
     plt.plot(f, S_dB_left, label='Левый канал')  # График для левого канала
     plt.plot(f, S_dB_right, label='Правый канал')  # График для правого канала
     plt.grid(True)
+    
+    # Установка логарифмической шкалы для оси X
+    plt.xscale('log')
     plt.xlim(2300, 3700)  # Ограничение по частоте
     plt.xlabel('Частота (Гц)')
     plt.ylabel('Уровень (дБ)')
@@ -41,11 +40,9 @@ def plot_amplitude_spectrum_combined(y_left, y_right):
 
     plt.show()
 
-
-
-
 # Визуализация амплитудного спектра для обоих каналов
-plot_amplitude_spectrum_combined(y[0, :], y[1, :])
+plot_amplitude_spectrum_combined(y[0, :], y[1, :], sr)
+
 
 
 # Функция для визуализации спектрограммы для обоих каналов
