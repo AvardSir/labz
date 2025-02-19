@@ -16,12 +16,9 @@ var numTilePossibilities = function(tiles) {
             for (let j = 0; j <= tiles.length  > 0; j++) {
                 for (let k = 1; k <= counts[i]; k++) {
                     let totallength = j + k;
-                    let prev_lengthcounts=lengthcounts[j]
-                    let fac_totallength=fac[totallength]
-                    let fac_k=fac[k]
-                    let fac_j=fac[j]
-                    let all=lengthcounts[j] * fac[totallength] / (fac[k] * fac[j])
-                    temp[totallength] += lengthcounts[j] * fac[totallength] / ( fac[k] *fac[j]);
+                    
+                    temp[totallength] = temp[totallength] + (lengthcounts[j] * totallength) / (fac[k]);
+
                 }
             }
             let ab=32
@@ -38,7 +35,9 @@ var numTilePossibilities = function(tiles) {
 tiles ="AAABBC"
 tiles='AAB'
 tiles='AACD'
-tiles='AABC'
+tiles='AABB'
+
+tiles='ABC'
 let aaa =numTilePossibilities(tiles) 
 let arr=[0,0]
 let ab32='a'.charCodeAt(0)-'A'.charCodeAt(0)

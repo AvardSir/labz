@@ -10,21 +10,23 @@ var numTilePossibilities = function(tiles) {
     
     let lengthcounts = Array(tiles.length + 1).fill(0);
     lengthcounts[0] = 1;
+    memo_temo_arr=[]
     for (let i = 0; i < 26; i++) {
         if (counts[i] > 0) {
             let temp = Array(tiles.length + 1).fill(0);
             for (let j = 0; j <= tiles.length  > 0; j++) {
-                for (let k = 1; k <= counts[i]; k++) {
-                    let totallength = j + k;
+                
+                    let totallength = j +1
                     let prev_lengthcounts=lengthcounts[j]
                     let fac_totallength=fac[totallength]
-                    let fac_k=fac[k]
+                    
                     let fac_j=fac[j]
-                    let all=lengthcounts[j] * fac[totallength] / (fac[k] * fac[j])
-                    temp[totallength] += lengthcounts[j] * fac[totallength] / ( fac[k] *fac[j]);
-                }
+                    let all=lengthcounts[j] * fac[totallength] / ( fac[j])
+                    temp[totallength] += lengthcounts[j] * totallength;
+                
             }
             let ab=32
+            memo_temo_arr.push(temp)
             for (let j = 0; j <= tiles.length; j++) {
                 lengthcounts[j] += temp[j];
             }
@@ -38,7 +40,7 @@ var numTilePossibilities = function(tiles) {
 tiles ="AAABBC"
 tiles='AAB'
 tiles='AACD'
-tiles='AABC'
+tiles='AAB'
 let aaa =numTilePossibilities(tiles) 
 let arr=[0,0]
 let ab32='a'.charCodeAt(0)-'A'.charCodeAt(0)
