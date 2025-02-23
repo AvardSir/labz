@@ -16,3 +16,5 @@ var canCompleteCircuit = function(gas, cost) {
 
     return totalGas < 0 ? -1 : start;    
 };
+
+ааа
