@@ -1,67 +1,79 @@
 import numpy as np
+import matplotlib.pyplot as plt
 import librosa
 import librosa.display
-import matplotlib.pyplot as plt
+import soundfile as sf
 
-# Считывание MP3 файла
-file_path = "meander_signal.mp3"
-data, samplerate = librosa.load(file_path, sr=None, mono=False)
+plt.close('all')  # Очистка памяти
 
-# Преобразование в моно тк  левый и правый канал одинаковы
-data = np.mean(data, axis=0)
+# Загрузка данных звукового файла - стерео
+input_signal, Fd = librosa.load('white noiz.mp3', sr=None, mono=False)
 
-# Временная область
-time = np.arange(len(data)) / samplerate
+# Проверяем, является ли сигнал стерео или моно
+if input_signal.ndim == 1:
+    input_signal = np.expand_dims(input_signal, axis=0)  # Преобразуем в 2D массив для единообразия
 
-# Частотный анализ
-frequencies = np.fft.rfftfreq(len(data), d=1 / samplerate)
-spectrum = np.abs(np.fft.rfft(data))
-spectrum_db = librosa.amplitude_to_db(spectrum + 1e-10, ref=np.max)
+# Уменьшаем значения всех отсчетов
+input_signal /= 3.0
 
+# Получить длину данных аудиофайла
+N = input_signal.shape[1]
+T = N / Fd
+t = np.linspace(0, T, N)
 
-# STFT спектрограмма 
-n_fft = 2048  # значения для БПФ. Чем выше тем лучше качество
-hop_length = n_fft // 2  # Больше hop_length — меньше окон, быстрее вычисления
-D = librosa.stft(data, n_fft=n_fft, hop_length=hop_length, window='hann')
-D_db = librosa.amplitude_to_db(np.abs(D), ref=np.max)
+# Вычисляем спектр входного сигнала
+Spectr_input = np.fft.fft(input_signal, axis=1)
 
-# Визуализация
-plt.figure(figsize=(14, 12))
+# Преобразуем в дБ:
+AS_input = np.abs(Spectr_input)
+eps = np.max(AS_input) * 1.0e-9
+S_dB_input = 20 * np.log10(AS_input + eps)
 
-# 1. Временная область
-plt.subplot(3, 1, 1)
-plt.plot(time, data, color='blue', lw=0.8)
-plt.title("Временная область (Сигнал)", fontsize=14, pad=15)  # Увеличенный отступ
-plt.xlabel("Время (с)", fontsize=12, labelpad=10)  # Отступ подписи
-plt.ylabel("Амплитуда", fontsize=12, labelpad=10)  # Отступ подписи
-plt.grid(alpha=0.5)
+# Задаем граничные частоты диапазона усиления, в Герцах
+lower_frequency = 4000
+upper_frequency = 10000
 
-# 2. Спектр амплитуд
-plt.subplot(3, 1, 2)
-plt.semilogx(frequencies, spectrum_db, color='green', lw=0.8)
-plt.axvline(x=400, color='red', linestyle='--', label="400 Гц")  # Линия на 400 Гц
-plt.title("Спектр амплитуд", fontsize=14, pad=15)  # Увеличенный отступ
-plt.xlabel("Частота (Гц)", fontsize=12, labelpad=10)  # Отступ подписи
-plt.ylabel("Амплитуда (дБ)", fontsize=12, labelpad=10)  # Отступ подписи
-plt.legend()
-plt.grid(alpha=0.5)
+# Переводим Герцы в целочисленные индексы массива:
+n_dn = round(N * lower_frequency / Fd)
+n_up = round(N * upper_frequency / Fd)
 
-# 3. Спектрограмма
-plt.subplot(3, 1, 3)
-img = librosa.display.specshow(D_db, x_axis='time', y_axis='log', sr=samplerate,
-                               hop_length=hop_length, cmap='magma', vmin=-80, vmax=0)
-plt.axhline(y=400, color='red', linestyle='--', label="400 Гц")  # Линия на 400 Гц
-plt.title("Спектрограмма", fontsize=14, pad=15)  # Увеличенный отступ
-plt.xlabel("Время (с)", fontsize=12, labelpad=10)  # Отступ подписи
-plt.ylabel("Частота (Гц)", fontsize=12, labelpad=10)  # Отступ подписи
-plt.legend()
+# Создаем массив коэффициентов усиления
+W = np.ones_like(Spectr_input)
 
-# Добавление цветовой шкалы
-cbar = plt.colorbar(img, format="%+2.0f dB")
-cbar.set_label('Амплитуда (дБ)', fontsize=12, labelpad=10)  # Отступ подписи
+# Усиливаем диапазон 4..10 кГц в 3 раза
+W[:, n_dn:n_up + 1] = 3.0  # первая половина
+W[:, N - n_up:N - n_dn + 1] = 3.0  # 'зеркальная' половина
 
-# Увеличиваем расстояние между графиками
-plt.subplots_adjust(hspace=0.5)
+# Применяем фильтр
+Spectr_output = Spectr_input * W
 
-# Отображение графиков
+# Обратное БПФ от модифицированного спектра:
+output_signal = np.real(np.fft.ifft(Spectr_output, axis=1))
+
+# Спектрограмма до и после обработки
+n_fft = 2048
+hop_length = n_fft // 2
+D_input = librosa.stft(input_signal[0], n_fft=n_fft, hop_length=hop_length, window='hann')
+D_output = librosa.stft(output_signal[0], n_fft=n_fft, hop_length=hop_length, window='hann')
+D_db_input = librosa.amplitude_to_db(np.abs(D_input), ref=np.max)
+D_db_output = librosa.amplitude_to_db(np.abs(D_output), ref=np.max)
+
+plt.figure(figsize=(14, 8))
+
+# Спектрограмма входного сигнала
+plt.subplot(2, 1, 1)
+librosa.display.specshow(D_db_input, x_axis='time', y_axis='log', sr=Fd, hop_length=hop_length, cmap='magma')
+plt.title("Спектрограмма входного сигнала")
+plt.colorbar(label='Амплитуда (дБ)')
+
+# Спектрограмма выходного сигнала
+plt.subplot(2, 1, 2)
+librosa.display.specshow(D_db_output, x_axis='time', y_axis='log', sr=Fd, hop_length=hop_length, cmap='magma')
+plt.title("Спектрограмма выходного сигнала")
+plt.colorbar(label='Амплитуда (дБ)')
+
+plt.tight_layout()
 plt.show()
+
+# Записываем новый аудиофайл
+sf.write('output.wav', np.transpose(output_signal), Fd)
