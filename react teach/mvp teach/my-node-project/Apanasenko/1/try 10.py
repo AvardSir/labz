@@ -1,0 +1,139 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Исходные данные
+R = 1.0  # расстояние в км (1000 м)
+P_tx = 320  # мощность передатчика, Вт
+f0 = 1800e6  # частота, Гц (1800 МГц)
+delta_f = 20e6  # ширина канала, Гц (20 МГц)
+kn = 3  # коэффициент, заданный пользователем
+
+h_BS = 50  # высота базовой станции, м
+h_MS = 10  # высота мобильной станции, м
+
+# Константы
+k = 1.38e-23  # постоянная Больцмана, Дж/К
+T = 290  # температура, К
+
+# потери по модели Окумура-Хата в дБ
+def okumura_hata_loss(d):
+    a_hMS = (1.1 * np.log10(f0) - 0.7) * h_MS - (1.56 * np.log10(f0) - 0.8)
+    L = 46.3 + 33.9 * np.log10(f0) - 13.82 * np.log10(h_BS) - a_hMS + (44.9 - 6.55 * np.log10(h_MS)) * np.log10(d)
+    return L
+
+# Мощности шума
+def noise_power():
+    return k * T * delta_f * kn
+
+# SNR
+def calculate_snr(d):
+    L = okumura_hata_loss(d)
+    P_rx = P_tx / (10 ** (L / 10))  # Мощность принимаемого сигнала
+    P_noise = noise_power()          # Мощность шума
+    snr = P_rx / P_noise             # SNR
+    return snr
+
+# Функция для расчета пропускной способности
+def calculate_capacity(d):
+    snr = calculate_snr(d)
+    return delta_f * np.log2(1 + snr) / 1e6  # Переводим в Мбит/с
+
+
+
+# Алгоритмы распределения ресурсов
+def PRS(C_array, N):
+    return [(np.sum(C_array ** (-1))) ** (-1)] * N
+
+def PSS(C_array, N):
+    result = np.zeros(N)
+    max_index = np.argmax(C_array)
+    result[max_index] = C_array[max_index]
+    return result
+
+def PRD(C_array, N):
+    return C_array / N
+
+# Основная функция моделирования
+def simulate(N, num_simulations=200):
+    total_sum_D = {'PRS': [], 'PSS': [], 'PRD': []}
+    avg_D = {'PRS': [], 'PSS': [], 'PRD': []}
+    min_D = {'PRS': [], 'PSS': [], 'PRD': []}
+
+    for _ in range(num_simulations):
+        distances = np.sqrt(np.random.uniform(0.1, R**2, N))  # Минимальное расстояние 0.1 км
+        c_array = np.array([calculate_capacity(d) for d in distances])
+
+        # ПРС
+        D_prs = PRS(c_array, N)
+        total_sum_D['PRS'].append(np.sum(D_prs))
+        avg_D['PRS'].append(np.mean(D_prs))
+        min_D['PRS'].append(np.min(D_prs))
+
+        # ПСС
+        D_array_pss = PSS(c_array, N)
+        total_sum_D['PSS'].append(np.sum(D_array_pss))
+        avg_D['PSS'].append(np.mean(D_array_pss))
+        min_D['PSS'].append(np.min(D_array_pss))
+
+        # ПРД
+        D_array_prd = PRD(c_array, N)
+        total_sum_D['PRD'].append(np.sum(D_array_prd))
+        avg_D['PRD'].append(np.mean(D_array_prd))
+        min_D['PRD'].append(np.min(D_array_prd))
+
+    # Усреднение результатов по всем симуляциям
+    for key in total_sum_D:
+        total_sum_D[key] = np.mean(total_sum_D[key])
+        avg_D[key] = np.mean(avg_D[key])
+        min_D[key] = np.mean(min_D[key])
+
+    return total_sum_D, avg_D, min_D
+
+N_values = [1, 2, 4, 8, 16, 32, 64]
+total_sum_D = {'PRS': [], 'PSS': [], 'PRD': []}
+avg_D_array = {'PRS': [], 'PSS': [], 'PRD': []}
+min_D_array = {'PRS': [], 'PSS': [], 'PRD': []}
+
+for N in N_values:
+    total_sum_rate, avg_D, min_D = simulate(N)
+    for key in total_sum_rate:
+        total_sum_D[key].append(total_sum_rate[key])
+        avg_D_array[key].append(avg_D[key])
+        min_D_array[key].append(min_D[key])
+
+plt.figure(figsize=(15, 10))
+
+# График суммарной скорости
+plt.subplot(3, 1, 1)
+for key in total_sum_D:
+    plt.plot(N_values, total_sum_D[key], label=key)
+plt.xlabel('Число абонентов (N)')
+plt.ylabel('Суммарная скорость (Мбит/с)')
+plt.title('Суммарная скорость передачи данных')
+plt.legend()
+plt.grid()
+plt.tight_layout(pad=2.0)
+
+# График средней скорости
+plt.subplot(3, 1, 2)
+for key in avg_D_array:
+    plt.plot(N_values, avg_D_array[key], label=key)
+plt.xlabel('Число абонентов (N)')
+plt.ylabel('Средняя скорость (Мбит/с)')
+plt.title('Средняя скорость передачи данных')
+plt.legend()
+plt.grid()
+plt.tight_layout(pad=2.0)
+
+# График минимальной скорости
+plt.subplot(3, 1, 3)
+for key in min_D_array:
+    plt.plot(N_values, min_D_array[key], label=key)
+plt.xlabel('Число абонентов (N)')
+plt.ylabel('Средняя минимальная скорость (Мбит/с)')
+plt.title('Средняя минимальная скорость передачи данных')
+plt.legend()
+plt.grid()
+plt.tight_layout(pad=2.0)
+
+plt.show()
