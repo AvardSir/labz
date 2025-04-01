@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Чтение изображения
-input_image = cv2.imread('kotik.jpeg')
+input_image = cv2.imread('panda.jpg')
 
 # Неприятная такая вещь в cv2 - не RGB, а BGR-формат
 LAB_image = cv2.cvtColor(input_image, cv2.COLOR_BGR2LAB)

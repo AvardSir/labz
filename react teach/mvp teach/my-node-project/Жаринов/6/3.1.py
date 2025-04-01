@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Чтение изображения
-input_image = cv2.imread('kotik.jpeg')
+input_image = cv2.imread('panda.jpg')
 
 # В черно-белое переводим, ибо нам только края
 L = cv2.cvtColor(input_image, cv2.COLOR_BGR2GRAY)
