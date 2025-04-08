@@ -201,3 +201,13 @@ ul {
 .event-item {
   background-color: #451740; /* Цвет для мероприятий */
 }
+
+
+.ads-row {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 20px;
+  flex-wrap: wrap; /* Для адаптивности на маленьких экранах */
+  margin-top: 20px;
+}
