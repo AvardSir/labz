@@ -6,63 +6,77 @@ import axios from "axios"; // Импортируем axios
 
 export const FoundAnecdotes = ({ anecdotes }) => {
   const navigate = useNavigate();
-  const { loginData } = useContext(AuthContext); // Достаем loginData из контекста
+  const { loginData } = useContext(AuthContext);
 
   const handleDelete = async (idAnecdote) => {
     try {
-      // Отправляем DELETE запрос на сервер
       const response = await axios.delete("/api/delete_anecdote", {
-        data: { idAnecdote }, // Передаем ID анекдота в теле запроса
+        data: { idAnecdote },
       });
-      
-      // Если удаление прошло успешно, показываем сообщение
       alert(response.data.message);
-      
-      // Здесь вы можете обновить список анекдотов, чтобы отобразить актуальные данные
-      // Например, вызвать функцию для обновления списка анекдотов
       window.location.reload();
-
     } catch (error) {
       console.error("Ошибка при удалении анекдота:", error);
       alert("Произошла ошибка при удалении анекдота");
     }
   };
 
-
   return (
     <div className="found-anecdotes">
-      {/* Условие отображения кнопки */}
       {loginData.IdRights != 1 && (
-        <button onClick={() => navigate("/add-anecdote")}>Добавить анекдот</button>
+        <button 
+          onClick={() => navigate("/add-anecdote")}
+          className="action-btn add-btn"
+        >
+          ✚ Добавить анекдот
+        </button>
       )}
 
-      <h3>Найденные анекдоты</h3>
+      <h3 className="section-title">Найденные анекдоты</h3>
+      
       {anecdotes.length === 0 ? (
-        <p>Ничего не найдено</p>
+        <p className="empty-message">Ничего не найдено</p>
       ) : (
-        <ul>
+        <ul className="anecdotes-list">
           {anecdotes.map((anecdote) => (
-            <li key={anecdote.IdAnecdote} className="anecdote-item">
-              <p><strong>Текст:</strong> {anecdote.Text}</p>
-              <p><strong>Дата:</strong> {new Date(anecdote.Date).toLocaleDateString()}</p>
-              <p><strong>Рейтинг:</strong> {anecdote.Rate}</p>
-              <p><strong>Автор:</strong> {anecdote.UserName}</p>
-              <p><strong>Тип:</strong> {anecdote.AnecdoteType.trim()}</p>
-              <button onClick={() => navigate(`/anecdote-comments/${anecdote.IdAnecdote}`)}>
-                Перейти к комментариям
-              </button>
-              {/* Условие отображения кнопки "Изменить" */}
-              {loginData.IdRights != 1 && (
-                <button onClick={() => navigate(`/edit-anecdote/${anecdote.IdAnecdote}`)}>
-                  Изменить
+            <li key={anecdote.IdAnecdote} className="card">
+            
+            <div className="card-content">
+              <p>{anecdote.Text}</p>
+            </div>
+            
+            <div className="card-meta">
+              <span>🏷️ {anecdote.AnecdoteType.trim()}</span>
+              <span>📅 {new Date(anecdote.Date).toLocaleDateString()}</span>
+              <span>⭐ {anecdote.Rate}</span>
+              <span>👤 {anecdote.UserName}</span>
+            </div>
+              
+              <div className="action-buttons">
+                <button 
+                  onClick={() => navigate(`/anecdote-comments/${anecdote.IdAnecdote}`)}
+                  
+                >
+                  💬 Комментарии
                 </button>
-              )}
-              {/* Условие отображения кнопки "Удалить" */}
-              {loginData.IdRights != 1 && (
-                <button onClick={() => handleDelete(anecdote.IdAnecdote)}>
-                  Удалить
-                </button>
-              )}
+                
+                {loginData.IdRights != 1 && (
+                  <>
+                    <button 
+                      onClick={() => navigate(`/edit-anecdote/${anecdote.IdAnecdote}`)}
+                      className="action-btn edit-btn"
+                    >
+                      ✏️ Изменить
+                    </button>
+                    <button 
+                      onClick={() => handleDelete(anecdote.IdAnecdote)}
+                      className="action-btn delete-btn"
+                    >
+                      🗑️ Удалить
+                    </button>
+                  </>
+                )}
+              </div>
             </li>
           ))}
         </ul>

@@ -1,3 +1,4 @@
+//AnecdotesPage.jsx
 import React from "react";
 import { Header } from "../components/Header.jsx";
 import { RegistrationForm } from "../components/Autification.jsx";
@@ -9,6 +10,16 @@ import "../css/HomePage.css";
 
 const EventsPage = () => {
   return (
+    // <Header />
+    // <div className="main-container horizontal-layout">
+    //   <HomePage />
+      
+    //   <div className="main-container">
+        
+    //     <SearchSection />
+    //   </div>
+    // </div>
+
     <div className="main-container">
       <HomePage />
       <SearchSection />

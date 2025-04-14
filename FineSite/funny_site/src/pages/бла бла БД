@@ -1,0 +1,940 @@
+USE [FunnySite]
+GO
+/****** Object:  Table [dbo].[EventTypeId]    Script Date: 14.04.2025 23:23:44 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[EventTypeId](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[EventTypeName] [nvarchar](100) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Анекдот]    Script Date: 14.04.2025 23:23:44 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Анекдот](
+	[IdAnecdote] [int] IDENTITY(1,1) NOT NULL,
+	[Text] [nvarchar](max) NULL,
+	[Date] [datetime] NULL,
+	[Rate] [int] NULL,
+	[IdUser] [int] NULL,
+	[IdTypeAnecdote] [int] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[IdAnecdote] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Запись_на_мероприятие]    Script Date: 14.04.2025 23:23:44 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Запись_на_мероприятие](
+	[IdEntries] [int] IDENTITY(1,1) NOT NULL,
+	[IdEvent] [int] NOT NULL,
+	[IdUser] [int] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[IdEntries] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Коментарий_Мероприятия]    Script Date: 14.04.2025 23:23:44 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Коментарий_Мероприятия](
+	[IdCommentsEvents] [int] IDENTITY(1,1) NOT NULL,
+	[Text] [nvarchar](500) NOT NULL,
+	[Date] [datetime] NOT NULL,
+	[IdEvent] [int] NOT NULL,
+	[IdUser] [int] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[IdCommentsEvents] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Комментарий_анекдота]    Script Date: 14.04.2025 23:23:44 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Комментарий_анекдота](
+	[IdCommentsontheAnecdote] [int] IDENTITY(1,1) NOT NULL,
+	[Text] [nvarchar](500) NOT NULL,
+	[Date] [datetime] NOT NULL,
+	[IdUser] [int] NOT NULL,
+	[IdAnecdote] [int] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[IdCommentsontheAnecdote] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Мероприятие]    Script Date: 14.04.2025 23:23:44 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Мероприятие](
+	[IdEvent] [int] IDENTITY(1,1) NOT NULL,
+	[Description] [nvarchar](max) NULL,
+	[Date] [datetime] NULL,
+	[Стоимость] [decimal](18, 2) NULL,
+	[HowManyFreeSeats] [int] NULL,
+	[Name] [nvarchar](255) NULL,
+	[Проведено] [bit] NULL,
+	[EventTypeId] [int] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[IdEvent] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Пользователь]    Script Date: 14.04.2025 23:23:44 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Пользователь](
+	[IdUser] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [nvarchar](255) NULL,
+	[Password] [nvarchar](255) NULL,
+	[Email] [nvarchar](255) NULL,
+	[Bio] [nvarchar](max) NULL,
+	[IdRights] [int] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[IdUser] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Права]    Script Date: 14.04.2025 23:23:44 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Права](
+	[IdRights] [int] NOT NULL,
+	[Rights] [varchar](20) NULL,
+ CONSTRAINT [XPKПрава] PRIMARY KEY CLUSTERED 
+(
+	[IdRights] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Тип_анекдота]    Script Date: 14.04.2025 23:23:44 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Тип_анекдота](
+	[IdTypeAnecdote] [int] NOT NULL,
+	[TypeAnecdote] [char](18) NULL,
+ CONSTRAINT [XPKТип_анекдота] PRIMARY KEY CLUSTERED 
+(
+	[IdTypeAnecdote] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[Коментарий_Мероприятия] ADD  DEFAULT (getdate()) FOR [Date]
+GO
+ALTER TABLE [dbo].[Комментарий_анекдота] ADD  DEFAULT (getdate()) FOR [Date]
+GO
+ALTER TABLE [dbo].[Комментарий_анекдота]  WITH CHECK ADD  CONSTRAINT [R_8] FOREIGN KEY([IdUser])
+REFERENCES [dbo].[Пользователь] ([IdUser])
+GO
+ALTER TABLE [dbo].[Комментарий_анекдота] CHECK CONSTRAINT [R_8]
+GO
+/****** Object:  StoredProcedure [dbo].[AddComment]    Script Date: 14.04.2025 23:23:44 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[AddComment]
+    @Text NVARCHAR(MAX),
+    @IdUser INT,
+    @IdAnecdote INT
+AS
+BEGIN
+    INSERT INTO [FunnySite].[dbo].[Комментарий_анекдота] ([Text], [Date], [IdUser], [IdAnecdote])
+    VALUES (@Text, GETDATE(), @IdUser, @IdAnecdote);
+END
+GO
+/****** Object:  StoredProcedure [dbo].[AddCommentEvent]    Script Date: 14.04.2025 23:23:44 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[AddCommentEvent]
+    @Text NVARCHAR(MAX),
+    @IdEvent INT,
+    @IdUser INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    INSERT INTO [FunnySite].[dbo].[Коментарий_Мероприятия] ([Text], [Date], [IdEvent], [IdUser])
+    VALUES (@Text, GETDATE(), @IdEvent, @IdUser);
+END
+GO
+/****** Object:  StoredProcedure [dbo].[AddCommentToAnecdote]    Script Date: 14.04.2025 23:23:44 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[AddCommentToAnecdote]
+    @Text NVARCHAR(MAX),
+    @Date DATETIME,
+    @IdAnecdote INT,
+    @IdUser INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    INSERT INTO [Комментарий_анекдота] ([Text], [Date], [IdAnecdote], [IdUser])
+    VALUES (@Text, @Date, @IdAnecdote, @IdUser);
+
+    SELECT SCOPE_IDENTITY() AS NewCommentId; -- Возвращает ID добавленного комментария
+END;
+GO
+/****** Object:  StoredProcedure [dbo].[AddEntry]    Script Date: 14.04.2025 23:23:44 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[AddEntry]
+    @IdEvent INT,
+    @IdUser INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    INSERT INTO [FunnySite].[dbo].[Запись_на_мероприятие] ([IdEvent], [IdUser])
+    VALUES (@IdEvent, @IdUser);
+END
+GO
+/****** Object:  StoredProcedure [dbo].[AddEntryAndDecrementSeats]    Script Date: 14.04.2025 23:23:44 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[AddEntryAndDecrementSeats]
+    @IdEvent INT,
+    @IdUser INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    BEGIN TRANSACTION;
+
+    -- Проверяем, есть ли свободные места
+    IF EXISTS (
+        SELECT 1 
+        FROM [FunnySite].[dbo].[Мероприятие]
+        WHERE [IdEvent] = @IdEvent AND [HowManyFreeSeats] > 0
+    )
+    BEGIN
+        -- Добавляем запись в таблицу "Запись_на_мероприятие"
+        INSERT INTO [FunnySite].[dbo].[Запись_на_мероприятие] ([IdEvent], [IdUser])
+        VALUES (@IdEvent, @IdUser);
+
+        -- Уменьшаем количество свободных мест на 1
+        UPDATE [FunnySite].[dbo].[Мероприятие]
+        SET [HowManyFreeSeats] = [HowManyFreeSeats] - 1
+        WHERE [IdEvent] = @IdEvent;
+
+        COMMIT TRANSACTION;
+    END
+    ELSE
+    BEGIN
+        -- Если мест нет, откатываем транзакцию и возвращаем сообщение об ошибке
+        ROLLBACK TRANSACTION;
+        RAISERROR ('Нет свободных мест для данного мероприятия.', 16, 1);
+    END
+END;
+GO
+/****** Object:  StoredProcedure [dbo].[AddEvent]    Script Date: 14.04.2025 23:23:44 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[AddEvent]
+    @Description NVARCHAR(MAX),
+    @Стоимость DECIMAL(18, 2),
+    @HowManyFreeSeats INT,
+    @Name NVARCHAR(255),
+    @Проведено BIT,
+    @EventTypeId INT
+AS
+BEGIN
+    INSERT INTO [FunnySite].[dbo].[Мероприятие] 
+    (
+        [Description],
+        [Date],
+        [Стоимость],
+        [HowManyFreeSeats],
+        [Name],
+        [Проведено],
+        [EventTypeId]
+    )
+    VALUES 
+    (
+        @Description,
+        GETDATE(),  -- Установка текущей даты
+        @Стоимость,
+        @HowManyFreeSeats,
+        @Name,
+        @Проведено,
+        @EventTypeId
+    );
+END;
+GO
+/****** Object:  StoredProcedure [dbo].[AddNewAnecdote]    Script Date: 14.04.2025 23:23:44 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[AddNewAnecdote]
+    @Text NVARCHAR(MAX),
+    @Rate INT,
+    @IdUser INT,
+    @IdTypeAnecdote INT
+AS
+BEGIN
+    -- Вставляем новый анекдот в таблицу с текущей датой
+    INSERT INTO [FunnySite].[dbo].[Анекдот] ([Text], [Date], [Rate], [IdUser], [IdTypeAnecdote])
+    VALUES (@Text, GETDATE(), @Rate, @IdUser, @IdTypeAnecdote);
+END
+GO
+/****** Object:  StoredProcedure [dbo].[DeleteAnecdote]    Script Date: 14.04.2025 23:23:44 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[DeleteAnecdote]
+    @IdAnecdote INT
+AS
+BEGIN
+    -- Удаление анекдота с заданным IdAnecdote
+    DELETE FROM [FunnySite].[dbo].[Анекдот]
+    WHERE [IdAnecdote] = @IdAnecdote;
+
+    -- Проверка, был ли удален анекдот
+    IF @@ROWCOUNT = 0
+    BEGIN
+        -- Если строка не была удалена, выводим сообщение об ошибке
+        RAISERROR('Анекдот с таким ID не найден', 16, 1);
+    END
+    ELSE
+    BEGIN
+        -- Если анекдот удален успешно
+        PRINT 'Анекдот успешно удален';
+    END
+END;
+
+SELECT TOP (1000) [IdAnecdote]
+      ,[Text]
+      ,[Date]
+      ,[Rate]
+      ,[IdUser]
+      ,[IdTypeAnecdote]
+  FROM [FunnySite].[dbo].[Анекдот]
+GO
+/****** Object:  StoredProcedure [dbo].[DeleteEventById]    Script Date: 14.04.2025 23:23:44 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[DeleteEventById]
+    @IdEvent INT
+AS
+BEGIN
+    -- Проверка на наличие мероприятия с данным IdEvent
+    IF NOT EXISTS (SELECT 1 FROM [FunnySite].[dbo].[Мероприятие] WHERE [IdEvent] = @IdEvent)
+    BEGIN
+        RAISERROR('Мероприятие с таким Id не найдено', 16, 1);
+        RETURN;
+    END
+
+    -- Удаление мероприятия
+    DELETE FROM [FunnySite].[dbo].[Мероприятие]
+    WHERE [IdEvent] = @IdEvent;
+
+    -- Возвращаем успешный результат
+    SELECT 'Мероприятие успешно удалено' AS Message;
+END;
+GO
+/****** Object:  StoredProcedure [dbo].[GetAnecdoteById]    Script Date: 14.04.2025 23:23:44 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[GetAnecdoteById]
+    @IdAnecdote INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT 
+        a.[IdAnecdote], 
+        a.[Text], 
+        a.[Date], 
+        a.[Rate], 
+        a.[IdUser],               -- Поле IdUser
+        u.[Name] AS [UserName], 
+        a.[IdTypeAnecdote],       -- Поле IdTypeAnecdote
+        t.[TypeAnecdote] AS [AnecdoteType]
+    FROM 
+        [Анекдот] a
+    JOIN 
+        [dbo].[Пользователь] u ON a.[IdUser] = u.[IdUser]
+    JOIN 
+        [dbo].[Тип_анекдота] t ON a.[IdTypeAnecdote] = t.[IdTypeAnecdote]
+    WHERE 
+        a.[IdAnecdote] = @IdAnecdote; -- Фильтрация по IdAnecdote
+END
+GO
+/****** Object:  StoredProcedure [dbo].[GetAnecdotes]    Script Date: 14.04.2025 23:23:44 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[GetAnecdotes]
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT 
+	 a.[IdAnecdote], 
+        a.[Text], 
+        a.[Date], 
+        a.[Rate], 
+        a.[IdUser],               -- Добавлено поле IdUser
+        u.[Name] AS [UserName], 
+        a.[IdTypeAnecdote],       -- Добавлено поле IdTypeAnecdote
+        t.[TypeAnecdote] AS [AnecdoteType]
+    FROM 
+        [Анекдот] a
+    JOIN 
+        [dbo].[Пользователь] u ON a.[IdUser] = u.[IdUser]
+    JOIN 
+        [dbo].[Тип_анекдота] t ON a.[IdTypeAnecdote] = t.[IdTypeAnecdote];
+END;
+GO
+/****** Object:  StoredProcedure [dbo].[GetAnecdotesByType]    Script Date: 14.04.2025 23:23:44 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[GetAnecdotesByType]
+    @IdTypeAnecdote INT  -- Параметр для фильтрации по IdTypeAnecdote
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT 
+		a.[IdAnecdote], 
+        a.[Text], 
+        a.[Date], 
+        a.[Rate], 
+        a.[IdUser],              
+        u.[Name] AS [UserName], 
+        a.[IdTypeAnecdote],       
+        t.[TypeAnecdote] AS [AnecdoteType]
+
+    FROM 
+        [Анекдот] a
+    JOIN 
+        [dbo].[Пользователь] u ON a.[IdUser] = u.[IdUser]
+    JOIN 
+        [dbo].[Тип_анекдота] t ON a.[IdTypeAnecdote] = t.[IdTypeAnecdote]
+    WHERE 
+        a.[IdTypeAnecdote] = @IdTypeAnecdote;  -- Фильтр по параметру IdTypeAnecdote
+END;
+GO
+/****** Object:  StoredProcedure [dbo].[GetAnecdotesByUser]    Script Date: 14.04.2025 23:23:44 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[GetAnecdotesByUser]
+    @IdUser INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT 
+        a.[Text], 
+        a.[Date], 
+        a.[Rate], 
+        a.[IdUser],              
+        u.[Name] AS [UserName], 
+        a.[IdTypeAnecdote],       
+        t.[TypeAnecdote] AS [AnecdoteType]
+    FROM 
+        [Анекдот] a
+    JOIN 
+        [dbo].[Пользователь] u ON a.[IdUser] = u.[IdUser]
+    JOIN 
+        [dbo].[Тип_анекдота] t ON a.[IdTypeAnecdote] = t.[IdTypeAnecdote]
+    WHERE 
+        a.[IdUser] = @IdUser;    -- Фильтр по параметру IdUser
+END;
+GO
+/****** Object:  StoredProcedure [dbo].[GetAnecdotesByUserAndType]    Script Date: 14.04.2025 23:23:44 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[GetAnecdotesByUserAndType]
+    @IdUser INT,                -- Параметр для фильтрации по IdUser
+    @IdTypeAnecdote INT         -- Параметр для фильтрации по IdTypeAnecdote
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT 
+        a.[Text], 
+        a.[Date], 
+        a.[Rate], 
+        a.[IdUser],              
+        u.[Name] AS [UserName], 
+        a.[IdTypeAnecdote],       
+        t.[TypeAnecdote] AS [AnecdoteType]
+    FROM 
+        [Анекдот] a
+    JOIN 
+        [dbo].[Пользователь] u ON a.[IdUser] = u.[IdUser]
+    JOIN 
+        [dbo].[Тип_анекдота] t ON a.[IdTypeAnecdote] = t.[IdTypeAnecdote]
+    WHERE 
+        a.[IdUser] = @IdUser AND          -- Фильтр по IdUser
+        a.[IdTypeAnecdote] = @IdTypeAnecdote;  -- Фильтр по IdTypeAnecdote
+END;
+GO
+/****** Object:  StoredProcedure [dbo].[GetCommentsForAnecdote]    Script Date: 14.04.2025 23:23:44 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[GetCommentsForAnecdote]
+    @AnecdoteId INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT 
+        c.[IdCommentsontheAnecdote],
+        c.[Text],
+        c.[Date],
+        c.[IdAnecdote],
+        c.[IdUser],
+        u.[Name] AS [AuthorName]  -- Имя автора комментария
+    FROM 
+        [FunnySite].[dbo].[Комментарий_анекдота] c
+    JOIN 
+        [FunnySite].[dbo].[Пользователь] u 
+        ON c.[IdUser] = u.[IdUser]
+    WHERE 
+        c.[IdAnecdote] = @AnecdoteId;
+END;
+GO
+/****** Object:  StoredProcedure [dbo].[GetCommentsForEvent]    Script Date: 14.04.2025 23:23:44 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[GetCommentsForEvent]
+AS
+BEGIN
+    SELECT 
+        c.[IdCommentsEvents] as [IdCommentsEvents],
+        c.[Text] AS CommentText, 
+        c.[Date] AS CommentDate, 
+        e.[Name] AS EventName, 
+        u.[Name] AS AuthorName
+    FROM 
+        [FunnySite].[dbo].[Коментарий_Мероприятия] c
+    JOIN 
+        [FunnySite].[dbo].[Мероприятие] e ON c.[IdEvent] = e.[IdEvent]
+    JOIN 
+        [FunnySite].[dbo].[Пользователь] u ON c.[IdUser] = u.[IdUser]
+    ORDER BY 
+        c.[Date] DESC;  -- Сортировка по дате комментария
+END
+GO
+/****** Object:  StoredProcedure [dbo].[GetCommentsForEventByIdEvent]    Script Date: 14.04.2025 23:23:44 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[GetCommentsForEventByIdEvent]
+    @EventId INT  -- Параметр для поиска по ID мероприятия
+AS
+BEGIN
+    SELECT 
+        c.[IdCommentsEvents] AS [IdCommentsEvents],
+        c.[Text] AS CommentText, 
+        c.[Date] AS CommentDate, 
+        e.[IdEvent] AS EventId,   -- Выводим IdEvent
+        e.[Name] AS EventName, 
+        u.[Name] AS AuthorName
+    FROM 
+        [FunnySite].[dbo].[Коментарий_Мероприятия] c
+    JOIN 
+        [FunnySite].[dbo].[Мероприятие] e ON c.[IdEvent] = e.[IdEvent]
+    JOIN 
+        [FunnySite].[dbo].[Пользователь] u ON c.[IdUser] = u.[IdUser]
+    WHERE 
+        e.[IdEvent] = @EventId  -- Фильтрация по ID мероприятия
+    ORDER BY 
+        c.[Date] DESC;  -- Сортировка по дате комментария
+END
+GO
+/****** Object:  StoredProcedure [dbo].[GetCommentsWithAuthors]    Script Date: 14.04.2025 23:23:44 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[GetCommentsWithAuthors]
+AS
+BEGIN
+    SELECT 
+        c.[IdCommentsontheAnecdote], 
+        c.[Text], 
+        c.[Date], 
+        c.[IdUser], 
+        c.[IdAnecdote], 
+        u.[Name] AS [AuthorName]  -- Имя автора комментария
+    FROM 
+        [FunnySite].[dbo].[Комментарий_анекдота] c
+    JOIN 
+        [FunnySite].[dbo].[Пользователь] u 
+        ON c.[IdUser] = u.[IdUser]
+    ORDER BY 
+        c.[Date] DESC;  -- Сортировка по дате
+END;
+GO
+/****** Object:  StoredProcedure [dbo].[GetEventDetails]    Script Date: 14.04.2025 23:23:44 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- Создание или изменение хранимой процедуры GetEventDetails
+CREATE PROCEDURE [dbo].[GetEventDetails]
+AS
+BEGIN
+    SELECT 
+        m.[IdEvent],                            -- ID мероприятия
+        m.[Description],                        -- Описание мероприятия
+        m.[Date],                               -- Дата мероприятия
+        m.[Стоимость],                          -- Стоимость мероприятия
+        m.[HowManyFreeSeats],                   -- Количество свободных мест
+        m.[Name],                               -- Название мероприятия
+        m.[Проведено],                          -- Статус проведения
+        m.[EventTypeId],                        -- Тип мероприятия (ID)
+        et.[EventTypeName] AS [ТипМероприятия], -- Название типа мероприятия
+        CASE 
+            WHEN m.[Проведено] = 1 THEN 'Да'  -- Если мероприятие проведено
+            WHEN m.[Проведено] = 0 THEN 'Нет' -- Если мероприятие не проведено
+            ELSE 'Неизвестно'                 -- На случай, если значение не 0 или 1
+        END AS [Проведено_Строка]              -- Преобразование статуса в строку
+    FROM 
+        [dbo].[Мероприятие] m                  -- Таблица мероприятий
+    LEFT JOIN 
+        [dbo].[EventTypeId] et ON m.[EventTypeId] = et.[Id];  -- Присоединение данных о типах мероприятий
+END;
+GO
+/****** Object:  StoredProcedure [dbo].[GetEventDetailsByIdEvent]    Script Date: 14.04.2025 23:23:44 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[GetEventDetailsByIdEvent]
+    @EventId INT  -- Параметр для фильтрации по IdEvent
+AS
+BEGIN
+    SELECT 
+        m.[IdEvent],
+        m.[Description],
+        m.[Date],
+        m.[Стоимость],
+        m.[HowManyFreeSeats],
+        m.[Name],
+        m.[Проведено],  -- Изначальный столбец Проведено
+        m.[EventTypeId],  -- Изначальный столбец EventTypeId
+        et.[EventTypeName] AS [ТипМероприятия],  -- Название типа мероприятия
+        CASE 
+            WHEN m.[Проведено] = 1 THEN 'Да'
+            WHEN m.[Проведено] = 0 THEN 'Нет'
+            ELSE 'Неизвестно'  -- На случай, если значение не 0 или 1
+        END AS [Проведено_Строка]  -- Преобразованное значение
+    FROM 
+        [dbo].[Мероприятие] m
+    LEFT JOIN 
+        [dbo].[EventTypeId] et ON m.[EventTypeId] = et.[Id]
+    WHERE
+        m.[IdEvent] = @EventId;  -- Фильтрация по IdEvent
+END;
+GO
+/****** Object:  StoredProcedure [dbo].[GetEventDetailsByType]    Script Date: 14.04.2025 23:23:44 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[GetEventDetailsByType]
+    @EventTypeId INT  -- Параметр для типа мероприятия
+AS
+BEGIN
+    SELECT 
+        m.[IdEvent],
+        m.[Description],
+        m.[Date],
+        m.[Стоимость],
+        m.[HowManyFreeSeats],
+        m.[Name],
+        m.[Проведено],  -- Изначальный столбец Проведено
+        m.[EventTypeId],  -- Изначальный столбец EventTypeId
+        et.[EventTypeName] AS [ТипМероприятия],  -- Название типа мероприятия
+        CASE 
+            WHEN m.[Проведено] = 1 THEN 'Да'
+            WHEN m.[Проведено] = 0 THEN 'Нет'
+            ELSE 'Неизвестно'  -- На случай, если значение не 0 или 1
+        END AS [Проведено_Строка]  -- Преобразованное значение
+    FROM 
+        [dbo].[Мероприятие] m
+    LEFT JOIN 
+        [dbo].[EventTypeId] et ON m.[EventTypeId] = et.[Id]
+    WHERE 
+        m.[EventTypeId] = @EventTypeId;  -- Фильтрация по переданному параметру
+END;
+GO
+/****** Object:  StoredProcedure [dbo].[GetEvents]    Script Date: 14.04.2025 23:23:44 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[GetEvents]
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT 
+        [IdEvent], 
+        [Description], 
+        [Date], 
+        [Стоимость], 
+        [HowManyFreeSeats], 
+        [Name]  -- Предполагается, что поле Name находится в таблице Мероприятие
+    FROM 
+        [dbo].[Мероприятие];
+END;
+GO
+/****** Object:  StoredProcedure [dbo].[GetUserDetailsById]    Script Date: 14.04.2025 23:23:44 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[GetUserDetailsById]
+    @IdUser INT
+AS
+BEGIN
+    SELECT 
+        p.[IdUser], 
+        p.[Name], 
+        p.[Email], 
+        p.[Bio], 
+        p.[IdRights], 
+        r.[Rights] AS [UserRights]
+    FROM 
+        [FunnySite].[dbo].[Пользователь] p
+    JOIN 
+        [FunnySite].[dbo].[Права] r ON p.[IdRights] = r.[IdRights]
+    WHERE 
+        p.[IdUser] = @IdUser;
+END;
+GO
+/****** Object:  StoredProcedure [dbo].[GetUserDetailsByNameAndPassword]    Script Date: 14.04.2025 23:23:44 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[GetUserDetailsByNameAndPassword]
+    @Name NVARCHAR(255),
+    @Password NVARCHAR(255)
+AS
+BEGIN
+    SELECT 
+        p.[IdUser], 
+        p.[Name], 
+        p.[Password], 
+        p.[Email], 
+        p.[Bio], 
+        p.[IdRights], 
+        r.[Rights] AS [UserRights]
+    FROM 
+        [FunnySite].[dbo].[Пользователь] p
+    JOIN 
+        [FunnySite].[dbo].[Права] r ON p.[IdRights] = r.[IdRights]
+    WHERE 
+        p.[Name] = @Name AND p.[Password] = @Password;
+END;
+GO
+/****** Object:  StoredProcedure [dbo].[GetUserIdByName]    Script Date: 14.04.2025 23:23:44 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[GetUserIdByName]
+    @Name NVARCHAR(255)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -- Получаем IdUser по имени
+    SELECT 
+        p.[IdUser]
+    FROM 
+        [FunnySite].[dbo].[Пользователь] p
+    WHERE 
+        p.[Name] = @Name;
+END;
+GO
+/****** Object:  StoredProcedure [dbo].[GetUsersWithRights]    Script Date: 14.04.2025 23:23:44 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- Создание процедуры
+CREATE PROCEDURE [dbo].[GetUsersWithRights]
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT 
+        p.[IdUser], 
+        p.[Name], 
+        p.[Password], 
+        p.[Email], 
+        p.[Bio], 
+        p.[IdRights], 
+        r.[Rights] AS [UserRights]
+    FROM 
+        [FunnySite].[dbo].[Пользователь] p
+    JOIN 
+        [FunnySite].[dbo].[Права] r ON p.[IdRights] = r.[IdRights];
+END;
+GO
+/****** Object:  StoredProcedure [dbo].[UpdateAnecdote]    Script Date: 14.04.2025 23:23:44 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[UpdateAnecdote]
+    @IdAnecdote INT,
+    @NewText NVARCHAR(MAX),
+    @NewRate INT,
+    @NewIdTypeAnecdote INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    UPDATE [FunnySite].[dbo].[Анекдот]
+    SET 
+        [Text] = @NewText,
+        [Rate] = @NewRate,
+        [IdTypeAnecdote] = @NewIdTypeAnecdote
+    WHERE 
+        [IdAnecdote] = @IdAnecdote;
+END
+GO
+/****** Object:  StoredProcedure [dbo].[UpdateEvent]    Script Date: 14.04.2025 23:23:44 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[UpdateEvent]
+    @IdEvent INT,
+    @Description NVARCHAR(MAX),
+    @Cost DECIMAL(10, 2),
+    @HowManyFreeSeats INT,
+    @Name NVARCHAR(MAX),
+    @Conducted BIT,
+    @EventTypeId INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    UPDATE [dbo].[Мероприятие]
+    SET 
+        [Description] = @Description,
+        [Стоимость] = @Cost,
+        [HowManyFreeSeats] = @HowManyFreeSeats,
+        [Name] = @Name,
+        [Проведено] = @Conducted,
+        [EventTypeId] = @EventTypeId
+    WHERE 
+        [IdEvent] = @IdEvent;
+END
+GO
+/****** Object:  StoredProcedure [dbo].[UpdateUserInfo]    Script Date: 14.04.2025 23:23:44 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[UpdateUserInfo]
+    @IdUser INT,
+    @Name NVARCHAR(255),
+    @Password NVARCHAR(255),
+    @Email NVARCHAR(255),
+    @Bio NVARCHAR(MAX)
+AS
+BEGIN
+    UPDATE [FunnySite].[dbo].[Пользователь]
+    SET [Name] = @Name,
+        [Password] = @Password,
+        [Email] = @Email,
+        [Bio] = @Bio
+    WHERE [IdUser] = @IdUser;
+END;
+GO
+/****** Object:  StoredProcedure [dbo].[ДобавитьПользователя]    Script Date: 14.04.2025 23:23:44 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[ДобавитьПользователя]
+    @Name NVARCHAR(255),
+    @Password NVARCHAR(255),
+    @Email NVARCHAR(255),
+    @Bio NVARCHAR(MAX),
+    @IdRights INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    INSERT INTO [FunnySite].[dbo].[Пользователь]
+        ([Name], [Password], [Email], [Bio], [IdRights])
+    VALUES
+        (@Name, @Password, @Email, @Bio, @IdRights);
+END;
+GO

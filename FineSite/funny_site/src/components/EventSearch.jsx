@@ -48,6 +48,8 @@ export const EventSearch = ({ searchData, setSearchData, setFoundEvents, handleS
         name="event"
         value={searchData.event}
         onChange={handleSearchChange}
+        className="styled-dropdown"
+
       >
         {eventTypes.map((type) => (
           <option key={type.id} value={type.id}>

@@ -1,13 +1,25 @@
 .ad-block {
-    background-color: rgba(255, 255, 255, 0.1);
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-    width: 300px; /* ограничиваем ширину */
-    box-sizing: border-box;
-  }
-  .ad-gif {
-    max-width: 100%;
-    height: auto;
-    border-radius: 8px;
-  }
+  width: 250px; /* Уменьшенный размер */
+  padding: 10px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  font-size: 0.9rem;
+}
+
+.ad-block h2 {
+  font-size: 1rem;
+  margin-bottom: 5px;
+}
+
+.ad-block p {
+  font-size: 0.85rem;
+}
+
+.ad-gif {
+  width: 100%;
+  height: auto;
+  border-radius: 5px;
+  margin: 8px 0;
+}

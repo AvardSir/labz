@@ -48,6 +48,8 @@ export const AnecdoteSearch = ({ searchData, setSearchData, setFoundAnecdotes, h
         name="anecdote"
         value={searchData.anecdote}
         onChange={handleSearchChange}
+        className="styled-dropdown"
+
       >
         {anecdoteTypes.map((type) => (
           <option key={type.id} value={type.id}>

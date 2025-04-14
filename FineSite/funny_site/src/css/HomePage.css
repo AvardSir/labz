@@ -1,26 +1,47 @@
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
 /* Основной стиль */
 body {
   margin: 0;
+  padding: 0;
   font-family: Arial, sans-serif;
   background: linear-gradient(135deg, #4a148c, #7b1fa2);
   color: #fff;
   display: flex;
   flex-direction: column;
-  align-items: center; /* Центрирование по горизонтали */
   justify-content: flex-start;
   height: 100vh;
-  padding: 0; /* Убираем padding слева, чтобы использовать 100% ширины */
-  text-shadow: 1px 1px 2px black; /* Черная обводка для текста */
-  overflow-x: hidden; /* Отключаем горизонтальный скролл */
+  text-shadow: 1px 1px 2px black;
+  overflow-x: hidden;
 }
+
 
 /* Основной контейнер */
 .main-container {
-  padding: 20px;
   width: 100%;
-  max-width: 1200px; /* Ограничение максимальной ширины */
-  margin-top: 20px;
-  box-sizing: border-box; /* Включаем padding в расчет ширины */
+  max-width: 1200px;            /* Фиксированная максимальная ширина */
+  margin: 0 auto;               /* Автоматические боковые отступы для центрирования */
+  padding: 3px ;           /* Вертикальные 15px, горизонтальные 20px */
+  box-sizing: border-box;       /* Учет padding в общей ширине */
+  
+  /* Оптимизация для печати */
+  @media print {
+    padding: 10px;
+    max-width: 100%;
+  }
+  
+  /* Адаптация для мобильных */
+  @media (max-width: 768px) {
+    padding: 12px 15px;         /* Уменьшенные отступы на мобильных */
+  }
+  
+  /* Для очень маленьких экранов */
+  @media (max-width: 480px) {
+    padding: 10px 12px;
+  }
 }
 
 /* Шапка */
@@ -59,7 +80,7 @@ body {
 .sidebar {
   position: fixed;
   left: 0;
-  top: 20px;
+  
   width: 240px;
   padding: 10px;
   background: rgba(0, 0, 0, 0.6);
@@ -210,4 +231,437 @@ ul {
   gap: 20px;
   flex-wrap: wrap; /* Для адаптивности на маленьких экранах */
   margin-top: 20px;
+}
+
+
+
+
+.header {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+
+.anecdote-item {
+  padding: 15px;
+  margin-bottom: 15px;
+  background-color: #501b4a;
+  border-radius: 8px;
+}
+
+.anecdote-text {
+  margin-bottom: 10px;
+}
+
+.anecdote-meta {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+  font-size: 0.9em;
+  color: #d0d0d0;
+}
+
+.anecdote-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.anecdote-actions button {
+  padding: 5px 10px;
+  background-color: #7b1fa2;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.anecdote-actions button:hover {
+  background-color: #9c27b0;
+}
+
+
+
+/* Общие стили кнопок */
+.action-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+/* Цветовые варианты */
+.action-btn.add-btn {
+  background: linear-gradient(135deg, #4CAF50, #2E7D32);
+  color: white;
+}
+
+.action-btn.primary-btn {
+  background: linear-gradient(135deg, #7B1FA2, #9C27B0);
+  color: white;
+}
+
+.action-btn.edit-btn {
+  background: linear-gradient(135deg, #FF9800, #FB8C00);
+  color: white;
+}
+
+.action-btn.delete-btn {
+  background: linear-gradient(135deg, #F44336, #D32F2F);
+  color: white;
+}
+
+/* Состояния кнопок */
+.action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  opacity: 0.92;
+}
+
+.action-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 3px rgba(0,0,0,0.2);
+}
+
+.action-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* Иконки в кнопках */
+.btn-icon {
+  font-size: 1.1em;
+  line-height: 1;
+  display: inline-flex;
+}
+
+/* Группы кнопок */
+/* Группы кнопок */
+.action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px dashed rgba(255,255,255,0.2);
+  justify-content: center; /* Центрирование кнопок */
+}
+
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .action-btn {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+  }
+  
+  .action-btn {
+    width: 100%;
+    margin-right: 0;
+    justify-content: center;
+  }
+}
+
+
+/* Глобальные стили для ВСЕХ кнопок */
+button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  background: linear-gradient(135deg, #7B1FA2, #9C27B0);
+  color: white;
+  font-weight: 500;
+}
+
+/* Состояния кнопок */
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  opacity: 0.9;
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+/* Группы кнопок */
+.action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px dashed rgba(255,255,255,0.2);
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  button {
+    width: 100%;
+    justify-content: center;
+    margin-right: 0;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+  }
+}
+
+
+
+/* Стили для выпадающего списка */
+.styled-dropdown {
+  padding: 10px 35px 10px 15px;
+  border: none;
+  border-radius: 25px;
+  background: linear-gradient(135deg, #7B1FA2, #9C27B0);
+  color: white;
+  font-size: 0.95rem;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  cursor: pointer;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  transition: all 0.3s ease;
+  width: 100%;
+  max-width: 250px;
+  margin: 0 10px 15px 0;
+}
+
+/* Кастомная стрелка */
+.styled-dropdown {
+  background-image: 
+    linear-gradient(45deg, transparent 50%, white 50%),
+    linear-gradient(135deg, white 50%, transparent 50%);
+  background-position:
+    calc(100% - 20px) center,
+    calc(100% - 15px) center;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+}
+
+/* Состояния */
+.styled-dropdown:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+.styled-dropdown:focus {
+  box-shadow: 0 0 0 2px rgba(255,255,255,0.3);
+}
+
+/* Стили для вариантов */
+.styled-dropdown option {
+  background: #7B1FA2;
+  padding: 10px;
+  border-radius: 0;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .styled-dropdown {
+    max-width: 100%;
+    margin-right: 0;
+  }
+}
+
+
+
+/* Общие стили карточек */
+.anecdote-card {
+  background: rgba(69, 23, 64, 0.9);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 25px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  transition: transform 0.3s ease;
+  position: relative;
+  border: 1px solid rgba(149, 51, 138, 0.5);
+}
+
+/* Эффект разделения между карточками */
+.anecdote-card:not(:last-child)::after {
+  content: "";
+  display: block;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #95338a, transparent);
+  position: absolute;
+  bottom: -12px;
+  left: 20%;
+  right: 20%;
+  opacity: 0.7;
+}
+
+/* Усиленный эффект при наведении */
+.anecdote-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+  border-color: rgba(149, 51, 138, 0.8);
+  z-index: 1;
+}
+
+/* Улучшенные стили мета-данных */
+.anecdote-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin: 20px 0;
+  padding: 12px 0;
+  border-top: 1px dashed rgba(255,255,255,0.15);
+  border-bottom: 1px dashed rgba(255,255,255,0.15);
+}
+
+/* Стили для кнопок */
+.action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(149, 51, 138, 0.3);
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .anecdote-card {
+    padding: 15px;
+    margin-bottom: 20px;
+  }
+  
+  .anecdote-card:not(:last-child)::after {
+    left: 15%;
+    right: 15%;
+  }
+  
+  .action-buttons {
+    gap: 8px;
+  }
+}
+
+
+/* Общие стили карточек */
+.card {
+  background: rgba(69, 23, 64, 0.9);
+  border-radius: 12px;
+  padding: 4px;
+  margin-bottom: 25px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  transition: all 0.3s ease;
+  position: relative;
+  border: 1px solid rgba(149, 51, 138, 0.5);
+}
+
+/* Эффект разделения между карточками */
+.card:not(:last-child)::after {
+  content: "";
+  display: block;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #95338a, transparent);
+  position: absolute;
+  bottom: -12px;
+  left: 20%;
+  right: 20%;
+  opacity: 0.7;
+}
+
+/* Эффекты при наведении */
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+  border-color: rgba(149, 51, 138, 0.8);
+  z-index: 1;
+}
+
+/* Стили контента */
+.card-content {
+  margin-bottom: 15px;
+}
+
+.card-title {
+  font-size: 1.3rem;
+  margin-bottom: 10px;
+  color: #fff;
+}
+
+.card-text {
+  font-size: 1.1rem;
+  line-height: 1.5;
+}
+
+/* Стили мета-данных */
+.card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin: 20px 0;
+  padding: 12px 0;
+  border-top: 1px dashed rgba(255,255,255,0.15);
+  border-bottom: 1px dashed rgba(255,255,255,0.15);
+  color: #e0e0e0;
+  font-size: 0.9rem;
+}
+
+.card-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Стили кнопок */
+.card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(149, 51, 138, 0.3);
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .card {
+    padding: 15px;
+    margin-bottom: 20px;
+  }
+  
+  .card:not(:last-child)::after {
+    left: 15%;
+    right: 15%;
+  }
+  
+  .card-actions {
+    gap: 8px;
+  }
+  
+  .card-meta {
+    gap: 10px;
+    font-size: 0.85rem;
+  }
 }

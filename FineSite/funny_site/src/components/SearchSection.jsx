@@ -73,7 +73,7 @@ export const SearchSection = ({ what ='anecdote'}) => {
   
   return (
     <section className="search">
-      <h2>Поиск</h2>
+      
       <div className="search-options">
         <AnecdoteSearch
           searchData={searchData}

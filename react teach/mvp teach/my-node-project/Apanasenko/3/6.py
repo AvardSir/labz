@@ -150,19 +150,7 @@ def calc_R_mean(slot_id: int,
     return total_data / min(y_slot, slot_id - start_slot)  # Защита от деления на 0
 
 def calc_smooth_R_mean(slot_id: int, sub_id: int, resources: list, subs: pd.DataFrame, R_mean_list: list) -> float:
-    """
-    Расчет сглаженной средней скорости с экспоненциальным взвешиванием
-    
-    Параметры:
-        slot_id: текущий временной слот
-        sub_id: ID абонента
-        resources: история распределения ресурсов
-        subs: DataFrame с пропускными способностями
-        R_mean_list: история средних скоростей
-        
-    Возвращает:
-        Сглаженное значение средней скорости
-    """
+   
     try:
         # Получаем текущее значение средней скорости
         current_mean = float(R_mean_list[-1][sub_id])
@@ -182,18 +170,7 @@ def calc_smooth_R_mean(slot_id: int, sub_id: int, resources: list, subs: pd.Data
 
 
 def calc_D_mean(subs: pd.DataFrame, lambda_: float, algorithm: str, use_smooth: bool = True) -> float:
-    """
-    Расчет среднего суммарного объема буфера для заданного алгоритма планирования
     
-    Параметры:
-        subs: DataFrame с пропускными способностями абонентов
-        lambda_: интенсивность входящего трафика (пакетов/слот)
-        algorithm: алгоритм планирования ("EB", "MT" или "PF")
-        use_smooth: использовать сглаженный расчет средней скорости (True/False)
-        
-    Возвращает:
-        Средний объем данных в буфере (в Кбайт) по всем слотам
-    """
     # Генерация входящего трафика
     P = generate_P(lambda_, subs)
     
