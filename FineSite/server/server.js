@@ -416,7 +416,7 @@ app.get("/api/IdByUsername", (req, res) => {
   });
 });
 
-
+// sss
 app.get("/api/IdByUsername_forEvents", async (req, res) => {
   const { Name } = req.query; // Получаем параметр Name из строки запроса
 

@@ -26,13 +26,10 @@ function App() {
           <Route path="/anecdote-comments/:anecdoteId" element={<AnecdoteCommentsPage />} />
           <Route path="/event-comments/:eventId" element={<EventCommentsPage />} />
           <Route path="/add-anecdote" element={<AddAnecdotePage />} />
-
           <Route path="/edit-anecdote/:id" element={<EditAnecdotePage />} />
 
           <Route path="/add-event" element={<AddEventPage />} />
           <Route path="/edit-event/:id" element={<EditEventPage />} />
-
-         
 
         </Routes>
       </Router>
