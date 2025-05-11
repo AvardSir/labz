@@ -1,68 +1,152 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-
 import { AuthContext } from "./context/AuthContext";
+import { Header } from "../components/Header";
+
+const styles = {
+  container: {
+    maxWidth: '800px',
+    margin: '0 auto',
+    padding: '2rem',
+    minHeight: '100vh',
+  },
+  form: {
+    width: '100%',
+    maxWidth: '600px',
+    margin: '0 auto',
+    backgroundColor: '#ffffff',
+    padding: '2rem',
+    borderRadius: '12px',
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+  },
+  title: {
+    color: '#2d3748',
+    marginBottom: '2rem',
+    textAlign: 'center',
+  },
+  formGroup: {
+    marginBottom: '1.5rem',
+  },
+  label: {
+    display: 'block',
+    marginBottom: '0.5rem',
+    fontWeight: '500',
+    color: '#2d3748',
+    fontSize: '0.95rem',
+  },
+  input: {
+    width: '100%',
+    padding: '0.75rem',
+    border: '1px solid #e2e8f0',
+    borderRadius: '8px',
+    fontSize: '1rem',
+    transition: 'all 0.2s ease',
+  },
+  textarea: {
+    width: '100%',
+    padding: '0.75rem',
+    border: '1px solid #e2e8f0',
+    borderRadius: '8px',
+    fontSize: '1rem',
+    resize: 'vertical',
+    minHeight: '150px',
+    transition: 'all 0.2s ease',
+    lineHeight: '1.6',
+  },
+  select: {
+    width: '100%',
+    padding: '0.75rem',
+    border: '1px solid #e2e8f0',
+    borderRadius: '8px',
+    fontSize: '1rem',
+    backgroundColor: 'white',
+    transition: 'all 0.2s ease',
+  },
+  buttonGroup: {
+    display: 'flex',
+    justifyContent: 'center',
+    marginTop: '2rem',
+  },
+  primaryButton: {
+    padding: '0.75rem 1.5rem',
+    backgroundColor: '#4299e1',
+    color: 'white',
+    border: 'none',
+    borderRadius: '8px',
+    cursor: 'pointer',
+    fontSize: '1rem',
+    fontWeight: '500',
+    transition: 'all 0.2s ease',
+    minWidth: '140px',
+  },
+  errorMessage: {
+    color: '#e53e3e',
+    margin: '1rem 0',
+    textAlign: 'center',
+  },
+  successMessage: {
+    color: '#38a169',
+    margin: '1rem 0',
+    textAlign: 'center',
+  },
+};
 
 export const AddAnecdoteComponent = () => {
-  const { loginData } = useContext(AuthContext); // Получаем данные пользователя
+  const { loginData } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     Text: "",
-    Rate: 0,
+    Rate: 1,
     IdTypeAnecdote: "",
   });
-  const [anecdoteTypes, setAnecdoteTypes] = useState([]); // Список типов анекдотов
+
+  const [anecdoteTypes, setAnecdoteTypes] = useState([]);
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  // Загрузка типов анекдотов при загрузке компонента
   useEffect(() => {
     const fetchAnecdoteTypes = async () => {
       try {
-        const response = await fetch("/api/anecdotes/types"); // URL должен соответствовать рабочему примеру
+        const response = await fetch("/api/anecdotes/types");
         const result = await response.json();
         setAnecdoteTypes(result);
-  
-        // Установка первого типа по умолчанию, если он есть
+
         if (result.length > 0) {
-          setFormData((prevData) => ({
-            ...prevData,
-            IdTypeAnecdote: result[0].id, // Устанавливаем значение первого типа
-          }));
-        } else {
-          setFormData((prevData) => ({
-            ...prevData,
-            IdTypeAnecdote: "", // Если нет типов, устанавливаем пустое значение
+          setFormData((prev) => ({
+            ...prev,
+            IdTypeAnecdote: result[0].id,
           }));
         }
-      } catch (error) {
-        console.error("Ошибка при получении типов анекдотов:", error);
+      } catch (err) {
+        console.error("Ошибка при получении типов анекдотов:", err);
         setError("Не удалось загрузить типы анекдотов");
       }
     };
-  
+
     fetchAnecdoteTypes();
   }, []);
-  
 
   const handleChange = ({ target: { name, value } }) => {
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
-    // Преобразование значений в числа
+    setError(null);
+    setSuccessMessage(null);
+    setLoading(true);
+
     const requestData = {
       ...formData,
-      Rate: Number(formData.Rate),       // Преобразуем в число
-      IdTypeAnecdote: Number(formData.IdTypeAnecdote), // Преобразуем в число
-      IdUser: loginData.login,
+      Rate: Number(formData.Rate),
+      IdTypeAnecdote: Number(formData.IdTypeAnecdote),
+      IdUser: loginData.IdUser,
     };
-    console.log("Form data being sent:", loginData);
 
     try {
+      console.log(requestData)
       const response = await fetch("/api/add-anecdote", {
         method: "POST",
         headers: {
@@ -70,75 +154,96 @@ export const AddAnecdoteComponent = () => {
         },
         body: JSON.stringify(requestData),
       });
-  
+
       const result = await response.json();
-  
+
       if (!response.ok) {
         throw new Error(result.error || "Не удалось добавить анекдот");
       }
-  
+
       setSuccessMessage("Анекдот успешно добавлен!");
-      setError(null);
-  
-      // Через 2 секунды перенаправляем обратно
       setTimeout(() => navigate("/"), 2000);
     } catch (err) {
       setError(err.message);
-      setSuccessMessage(null);
+    } finally {
+      setLoading(false);
     }
   };
-  
-  
 
   return (
-    <div className="add-anecdote">
-      <h2>Добавить анекдот</h2>
-      {error && <p className="error">{error}</p>}
-      {successMessage && <p className="success">{successMessage}</p>}
+    <div style={styles.container}>
+      
+      <div style={styles.form}>
+        <h2 style={styles.title}>Добавить анекдот</h2>
 
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="Text">Текст анекдота:</label>
-          <textarea
-            id="Text"
-            name="Text"
-            value={formData.Text}
-            onChange={handleChange}
-            required
-          />
-        </div>
+        {error && <p style={styles.errorMessage}>{error}</p>}
+        {successMessage && <p style={styles.successMessage}>{successMessage}</p>}
 
-        <div className="form-group">
-          <label htmlFor="Rate">Рейтинг:</label>
-          <input
-            type="number"
-            id="Rate"
-            name="Rate"
-            value={formData.Rate}
-            onChange={handleChange}
-            required
-          />
-        </div>
+        <form onSubmit={handleSubmit}>
+          <div style={styles.formGroup}>
+            <label htmlFor="Text" style={styles.label}>Текст анекдота:</label>
+            <textarea
+              id="Text"
+              name="Text"
+              value={formData.Text}
+              onChange={handleChange}
+              required
+              style={styles.textarea}
+            />
+          </div>
 
-        <div className="form-group">
-          <label htmlFor="IdTypeAnecdote">Тип анекдота:</label>
-          <select
-            id="IdTypeAnecdote"
-            name="IdTypeAnecdote"
-            value={formData.IdTypeAnecdote}
-            onChange={handleChange}
-            required
-          >
-            {anecdoteTypes.map((type) => (
-              <option key={type.id} value={type.id}>
-                {type.name}
-              </option>
-            ))}
-          </select>
-        </div>
+          {/* <div style={styles.formGroup}>
+            <label htmlFor="Rate" style={styles.label}>Рейтинг:</label>
+            <input
+              type="number"
+              id="Rate"
+              name="Rate"
+              value={formData.Rate}
+              onChange={handleChange}
+              required
+              style={styles.input}
+            />
+          </div> */}
 
-        <button type="submit">Добавить</button>
-      </form>
+          <div style={styles.formGroup}>
+            <label htmlFor="IdTypeAnecdote" style={styles.label}>Тип анекдота:</label>
+            <select
+              id="IdTypeAnecdote"
+              name="IdTypeAnecdote"
+              value={formData.IdTypeAnecdote}
+              onChange={handleChange}
+              required
+              style={styles.select}
+            >
+              {anecdoteTypes.map((type) => (
+                <option key={type.id} value={type.id}>
+                  {type.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div style={styles.buttonGroup}>
+            <button
+              type="submit"
+              disabled={loading}
+              style={{
+                ...styles.primaryButton,
+                opacity: loading ? 0.7 : 1,
+              }}
+            >
+              {loading ? "Добавление..." : "Добавить"}
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate("/events")}
+              style={styles.primaryButton}
+            >
+              Назад
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

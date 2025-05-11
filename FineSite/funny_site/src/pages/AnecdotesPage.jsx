@@ -10,16 +10,6 @@ import "../css/HomePage.css";
 
 const EventsPage = () => {
   return (
-    // <Header />
-    // <div className="main-container horizontal-layout">
-    //   <HomePage />
-      
-    //   <div className="main-container">
-        
-    //     <SearchSection />
-    //   </div>
-    // </div>
-
     <div className="main-container">
       <HomePage />
       <SearchSection />

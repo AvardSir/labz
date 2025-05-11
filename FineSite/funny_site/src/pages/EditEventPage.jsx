@@ -1,9 +1,118 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
-import { Header } from "../components/Header"; // Используем именованный импорт
+import { Header } from "../components/Header";
+
+const styles = {
+  container: {
+    maxWidth: '800px',
+    margin: '0 auto',
+    padding: '2rem',
+    minHeight: '100vh',
+  },
+  form: {
+    width: '100%',
+    maxWidth: '600px',
+    margin: '0 auto',
+    backgroundColor: '#ffffff',
+    padding: '2rem',
+    borderRadius: '12px',
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+  },
+  title: {
+    color: '#2d3748',
+    marginBottom: '2rem',
+    textAlign: 'center',
+  },
+  formGroup: {
+    marginBottom: '1.5rem',
+  },
+  label: {
+    display: 'block',
+    marginBottom: '0.5rem',
+    fontWeight: '500',
+    color: '#2d3748',
+    fontSize: '0.95rem',
+  },
+  input: {
+    width: '100%',
+    padding: '0.75rem',
+    border: '1px solid #e2e8f0',
+    borderRadius: '8px',
+    fontSize: '1rem',
+    transition: 'all 0.2s ease',
+  },
+  textarea: {
+    width: '100%',
+    padding: '0.75rem',
+    border: '1px solid #e2e8f0',
+    borderRadius: '8px',
+    fontSize: '1rem',
+    resize: 'vertical',
+    minHeight: '120px',
+    transition: 'all 0.2s ease',
+  },
+  select: {
+    width: '100%',
+    padding: '0.75rem',
+    border: '1px solid #e2e8f0',
+    borderRadius: '8px',
+    fontSize: '1rem',
+    backgroundColor: 'white',
+    transition: 'all 0.2s ease',
+  },
+  checkboxContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.5rem',
+  },
+  checkbox: {
+    width: '1.2rem',
+    height: '1.2rem',
+  },
+  buttonGroup: {
+    display: 'flex',
+    gap: '1rem',
+    marginTop: '2rem',
+  },
+  primaryButton: {
+    padding: '0.75rem 1.5rem',
+    backgroundColor: '#4299e1',
+    color: 'white',
+    border: 'none',
+    borderRadius: '8px',
+    cursor: 'pointer',
+    fontSize: '1rem',
+    fontWeight: '500',
+    transition: 'all 0.2s ease',
+    flex: 1,
+  },
+  secondaryButton: {
+    padding: '0.75rem 1.5rem',
+    backgroundColor: '#e2e8f0',
+    color: '#4a5568',
+    border: 'none',
+    borderRadius: '8px',
+    cursor: 'pointer',
+    fontSize: '1rem',
+    fontWeight: '500',
+    transition: 'all 0.2s ease',
+    flex: 1,
+  },
+  loadingText: {
+    textAlign: 'center',
+    color: '#4a5568',
+    fontStyle: 'italic',
+  },
+  errorMessage: {
+    color: '#e53e3e',
+    margin: '1rem 0',
+    textAlign: 'center',
+  },
+};
+
 const EditEventPage = () => {
-  const { id } = useParams(); // Извлекаем IdEvent из параметров маршрута
+  const { id } = useParams();
   const [event, setEvent] = useState({
     Name: "",
     Description: "",
@@ -12,10 +121,10 @@ const EditEventPage = () => {
     Conducted: false,
     EventTypeId: "",
   });
-  const [eventTypes, setEventTypes] = useState([]); // Для хранения типов мероприятий
+  const [eventTypes, setEventTypes] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate(); // Для навигации после обновления
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!id) {
@@ -23,37 +132,47 @@ const EditEventPage = () => {
       return;
     }
 
-    // Функция для загрузки типов мероприятий
     const fetchEventTypes = async () => {
       try {
-        const response = await axios.get("/api/event-types"); // Ваш API для получения типов
-        setEventTypes(response.data); // Сохраняем типы мероприятий в состояние
+        const response = await axios.get("/api/event-types");
+        setEventTypes(response.data);
       } catch (err) {
         console.error("Ошибка при загрузке типов мероприятий", err);
         setError("Ошибка при загрузке типов мероприятий");
       }
     };
 
-    // Функция для загрузки данных мероприятия
     const fetchEventDetails = async () => {
       try {
+        setLoading(true);
         const response = await axios.get(`/event-details/${id}`);
-        setEvent(response.data[0]);
+        const data = response.data[0];
+        console.log(data)
+        setEvent({
+          Name: data.Name || "",
+          Description: data.Description || "",
+          Cost: data.Стоимость || "",
+          HowManyFreeSeats: data.HowManyFreeSeats || "",
+          Conducted: data.Проведено || false,
+          EventTypeId: data.EventTypeId || "",
+        });
       } catch (err) {
         console.error("Ошибка при загрузке данных мероприятия", err);
         setError("Ошибка при загрузке данных мероприятия");
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchEventTypes(); // Загружаем типы мероприятий
-    fetchEventDetails(); // Загружаем данные мероприятия
+    fetchEventTypes();
+    fetchEventDetails();
   }, [id]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setEvent((prev) => ({
+    const { name, value, type, checked } = e.target;
+    setEvent(prev => ({
       ...prev,
-      [name]: value,
+      [name]: type === 'checkbox' ? checked : value
     }));
   };
 
@@ -66,14 +185,14 @@ const EditEventPage = () => {
       const response = await axios.put("/api/update_event", {
         idEvent: id,
         description: event.Description,
-        cost: event.Стоимость,
+        cost: event.Cost,
         howManyFreeSeats: event.HowManyFreeSeats,
         name: event.Name,
-        conducted: event.Проведено,
+        conducted: event.Conducted,
         eventTypeId: event.EventTypeId,
       });
-      alert(response.data.message); // Сообщение от сервера
-      navigate("/"); // Перенаправление на главную страницу
+      // alert(response.data.message);
+      navigate("/events");
     } catch (err) {
       console.error("Ошибка при обновлении мероприятия", err);
       setError("Ошибка при обновлении мероприятия");
@@ -82,96 +201,138 @@ const EditEventPage = () => {
     }
   };
 
-  if (error) return <p>{error}</p>;
-
-  if (loading) return <p>Загрузка...</p>;
+  if (error) return <p style={styles.errorMessage}>{error}</p>;
+  if (loading) return <p style={styles.loadingText}>Загрузка...</p>;
 
   return (
-    <div>
-      <Header/>
-      {console.log(event)}
-      <h1>Редактировать мероприятие</h1>
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="Name">Название мероприятия:</label>
-          <input
-            type="text"
-            id="Name"
-            name="Name"
-            value={event.Name}
-            onChange={handleChange}
-            required
-          />
-        </div>
+    <div style={styles.container}>
+      <Header />
+      
+      <div style={styles.form}>
+        <h2 style={styles.title}>Редактировать мероприятие</h2>
+        
+        <form onSubmit={handleSubmit}>
+          <div style={styles.formGroup}>
+            <label htmlFor="Name" style={styles.label}>
+              Название мероприятия:
+            </label>
+            <input
+              type="text"
+              id="Name"
+              name="Name"
+              value={event.Name}
+              onChange={handleChange}
+              required
+              style={styles.input}
+            />
+          </div>
 
-        <div className="form-group">
-          <label htmlFor="Description">Описание:</label>
-          <textarea
-            id="Description"
-            name="Description"
-            value={event.Description}
-            onChange={handleChange}
-            required
-          />
-        </div>
+          <div style={styles.formGroup}>
+            <label htmlFor="Description" style={styles.label}>
+              Описание:
+            </label>
+            <textarea
+              id="Description"
+              name="Description"
+              value={event.Description}
+              onChange={handleChange}
+              required
+              style={styles.textarea}
+            />
+          </div>
 
-        <div className="form-group">
-          <label htmlFor="Cost">Стоимость:</label>
-          <input
-            type="number"
-            id="Cost"
-            name="Cost"
-            value={event.Стоимость}
-            onChange={handleChange}
-            required
-          />
-        </div>
+          <div style={styles.formGroup}>
 
-        <div className="form-group">
-          <label htmlFor="HowManyFreeSeats">Количество свободных мест:</label>
-          <input
-            type="number"
-            id="HowManyFreeSeats"
-            name="HowManyFreeSeats"
-            value={event.HowManyFreeSeats}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="Conducted">Проведено:</label>
-          <input
-            type="checkbox"
-            id="Conducted"
-            name="Conducted"
-            checked={event.Проведено}
-            onChange={(e) => handleChange({ target: { name: "Conducted", value: e.target.checked } })}
-          />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="EventTypeId">Тип мероприятия:</label>
-          <select
-            id="EventTypeId"
-            name="EventTypeId"
-            value={event.EventTypeId}
-            onChange={handleChange}
-            required
-          >
+            {/* {console.log(event)} */}
             
-            {eventTypes.map((type) => (
-              <option key={type.Id} value={type.Id}>
-                {type.EventTypeName}
-              </option>
-            ))}
-          </select>
-        </div>
+            {/* {console.log(data.Cost)} */}
+            <label htmlFor="Cost" style={styles.label}>
+              Стоимость:
+            </label>
+            <input
+              type="number"
+              id="Cost"
+              name="Cost"
+              value={event.Cost}
+              onChange={handleChange}
+              required
+              style={styles.input}
+            />
+          </div>
 
-        <button type="submit" disabled={loading}>
-          {loading ? "Сохранение..." : "Сохранить изменения"}
-        </button>
-      </form>
+          <div style={styles.formGroup}>
+            <label htmlFor="HowManyFreeSeats" style={styles.label}>
+              Количество свободных мест:
+            </label>
+            <input
+              type="number"
+              id="HowManyFreeSeats"
+              name="HowManyFreeSeats"
+              value={event.HowManyFreeSeats}
+              onChange={handleChange}
+              required
+              style={styles.input}
+            />
+          </div>
+
+          <div style={styles.formGroup}>
+            <div style={styles.checkboxContainer}>
+              <input
+                type="checkbox"
+                id="Conducted"
+                name="Conducted"
+                checked={event.Conducted}
+                onChange={handleChange}
+                style={styles.checkbox}
+              />
+              <label htmlFor="Conducted" style={styles.label}>
+                Проведено
+              </label>
+            </div>
+          </div>
+
+          <div style={styles.formGroup}>
+            <label htmlFor="EventTypeId" style={styles.label}>
+              Тип мероприятия:
+            </label>
+            <select
+              id="EventTypeId"
+              name="EventTypeId"
+              value={event.EventTypeId}
+              onChange={handleChange}
+              required
+              style={styles.select}
+            >
+              <option value="">Выберите тип</option>
+              {eventTypes.map((type) => (
+                <option key={type.Id} value={type.Id}>
+                  {type.EventTypeName}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div style={styles.buttonGroup}>
+            <button 
+              type="submit" 
+              disabled={loading}
+              style={{
+                ...styles.primaryButton,
+                opacity: loading ? 0.7 : 1,
+              }}
+            >
+              {loading ? "Сохранение..." : "Сохранить изменения"}
+            </button>
+            <button 
+              type="button"
+              onClick={() => navigate('/events')}
+              style={styles.primaryButton}
+            >
+              Назад
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

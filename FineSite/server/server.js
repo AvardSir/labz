@@ -43,6 +43,87 @@ app.get('/api/anecdotes', async (req, res) => {
     }
 });
 
+app.delete("/api/delete_anecdote", async (req, res) => {
+  const { idAnecdote } = req.body;  // Получаем ID анекдота из тела запроса
+
+  // Проверка, если ID анекдота не передан или не является числом
+  if (!idAnecdote || isNaN(idAnecdote)) {
+    return res.status(400).json({ error: 'Некорректный ID анекдота' });
+  }
+
+  try {
+    // Подключаемся к базе данных
+    let pool = await sql.connect(dbConfig);
+
+    // Выполняем вызов процедуры удаления анекдота
+    await pool
+      .request()
+      .input('IdAnecdote', sql.Int, idAnecdote)  // Передаем ID анекдота в процедуру
+      .execute('DeleteAnecdote');  // Имя процедуры для удаления анекдота
+
+    // Возвращаем успешный ответ
+    res.status(200).json({ message: 'Анекдот успешно удален' });
+  } catch (error) {
+    // Логируем ошибку и отправляем ответ с ошибкой
+    console.error("Ошибка при удалении анекдота:", error.message, error.stack);
+    res.status(500).json({ error: 'Произошла ошибка на сервере' });
+  } finally {
+    // Закрываем соединение с базой данных
+    sql.close();
+  }
+});
+
+  // Добавление комментария к анекдоту
+  app.post("/api/add-comment-anecdote", (req, res) => {
+    const { Text, IdUser, IdAnecdote } = req.body;  // Получаем данные из тела запроса
+
+    // Проверка на наличие всех обязательных параметров
+    if (!Text || !IdUser || !IdAnecdote) {
+        return res.status(400).json({ error: "Все поля (Text, IdUser, IdAnecdote) обязательны для заполнения." });
+    }
+
+    // Создание SQL-запроса через sql.request()
+    new sql.Request()
+        .input('Text', sql.NVarChar, Text)
+        .input('IdUser', sql.Int, IdUser)
+        .input('IdAnecdote', sql.Int, IdAnecdote)
+        .execute('AddComment') // Вызов хранимой процедуры
+        .then((result) => {
+            // Проверка на успешное добавление комментария
+            if (result.rowsAffected[0] === 0) {
+                return res.status(500).json({ error: "Комментарий не был добавлен." });
+            }
+
+            res.status(200).json({ message: "Комментарий успешно добавлен", result });
+        })
+        .catch((err) => {
+            console.error("Ошибка при добавлении комментария:", err);
+            return res.status(500).json({ error: "Ошибка сервера при добавлении комментария." });
+        });
+});
+app.put('/api/update-user', async (req, res) => {
+  const { IdUser, Name, Password, Email, Bio } = req.body;
+
+  try {
+    const pool = await sql.connect(dbConfig);
+
+    const result = await pool.request()
+    .input('IdUser', sql.Int, IdUser)
+      .input('Name', sql.NVarChar(255), Name)
+      .input('Password', sql.NVarChar(255), Password)
+      .input('Email', sql.NVarChar(255), Email)
+      .input('Bio', sql.NVarChar(sql.MAX), Bio)
+      .execute('UpdateUserInfo'); // Вызываем хранимую процедуру
+
+    res.status(200).json({ message: 'Данные успешно обновлены!' });
+  } catch (error) {
+    console.error('Ошибка при обновлении данных:', error);
+    res.status(500).json({ message: 'Ошибка сервера', error: error.message });
+  }
+});
+
+
+
 // Эндпоинт для получения мероприятий
 app.get('/api/events', async (req, res) => {
     try {
@@ -168,7 +249,29 @@ app.get('/api/events/types', async (req, res) => {
   
 
 
-
+  app.post('/api/add-user', async (req, res) => {
+    const { Name, Password, Email, Bio, IdRights } = req.body;
+  
+    try {
+      const pool = await sql.connect(dbConfig);
+  
+      const result = await pool.request()
+        .input('Name', sql.NVarChar(255), Name)
+        .input('Password', sql.NVarChar(255), Password)
+        .input('Email', sql.NVarChar(255), Email)
+        .input('Bio', sql.NVarChar(sql.MAX), Bio)
+        .input('IdRights', sql.Int, IdRights)
+        .execute('AddUser');
+  
+      const newUserId = result.recordset[0].NewUserId;
+  
+      res.status(200).json({ message: 'Пользователь успешно добавлен!', userId: newUserId });
+    } catch (error) {
+      console.error('Ошибка при добавлении пользователя:', error);
+      res.status(500).json({ message: 'Ошибка сервера', error: error.message });
+    }
+  });
+  
   app.get('/api/users/users', async (req, res) => {
     try {
         let pool = await sql.connect(dbConfig);
@@ -292,34 +395,6 @@ app.get('/api/comments-anecdote', async (req, res) => {
   
 
   
-  // Добавление комментария к анекдоту
-  app.post("/api/add-comment-anecdote", (req, res) => {
-    const { Text, IdUser, IdAnecdote } = req.body;  // Получаем данные из тела запроса
-
-    // Проверка на наличие всех обязательных параметров
-    if (!Text || !IdUser || !IdAnecdote) {
-        return res.status(400).json({ error: "Все поля (Text, IdUser, IdAnecdote) обязательны для заполнения." });
-    }
-
-    // Создание SQL-запроса через sql.request()
-    new sql.Request()
-        .input('Text', sql.NVarChar, Text)
-        .input('IdUser', sql.Int, IdUser)
-        .input('IdAnecdote', sql.Int, IdAnecdote)
-        .execute('AddComment') // Вызов хранимой процедуры
-        .then((result) => {
-            // Проверка на успешное добавление комментария
-            if (result.rowsAffected[0] === 0) {
-                return res.status(500).json({ error: "Комментарий не был добавлен." });
-            }
-
-            res.status(200).json({ message: "Комментарий успешно добавлен", result });
-        })
-        .catch((err) => {
-            console.error("Ошибка при добавлении комментария:", err);
-            return res.status(500).json({ error: "Ошибка сервера при добавлении комментария." });
-        });
-});
 
 
 
@@ -576,7 +651,7 @@ app.post("/api/add-entry", async (req, res) => {
 
 app.post('/api/add-anecdote', async (req, res) => {
   const { Text, Rate, IdUser, IdTypeAnecdote } = req.body;
-
+  console.log(req.body)
   if (!Text || Rate == null || !IdUser || !IdTypeAnecdote) {
       return res.status(400).json({ error: 'Все поля обязательны для заполнения' });
   }
@@ -685,17 +760,20 @@ app.post('/api/add_events', async (req, res) => {
 app.put('/api/update_event', async (req, res) => {
   const { idEvent, description, cost, howManyFreeSeats, name, conducted, eventTypeId } = req.body;
 
-  if (
-    !idEvent || 
-    !description || 
-    isNaN(cost) || 
-    isNaN(howManyFreeSeats) || 
-    !name || 
-    typeof conducted !== 'boolean' || 
-    isNaN(eventTypeId)
-  ) {
-    return res.status(400).json({ error: "Некорректные входные данные" });
-  }
+  const conductedBool = conducted === true || conducted === 'true';
+
+if (
+  !idEvent || 
+  !description || 
+  isNaN(cost) || 
+  isNaN(howManyFreeSeats) || 
+  !name || 
+  !['true', 'false', true, false].includes(conducted) || 
+  isNaN(eventTypeId)
+) {
+  return res.status(400).json({ error: "Некорректные входные данные" });
+}
+
 
   try {
     let pool = await sql.connect(dbConfig);
@@ -712,7 +790,10 @@ app.put('/api/update_event', async (req, res) => {
       .input('EventTypeId', sql.Int, eventTypeId)
       .execute('UpdateEvent');
 
-    res.status(200).json({ message: 'Мероприятие успешно обновлено' });
+      res.sendStatus(200); // Просто статус 200 OK, без тела
+
+
+
   } catch (error) {
     console.error("Ошибка при обновлении мероприятия:", error.message, error.stack);
     res.status(500).json({ error: 'Произошла ошибка на сервере' });
@@ -741,73 +822,42 @@ app.get('/api/event-types', async (req, res) => {
   }
 });
 
-app.delete("/api/delete_anecdote", async (req, res) => {
-  const { idAnecdote } = req.body;  // Получаем ID анекдота из тела запроса
+app.delete('/api/delete_event/:idEvent', async (req, res) => {
+  const idEvent = parseInt(req.params.idEvent, 10);
 
-  // Проверка, если ID анекдота не передан или не является числом
-  if (!idAnecdote || isNaN(idAnecdote)) {
-    return res.status(400).json({ error: 'Некорректный ID анекдота' });
-  }
-
-  try {
-    // Подключаемся к базе данных
-    let pool = await sql.connect(dbConfig);
-
-    // Выполняем вызов процедуры удаления анекдота
-    await pool
-      .request()
-      .input('IdAnecdote', sql.Int, idAnecdote)  // Передаем ID анекдота в процедуру
-      .execute('DeleteAnecdote');  // Имя процедуры для удаления анекдота
-
-    // Возвращаем успешный ответ
-    res.status(200).json({ message: 'Анекдот успешно удален' });
-  } catch (error) {
-    // Логируем ошибку и отправляем ответ с ошибкой
-    console.error("Ошибка при удалении анекдота:", error.message, error.stack);
-    res.status(500).json({ error: 'Произошла ошибка на сервере' });
-  } finally {
-    // Закрываем соединение с базой данных
-    sql.close();
-  }
-});
-app.delete("/api/delete_event", async (req, res) => {
-  const { idEvent } = req.body;  // Получаем ID мероприятия из тела запроса
-
-  // Проверка на корректность ID
+  // Проверка ID
   if (!idEvent || isNaN(idEvent)) {
     return res.status(400).json({ error: 'Некорректный ID мероприятия' });
   }
 
   try {
-    // Подключаемся к базе данных
     const pool = await sql.connect(dbConfig);
 
-    // Проверка на наличие мероприятия с таким ID
-    const checkEvent = await pool
+    // Проверка существования мероприятия
+    const checkResult = await pool
       .request()
-      .input("IdEvent", sql.Int, idEvent)
-      .query("SELECT 1 FROM [dbo].[Мероприятие] WHERE [IdEvent] = @IdEvent");
+      .input('IdEvent', sql.Int, idEvent)
+      .query('SELECT 1 FROM [dbo].[Мероприятие] WHERE [IdEvent] = @IdEvent');
 
-    if (checkEvent.recordset.length === 0) {
+    if (checkResult.recordset.length === 0) {
       return res.status(404).json({ error: 'Мероприятие не найдено' });
     }
 
-    // Выполнение процедуры удаления
+    // Удаление мероприятия через процедуру
     await pool
       .request()
-      .input("IdEvent", sql.Int, idEvent)
-      .execute("DeleteEventById"); // Имя вашей процедуры удаления
+      .input('IdEvent', sql.Int, idEvent)
+      .execute('DeleteEventById');
 
-    // Отправляем успешный ответ
-    res.status(200).json({ message: "Мероприятие успешно удалено" });
+    res.status(200).json({ message: 'Мероприятие успешно удалено' });
   } catch (error) {
-    console.error("Ошибка при удалении мероприятия:", error);
-    res.status(500).json({ error: 'Произошла ошибка при удалении мероприятия' });
+    console.error('Ошибка при удалении мероприятия:', error);
+    res.status(500).json({ error: 'Ошибка сервера при удалении мероприятия' });
   } finally {
-    // Закрываем соединение с базой данных
-    sql.close();
+    sql.close(); // закрываем соединение
   }
 });
+
 
 // Запуск сервера
 const PORT = 5000;

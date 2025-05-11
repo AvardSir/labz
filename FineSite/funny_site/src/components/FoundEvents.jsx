@@ -9,17 +9,16 @@ export const FoundEvents = ({ events }) => {
   const { loginData } = useContext(AuthContext);
 
   const handleDelete = async (eventId) => {
-    try {
-      const response = await axios.delete('/api/delete_event', {
-        data: { idEvent: eventId },
-      });
-      alert(response.data.message);
-      window.location.reload();
-    } catch (error) {
-      console.error("Ошибка при удалении мероприятия:", error);
-      alert("Ошибка при удаления мероприятия.");
-    }
-  };
+  try {
+    // console.log(eventId)
+    const response = await axios.delete(`/api/delete_event/${eventId}`);
+    alert(response.data.message);
+    window.location.reload();
+  } catch (error) {
+    console.error("Ошибка при удалении мероприятия:", error.response?.data || error);
+    alert(error.response?.data?.error || "Ошибка при удалении мероприятия");
+  }
+};
 
   return  <div className="found-events">
   {loginData.IdRights != 1 && (
@@ -49,7 +48,8 @@ export const FoundEvents = ({ events }) => {
           <span>📅 {new Date(event.Date).toLocaleDateString()}</span>
           <span>🪑 {event.HowManyFreeSeats} мест</span>
           <span>🏷️ {event.ТипМероприятия}</span>
-          <span>{event.Проведено_Строка === 'True' ? '✅ Проведено' : '🕒 Запланировано'}</span>
+          
+          <span>{event.Проведено === true ? '✅ Проведено' : '🕒 Запланировано'}</span>
         </div>
           
           {/* Блок кнопок */}

@@ -9,7 +9,7 @@ import "../css/HomePage.css"; // Простой импорт стилей
 const AddAnecdotePage = ({ what = 'anecdote' }) => {
   return (
     <div className="main-container">
-      <Autification/>
+      
       <Header />
       <AddAnecdoteComponent />
       

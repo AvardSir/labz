@@ -42,13 +42,22 @@ export const FoundAnecdotes = ({ anecdotes }) => {
             <li key={anecdote.IdAnecdote} className="card">
             
             <div className="card-content">
-              <p>{anecdote.Text}</p>
+            
+      <p >
+        {anecdote.Text.split('\n').map((line, index) => (
+          <React.Fragment key={index}>
+            {line}
+            {index < anecdote.Text.split('\n').length - 1 && <br />}
+          </React.Fragment>
+        ))}
+      </p>
+
             </div>
             
             <div className="card-meta">
               <span>🏷️ {anecdote.AnecdoteType.trim()}</span>
               <span>📅 {new Date(anecdote.Date).toLocaleDateString()}</span>
-              <span>⭐ {anecdote.Rate}</span>
+              {/* <span>⭐ {anecdote.Rate}</span> */}
               <span>👤 {anecdote.UserName}</span>
             </div>
               

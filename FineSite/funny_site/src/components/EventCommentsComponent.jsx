@@ -1,8 +1,10 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { AuthContext } from "./context/AuthContext"; // Путь к вашему контексту
+import { useNavigate } from 'react-router-dom';
 
 export const EventCommentsComponent = () => {
+  const navigate = useNavigate();
   const { eventId } = useParams(); // Получаем ID события из URL
   const { loginData } = useContext(AuthContext); // Извлекаем данные о пользователе из контекста
   const [event, setEvent] = useState(null); // Состояние для события
@@ -95,29 +97,57 @@ export const EventCommentsComponent = () => {
   return (
     <div className="event-comments-page">
       {event ? (
-        <div>
-          <h3>Мероприятие #{event.IdEvent}</h3>
-          <p>{event.Description}</p>
-          <p><strong>{event.Name}</strong> ({new Date(event.Date).toLocaleDateString()})</p>
-          <p><strong>Стоимость:</strong> {event.Стоимость}</p>
+        <div className="card">
+          <h4 className="card-title">{event.Name}</h4>
+          <div className="card-content">
+            <p>{event.Description}</p>
+          </div>
+        
+          <div className="card-meta">
+            <span>💰 {event.Стоимость} ₽</span>
+            <span>📅 {new Date(event.Date).toLocaleDateString()}</span>
+            <span>🪑 {event.HowManyFreeSeats} мест</span>
+            <span>🏷️ {event.ТипМероприятия}</span>
+            
+            <span>{event.Проведено === true ? '✅ Проведено' : '🕒 Запланировано'}</span>
+          </div>
+        
         </div>
       ) : (
         <p>Загрузка мероприятия...</p>
       )}
 
       <h4>Комментарии:</h4>
-      <ul>
-        {comments.length > 0 ? (
-          comments.map((comment, index) => (
-            <li key={index}>
-              <p>{comment.CommentText}</p>
-              <p><strong>{comment.AuthorName}</strong> ({new Date(comment.CommentDate).toLocaleDateString()})</p>
-            </li>
-          ))
-        ) : (
-          <p>Комментариев нет</p>
-        )}
-      </ul>
+      <ul className="comments-list">
+  {comments.length > 0 ? (
+    comments.map((comment, index) => (
+      <li key={index} className="comment-item">
+        {/* Основной текст комментария */}
+        <div className="comment-bubble">
+          {console.log(comment)}
+          <p className="comment-text">{comment.CommentText}</p>
+        </div>
+        
+        {/* Мета-информация о комментарии */}
+        <div className="comment-meta">
+          {/* Аватар и имя автора */}
+          <div className="comment-author">
+            
+            <strong className="author-name">{comment.AuthorName}</strong>
+          </div>
+          
+          {/* Дата и время */}
+          
+        </div>
+      </li>
+    ))
+  ) : (
+    <div className="no-comments">
+      <i className="icon-comment"></i>
+      <p>Пока нет комментариев</p>
+    </div>
+  )}
+</ul>
       <div>
         <input
           type="text"
@@ -126,6 +156,8 @@ export const EventCommentsComponent = () => {
           placeholder="Добавить комментарий"
         />
         <button onClick={handleAddComment}>Добавить</button>
+        
+        <button onClick={() => navigate('/events')}>Назад</button>
       </div>
     </div>
   );

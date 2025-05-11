@@ -72,7 +72,7 @@ export const Autification = () => {
     return (
       <section className="registration">
         <h2>
-        {console.log(loginData.IdRights!=1)}
+        {/* {console.log(loginData.IdRights!=1)} */}
           Вы успешно авторизованы!
           {loginData?.IdRights != 1 && " Добро пожаловать, администратор!"}
         </h2>
