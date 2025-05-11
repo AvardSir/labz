@@ -858,6 +858,7 @@ app.delete('/api/delete_event/:idEvent', async (req, res) => {
   }
 });
 
+// все привет чекаем комиты
 
 // Запуск сервера
 const PORT = 5000;
