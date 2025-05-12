@@ -860,6 +860,56 @@ app.delete('/api/delete_event/:idEvent', async (req, res) => {
 
 // все привет чекаем комиты
 
+
+app.post('/api/anecdotes/rate', async (req, res) => {
+    const { IsPlus, IdUser, IdAnecdote } = req.body;
+
+    // Валидация входных данных
+    if (typeof IsPlus !== 'boolean' || !IdUser || !IdAnecdote) {
+        return res.status(400).json({ 
+            success: false, 
+            message: 'Необходимо указать IsPlus (boolean), IdUser (number) и IdAnecdote (number)' 
+        });
+    }
+
+    try {
+        const request = new sql.Request(req.db);
+        
+        // Вызов хранимой процедуры
+        const result = await request
+            .input('IsPlus', sql.Bit, IsPlus)
+            .input('IdUser', sql.Int, IdUser)
+            .input('IdAnecdote', sql.Int, IdAnecdote)
+            .execute('sp_AnikGrade_Add');
+
+        const procedureResult = result.recordset[0];
+
+        // Получаем обновленный рейтинг анекдота
+        const ratingResult = await new sql.Request(req.db)
+            .input('IdAnecdote', sql.Int, IdAnecdote)
+            .query('SELECT Rate FROM [Анекдот] WHERE IdAnecdote = @IdAnecdote');
+
+        res.json({
+            success: true,
+            message: procedureResult.Result,
+            action: procedureResult.ActionTaken,
+            newRating: ratingResult.recordset[0].Rate
+        });
+
+    } catch (error) {
+        console.error('Ошибка при обработке оценки:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Ошибка сервера при обработке оценки',
+            error: error.message 
+        });
+    }
+});
+
+
+
+
+
 // Запуск сервера
 const PORT = 5000;
 app.listen(PORT, () => {
