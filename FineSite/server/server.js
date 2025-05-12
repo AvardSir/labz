@@ -873,7 +873,7 @@ app.post('/api/anecdotes/rate', async (req, res) => {
     }
 
     try {
-        const request = new sql.Request(req.db);
+        const request = new sql.Request(await poolPromise);
         
         // Вызов хранимой процедуры
         const result = await request
@@ -884,10 +884,25 @@ app.post('/api/anecdotes/rate', async (req, res) => {
 
         const procedureResult = result.recordset[0];
 
-        // Получаем обновленный рейтинг анекдота
-        const ratingResult = await new sql.Request(req.db)
+        // Проверяем, была ли ошибка в процедуре
+        if (procedureResult.Result.startsWith('Error:')) {
+            return res.status(500).json({
+                success: false,
+                message: procedureResult.Result.replace('Error: ', ''),
+                action: procedureResult.ActionTaken
+            });
+        }
+
+        // Получаем обновленный рейтинг анекдота отдельным запросом
+        const ratingRequest = new sql.Request(await poolPromise);
+        const ratingResult = await ratingRequest
             .input('IdAnecdote', sql.Int, IdAnecdote)
             .query('SELECT Rate FROM [Анекдот] WHERE IdAnecdote = @IdAnecdote');
+
+        // Проверяем, что получили рейтинг
+        if (!ratingResult.recordset.length) {
+            throw new Error('Анекдот не найден');
+        }
 
         res.json({
             success: true,
@@ -901,7 +916,8 @@ app.post('/api/anecdotes/rate', async (req, res) => {
         res.status(500).json({ 
             success: false, 
             message: 'Ошибка сервера при обработке оценки',
-            error: error.message 
+            error: error.message,
+            action: 0 // При ошибке action = 0
         });
     }
 });

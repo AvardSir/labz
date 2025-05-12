@@ -23,7 +23,7 @@ export const FoundAnecdotes = ({ anecdotes }) => {
 
   return (
     <div className="found-anecdotes">
-      {loginData.IdRights != 1 && (
+      {loginData.IdRights == 2 && (
         <button 
           onClick={() => navigate("/add-anecdote")}
           className="action-btn add-btn"
@@ -39,6 +39,7 @@ export const FoundAnecdotes = ({ anecdotes }) => {
       ) : (
         <ul className="anecdotes-list">
           {anecdotes.map((anecdote) => (
+            
             <li key={anecdote.IdAnecdote} className="card">
             
             <div className="card-content">
@@ -69,7 +70,7 @@ export const FoundAnecdotes = ({ anecdotes }) => {
                   💬 Комментарии
                 </button>
                 
-                {loginData.IdRights != 1 && (
+                {loginData.IdRights == 2 && (
                   <>
                     <button 
                       onClick={() => navigate(`/edit-anecdote/${anecdote.IdAnecdote}`)}

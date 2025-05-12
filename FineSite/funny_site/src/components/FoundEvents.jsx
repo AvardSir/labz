@@ -21,7 +21,7 @@ export const FoundEvents = ({ events }) => {
 };
 
   return  <div className="found-events">
-  {loginData.IdRights != 1 && (
+  {loginData.IdRights == 2 && (
     <button 
       onClick={() => navigate(`/add-event`)}
       className="action-btn add-btn"
@@ -66,7 +66,7 @@ export const FoundEvents = ({ events }) => {
               className="action-btn signup-btn"
             />
 
-            {loginData.IdRights != 1 && (
+            {loginData.IdRights == 2 && (
               <>
                 <button
                   onClick={() => navigate(`/edit-event/${event.IdEvent}`)}

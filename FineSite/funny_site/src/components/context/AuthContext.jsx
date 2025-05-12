@@ -10,7 +10,7 @@ export const AuthProvider = ({ children }) => {
     login: "",
     IdUser: null,
     password: "",
-    IdRights: 1,
+    IdRights: 0,
   });
   const [userDetails, setUserDetails] = useState(null);
 
@@ -57,7 +57,7 @@ export const AuthProvider = ({ children }) => {
       login: "", 
       IdUser: null, 
       password: "", 
-      IdRights: 1 
+      IdRights: 0 
     });
     setIsLoggedIn(false);
     setUserDetails(null);
