@@ -94,3 +94,6 @@ export const FoundAnecdotes = ({ anecdotes }) => {
     </div>
   );
 };
+
+
+// check 1
