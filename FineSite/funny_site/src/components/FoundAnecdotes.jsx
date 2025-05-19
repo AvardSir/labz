@@ -9,37 +9,62 @@ export const FoundAnecdotes = ({ anecdotes }) => {
   const [localAnecdotes, setLocalAnecdotes] = useState([]);
 
   useEffect(() => {
-    setLocalAnecdotes(anecdotes);
-  }, [anecdotes]);
+    const fetchRatedAnecdotes = async () => {
+      try {
+        const res = await fetch(`/api/rated-anecdotes?IdUser=${loginData.IdUser}`);
+        const rated = await res.json(); // Массив объектов: { IdAnecdote, IsPlus }
 
-  const handleRate = async (idAnecdote, isPlus) => { 
+        const ratedMap = new Map(
+          rated.map((r) => [r.IdAnecdote, r.IsPlus])
+        );
+
+        const updatedAnecdotes = anecdotes.map((a) => ({
+          ...a,
+          UserRating: ratedMap.has(a.IdAnecdote) ? ratedMap.get(a.IdAnecdote) : null,
+        }));
+
+        setLocalAnecdotes(updatedAnecdotes);
+      } catch (error) {
+        console.error("Ошибка при загрузке рейтингов:", error);
+        setLocalAnecdotes(anecdotes); // хотя бы покажем анекдоты
+      }
+    };
+
+    if (loginData?.IdUser && anecdotes.length > 0) {
+      fetchRatedAnecdotes();
+    } else {
+      setLocalAnecdotes(anecdotes);
+    }
+  }, [anecdotes, loginData]);
+
+  const handleRate = async (idAnecdote, isPlus) => {
     try {
-      const currentAnecdote = localAnecdotes.find(a => a.IdAnecdote === idAnecdote);
-      const isSameRating = currentAnecdote.UserRating === isPlus;
+      const current = localAnecdotes.find((a) => a.IdAnecdote === idAnecdote);
+      const isSameRating = current.UserRating === isPlus;
 
-      const response = await fetch("/api/anecdotes/rate", {
+      const res = await fetch("/api/anecdotes/rate", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify({
-          IsPlus: isPlus,
           IdUser: loginData.IdUser,
           IdAnecdote: idAnecdote,
+          IsPlus: isPlus,
         }),
       });
 
-      const data = await response.json();
+      const data = await res.json();
 
       if (data.success) {
         const updated = localAnecdotes.map((a) =>
           a.IdAnecdote === idAnecdote
             ? {
-              ...a,
-              Rate: data.newRating,
-              UserRating: isSameRating ? null : isPlus // Сбрасываем оценку при повторном нажатии
-            }
+                ...a,
+                Rate: data.newRating,
+                UserRating: isSameRating ? null : isPlus,
+              }
             : a
         );
         setLocalAnecdotes(updated);
@@ -47,14 +72,14 @@ export const FoundAnecdotes = ({ anecdotes }) => {
     } catch (error) {
       console.error("Ошибка при оценке:", error);
     }
-  };;;
+  };
 
   const handleDelete = async (idAnecdote) => {
     try {
-      const response = await axios.delete("/api/delete_anecdote", {
+      const res = await axios.delete("/api/delete_anecdote", {
         data: { idAnecdote },
       });
-      alert(response.data.message);
+      alert(res.data.message);
       window.location.reload();
     } catch (error) {
       console.error("Ошибка при удалении анекдота:", error);
@@ -96,7 +121,6 @@ export const FoundAnecdotes = ({ anecdotes }) => {
 
               <div className="card-meta">
                 <span>🏷️ {anecdote.AnecdoteType.trim()}</span>
-                
                 <span>⭐ {anecdote.Rate || 0}</span>
                 <span>👤 {anecdote.UserName}</span>
                 <span>📅 {new Date(anecdote.Date).toLocaleDateString()}</span>

@@ -836,11 +836,9 @@ app.delete('/api/delete_event/:idEvent', async (req, res) => {
 
 // все привет чекаем комиты
 
-
 app.post('/api/anecdotes/rate', async (req, res) => {
     const { IsPlus, IdUser, IdAnecdote } = req.body;
 
-    // Валидация входных данных
     if (typeof IsPlus !== 'boolean' || !IdUser || !IdAnecdote) {
         return res.status(400).json({ 
             success: false, 
@@ -849,10 +847,9 @@ app.post('/api/anecdotes/rate', async (req, res) => {
     }
 
     try {
-        const request = new sql.Request(await poolPromise);
-        
-        // Вызов хранимой процедуры
-        const result = await request
+        const pool = await poolPromise;
+
+        const result = await pool.request()
             .input('IsPlus', sql.Bit, IsPlus)
             .input('IdUser', sql.Int, IdUser)
             .input('IdAnecdote', sql.Int, IdAnecdote)
@@ -860,7 +857,6 @@ app.post('/api/anecdotes/rate', async (req, res) => {
 
         const procedureResult = result.recordset[0];
 
-        // Проверяем, была ли ошибка в процедуре
         if (procedureResult.Result.startsWith('Error:')) {
             return res.status(500).json({
                 success: false,
@@ -869,13 +865,11 @@ app.post('/api/anecdotes/rate', async (req, res) => {
             });
         }
 
-        // Получаем обновленный рейтинг анекдота отдельным запросом
-        const ratingRequest = new sql.Request(await poolPromise);
-        const ratingResult = await ratingRequest
+        // Получаем обновленный рейтинг
+        const ratingResult = await pool.request()
             .input('IdAnecdote', sql.Int, IdAnecdote)
             .query('SELECT Rate FROM [Анекдот] WHERE IdAnecdote = @IdAnecdote');
 
-        // Проверяем, что получили рейтинг
         if (!ratingResult.recordset.length) {
             throw new Error('Анекдот не найден');
         }
@@ -893,63 +887,51 @@ app.post('/api/anecdotes/rate', async (req, res) => {
             success: false, 
             message: 'Ошибка сервера при обработке оценки',
             error: error.message,
-            action: 0 // При ошибке action = 0
+            action: 0
         });
     }
 });
 
-
-
-
-
 app.get('/api/rating', async (req, res) => {
     const { IdUser, IdAnecdote } = req.query;
 
+    if (!IdUser || !IdAnecdote) {
+        return res.status(400).send('IdUser и IdAnecdote обязательны');
+    }
+
     try {
-        // Подключение к базе данных
-        await sql.connect(dbConfig);
+        const pool = await poolPromise;
+        const result = await pool.request()
+            .input('IdUser', sql.Int, IdUser)
+            .input('IdAnecdote', sql.Int, IdAnecdote)
+            .execute('GetUserRatingForAnecdote');
 
-        // Выполнение процедуры
-        const result = await sql.query`EXEC GetUserRatingForAnecdote @IdUser = ${IdUser}, @IdAnecdote = ${IdAnecdote}`;
-
-        // Возврат результата
         res.json(result.recordset);
     } catch (err) {
-        console.error('SQL error', err);
-        res.status(500).send('Server error');
-    } finally {
-        // Закрытие подключения
-        await sql.close();
+        console.error('Ошибка получения рейтинга:', err);
+        res.status(500).send('Ошибка сервера');
     }
 });
-
-
 
 app.get('/api/rated-anecdotes', async (req, res) => {
     const { IdUser } = req.query;
 
     if (!IdUser) {
-        return res.status(400).send('IdUser is required');
+        return res.status(400).send('IdUser обязателен');
     }
 
     try {
-        // Подключение к базе данных
-        await sql.connect(dbConfig);
+        const pool = await poolPromise;
+        const result = await pool.request()
+            .input('IdUser', sql.Int, IdUser)
+            .execute('GetRatedAnecdotesByUser');
 
-        // Выполнение процедуры
-        const result = await sql.query`EXEC GetRatedAnecdotesByUser @IdUser = ${IdUser}`;
-
-        // Возврат результата
         res.json(result.recordset);
     } catch (err) {
-        console.error('SQL error', err);
-        res.status(500).send('Server error');
-    } finally {
-        // Закрытие подключения
-        await sql.close();
+        console.error('Ошибка получения оценённых анекдотов:', err);
+        res.status(500).send('Ошибка сервера');
     }
 });
-
 
 
 // Запуск сервера
