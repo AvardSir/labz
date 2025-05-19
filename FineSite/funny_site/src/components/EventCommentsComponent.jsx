@@ -116,7 +116,7 @@ export const EventCommentsComponent = () => {
       ) : (
         <p>Загрузка мероприятия...</p>
       )}
-<button onClick={() => navigate('/events')} class="back-button">Назад</button>
+<button onClick={() => navigate('/events')} className="back-button">Назад</button>
       <h4>Комментарии:</h4>
       <ul className="comments-list">
   {comments.length > 0 ? (
@@ -148,16 +148,16 @@ export const EventCommentsComponent = () => {
     </div>
   )}
 </ul>
-      <div class="comment-container">
+      <div className="comment-container">
     <input
         type="text"
         value={newComment}
         onChange={(e) => setNewComment(e.target.value)}
         placeholder="Добавить комментарий"
-        class="comment-input"
+        className="comment-input"
     />
-    <button onClick={handleAddComment} class="comment-button">Добавить</button>
-    <button onClick={() => navigate('/events')} class="back-button">Назад</button>
+    <button onClick={handleAddComment} className="comment-button">Добавить</button>
+    <button onClick={() => navigate('/events')} className="back-button">Назад</button>
 </div>
     </div>
   );

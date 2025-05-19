@@ -128,7 +128,7 @@ const navigate = useNavigate();
         <p>Загрузка анекдота...</p>
       )}
       
-      <button onClick={() => navigate('/')} class="back-button">Назад</button>
+      <button onClick={() => navigate('/')} className="back-button">Назад</button>
       <h4>Комментарии:</h4>
       <ul className="comments-list">
   {comments.length > 0 ? (
@@ -170,16 +170,16 @@ const navigate = useNavigate();
     </div>
   )}
 </ul>
-      <div class="comment-container">
+      <div className="comment-container">
     <input
         type="text"
         value={newComment}
         onChange={(e) => setNewComment(e.target.value)}
         placeholder="Добавить комментарий"
-        class="comment-input"
+        className="comment-input"
     />
-    <button onClick={handleAddComment} class="comment-button">Добавить</button>
-    <button onClick={() => navigate('/')} class="back-button">Назад</button>
+    <button onClick={handleAddComment} className="comment-button">Добавить</button>
+    <button onClick={() => navigate('/')} className="back-button">Назад</button>
 </div>
 
     </div>
