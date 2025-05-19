@@ -71,7 +71,8 @@ export const AnecdoteCommentsComponent = () => {
 
   return (
     <div className="anecdote-comments-page">
-      <AnecdoteCard anecdote={anecdote} />
+      <AnecdoteCard anecdote={anecdote} setAnecdote={setAnecdote} />
+
       
       <h4>Комментарии:</h4>
       <CommentList comments={comments} />
