@@ -4,7 +4,7 @@ import { RegistrationForm } from "../components/Autification.jsx";
 import { SearchSection } from "../components/SearchSection.jsx";
 import { FoundAnecdotes } from "../components/FoundAnecdotes.jsx";
 import HomePage from "./HomePage.jsx";
-import { AnecdoteCommentsComponent } from "../components/AnecdoteCommentsComponent.jsx";
+import { AnecdoteCommentsComponent } from "../components/anikComments/AnecdoteCommentsComponent.jsx";
 
 
 const AnecdoteCommentsPage = () => {
