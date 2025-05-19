@@ -724,11 +724,15 @@ button {
 /* Текст комментария */
 .comment-text {
   margin: 0;
-  color: #2d3748;
-  font-size: 1rem;
-  line-height: 1.6;
-  white-space: pre-line;
+  color: #2d3748; /* Основной цвет текста */
+  font-size: 1rem; /* Размер шрифта */
+  line-height: 1.6; /* Высота строки для лучшей читаемости */
+  white-space: pre-line; /* Сохранение переносов строк */
+  padding: 0.25rem; /* Легкие отступы для улучшения читаемости */
+  text-shadow: 0 0 0 rgba(0, 0, 0, 0); /* Указание тени с нулевыми значениями */
+  font-weight: bold; /* Установка жирного начертания текста */
 }
+
 
 /* Блок с мета-данными */
 .comment-meta {
