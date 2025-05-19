@@ -1,9 +1,11 @@
 import React, { useContext, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
+import { useNavigate } from 'react-router-dom';
 
 export const AnecdoteCard = ({ anecdote, setAnecdote }) => {
   const { loginData } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   if (!anecdote) return <p>Загрузка анекдота...</p>;
 
@@ -82,6 +84,7 @@ export const AnecdoteCard = ({ anecdote, setAnecdote }) => {
           </button>
         </div>
       )}
+      
     </div>
   );
 };
