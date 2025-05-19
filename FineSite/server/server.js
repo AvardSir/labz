@@ -949,6 +949,32 @@ app.get('/api/rating', async (req, res) => {
 
 
 
+app.get('/api/rated-anecdotes', async (req, res) => {
+    const { IdUser } = req.query;
+
+    if (!IdUser) {
+        return res.status(400).send('IdUser is required');
+    }
+
+    try {
+        // Подключение к базе данных
+        await sql.connect(dbConfig);
+
+        // Выполнение процедуры
+        const result = await sql.query`EXEC GetRatedAnecdotesByUser @IdUser = ${IdUser}`;
+
+        // Возврат результата
+        res.json(result.recordset);
+    } catch (err) {
+        console.error('SQL error', err);
+        res.status(500).send('Server error');
+    } finally {
+        // Закрытие подключения
+        await sql.close();
+    }
+});
+
+
 
 // Запуск сервера
 const PORT = 5000;
