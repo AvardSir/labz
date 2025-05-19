@@ -14,6 +14,9 @@ export const FoundAnecdotes = ({ anecdotes }) => {
 
   const handleRate = async (idAnecdote, isPlus) => {
     try {
+      const currentAnecdote = localAnecdotes.find(a => a.IdAnecdote === idAnecdote);
+      const isSameRating = currentAnecdote.UserRating === isPlus;
+
       const response = await fetch("/api/anecdotes/rate", {
         method: "POST",
         headers: {
@@ -32,18 +35,19 @@ export const FoundAnecdotes = ({ anecdotes }) => {
       if (data.success) {
         const updated = localAnecdotes.map((a) =>
           a.IdAnecdote === idAnecdote
-            ? { ...a, Rate: data.newRating, UserRating: isPlus }
+            ? {
+              ...a,
+              Rate: data.newRating,
+              UserRating: isSameRating ? null : isPlus // Сбрасываем оценку при повторном нажатии
+            }
             : a
         );
         setLocalAnecdotes(updated);
-      } else {
-        alert("Ошибка при оценке анекдота");
       }
     } catch (error) {
       console.error("Ошибка при оценке:", error);
-      alert("Произошла ошибка при попытке оценки");
     }
-  };
+  };;;
 
   const handleDelete = async (idAnecdote) => {
     try {
@@ -51,7 +55,7 @@ export const FoundAnecdotes = ({ anecdotes }) => {
         data: { idAnecdote },
       });
       alert(response.data.message);
-      window.location.reload(); // сохраняем вашу логику
+      window.location.reload();
     } catch (error) {
       console.error("Ошибка при удалении анекдота:", error);
       alert("Произошла ошибка при удалении анекдота");
@@ -92,30 +96,27 @@ export const FoundAnecdotes = ({ anecdotes }) => {
 
               <div className="card-meta">
                 <span>🏷️ {anecdote.AnecdoteType.trim()}</span>
-                <span>📅 {new Date(anecdote.Date).toLocaleDateString()}</span>
+                
                 <span>⭐ {anecdote.Rate || 0}</span>
                 <span>👤 {anecdote.UserName}</span>
+                <span>📅 {new Date(anecdote.Date).toLocaleDateString()}</span>
               </div>
 
               {showRatingButtons() && (
                 <div className="rating-buttons">
-  <button
-    onClick={() => handleRate(anecdote.IdAnecdote, true)}
-    className={`rate-btn plus-btn ${anecdote.UserRating === true ? "active" : ""}`}
-  >
-    +
-  </button>
-
-  <button
-    onClick={() => handleRate(anecdote.IdAnecdote, false)}
-    className={`rate-btn minus-btn ${anecdote.UserRating === false ? "active" : ""}`}
-  >
-    –
-  </button>
-</div>
-
-
-
+                  <button
+                    onClick={() => handleRate(anecdote.IdAnecdote, true)}
+                    className={`rate-btn plus-btn ${anecdote.UserRating === true ? 'active' : ''}`}
+                  >
+                    +
+                  </button>
+                  <button
+                    onClick={() => handleRate(anecdote.IdAnecdote, false)}
+                    className={`rate-btn minus-btn ${anecdote.UserRating === false ? 'active' : ''}`}
+                  >
+                    –
+                  </button>
+                </div>
               )}
 
               <div className="action-buttons">

@@ -605,12 +605,14 @@ button:active {
   display: flex;
   flex-wrap: wrap;
   gap: 15px;
-  margin: 20px 0;
+  margin: 20px 0 5px;
   padding: 12px 0;
-  border-top: 1px dashed rgba(255,255,255,0.15);
-  border-bottom: 1px dashed rgba(255,255,255,0.15);
+  border-top: 1px dashed rgba(255, 255, 255, 0.15);
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.15);
   color: #e0e0e0;
   font-size: 0.9rem;
+  justify-content: center; /* Центрирование по горизонтали */
+  align-items: center; /* Центрирование по вертикали */
 }
 
 .card-meta span {
@@ -618,6 +620,7 @@ button:active {
   align-items: center;
   gap: 5px;
 }
+
 
 /* Стили кнопок */
 .card-actions {
@@ -813,40 +816,43 @@ button {
 
 
 
-
-
-
 .rating-buttons {
   display: flex;
   justify-content: center;
-  align-items: center; /* Центрирование по вертикали */
-  gap: 12px;
-  margin-top: 12px;
+  margin-top: 0; /* Убедитесь, что отступ сверху равен 0 */
+  margin-bottom: 0; /* Убедитесь, что отступ снизу равен 0 */
 }
 
 .rate-btn {
-  font-size: 1.8rem;
-  width: 44px;
-  height: 44px;
   border: none;
   border-radius: 50%;
-  background-color: #666;
-  color: white;
+  width: 40px; /* Увеличьте ширину кнопок */
+  height: 40px; /* Увеличьте высоту кнопок */
   cursor: pointer;
-  transition: background-color 0.2s, transform 0.2s;
+  font-size: 24px; /* Увеличьте размер шрифта */
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.3s ease;
+  padding: 10px; /* Увеличьте внутренний отступ, если нужно */
 }
 
-.rate-btn:hover {
-  transform: scale(1.1);
+.plus-btn {
+  background-color: #f0f0f0;
+  color: white;
 }
 
 .plus-btn.active {
-  background-color: green;
+  background-color: #4CAF50;
+  color: #0de40d;
+}
+
+.minus-btn {
+  background-color: #f0f0f0;
+  color: white;
 }
 
 .minus-btn.active {
-  background-color: red;
+  background-color: #F44336;
+  color: red;
 }
