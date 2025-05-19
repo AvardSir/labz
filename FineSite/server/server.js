@@ -368,30 +368,6 @@ app.get('/api/comments-anecdote', async (req, res) => {
 
   
 
-  //2 версия эпопея коментов
-  app.get("/api/comments-anecdote", async (req, res) => {
-    const anecdoteId = req.query.anecdoteId;
-  
-    if (!anecdoteId) {
-      return res.status(400).json({ error: "Параметр anecdoteId обязателен." });
-    }
-  
-    try {
-      const result = await pool.request()
-        .input('AnecdoteId', sql.Int, anecdoteId)  // Передаем параметр в запрос
-        .execute('GetCommentsForAnecdote');  // Хранимая процедура
-  
-      if (result.recordset.length === 0) {
-        return res.status(404).json({ message: "Комментарии не найдены." });
-      }
-  
-      res.status(200).json(result.recordset);  // Возвращаем результат
-    } catch (err) {
-      console.error('Ошибка при получении комментариев:', err);
-      res.status(500).send("Ошибка сервера");
-    }
-  });
-  
   
 
   
