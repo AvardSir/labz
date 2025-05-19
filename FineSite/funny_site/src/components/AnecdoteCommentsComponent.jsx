@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { AuthContext } from "./context/AuthContext"; // Путь к вашему контексту
 import { useNavigate } from 'react-router-dom';
 
-export const AnecdoteCommentsСomponent = () => {
+export const AnecdoteCommentsComponent = () => {
   const { anecdoteId } = useParams(); // Получаем ID анекдота из URL
   const { loginData } = useContext(AuthContext); // Извлекаем данные о пользователе из контекста
   const [anecdote, setAnecdote] = useState(null); // Состояние для анекдота

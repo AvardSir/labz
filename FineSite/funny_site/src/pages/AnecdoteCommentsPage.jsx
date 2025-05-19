@@ -4,14 +4,14 @@ import { RegistrationForm } from "../components/Autification.jsx";
 import { SearchSection } from "../components/SearchSection.jsx";
 import { FoundAnecdotes } from "../components/FoundAnecdotes.jsx";
 import HomePage from "./HomePage.jsx";
-import { AnecdoteCommentsСomponent } from "../components/AnecdoteCommentsСomponent.jsx";
+import { AnecdoteCommentsComponent } from "../components/AnecdoteCommentsComponent.jsx";
 
 
 const AnecdoteCommentsPage = () => {
   return (
     <div className="main-container">
       <HomePage/>
-      <AnecdoteCommentsСomponent  />
+      <AnecdoteCommentsComponent  />
     </div>
   );
 };
