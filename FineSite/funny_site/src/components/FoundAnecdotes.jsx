@@ -99,20 +99,23 @@ export const FoundAnecdotes = ({ anecdotes }) => {
 
               {showRatingButtons() && (
                 <div className="rating-buttons">
-                  <button
-                    onClick={() => handleRate(anecdote.IdAnecdote, true)}
-                    className={`rate-btn plus-btn ${anecdote.UserRating === true ? "active" : ""}`}
-                  >
-                    ➕
-                  </button>
-                  <span className="rating-value">{anecdote.Rate || 0}</span>
-                  <button
-                    onClick={() => handleRate(anecdote.IdAnecdote, false)}
-                    className={`rate-btn minus-btn ${anecdote.UserRating === false ? "active" : ""}`}
-                  >
-                    ➖
-                  </button>
-                </div>
+  <button
+    onClick={() => handleRate(anecdote.IdAnecdote, true)}
+    className={`rate-btn plus-btn ${anecdote.UserRating === true ? "active" : ""}`}
+  >
+    +
+  </button>
+
+  <button
+    onClick={() => handleRate(anecdote.IdAnecdote, false)}
+    className={`rate-btn minus-btn ${anecdote.UserRating === false ? "active" : ""}`}
+  >
+    –
+  </button>
+</div>
+
+
+
               )}
 
               <div className="action-buttons">
