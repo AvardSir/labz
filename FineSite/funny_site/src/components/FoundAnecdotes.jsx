@@ -12,7 +12,7 @@ export const FoundAnecdotes = ({ anecdotes }) => {
     setLocalAnecdotes(anecdotes);
   }, [anecdotes]);
 
-  const handleRate = async (idAnecdote, isPlus) => {
+  const handleRate = async (idAnecdote, isPlus) => { 
     try {
       const currentAnecdote = localAnecdotes.find(a => a.IdAnecdote === idAnecdote);
       const isSameRating = currentAnecdote.UserRating === isPlus;
