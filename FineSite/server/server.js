@@ -934,6 +934,46 @@ app.get('/api/rated-anecdotes', async (req, res) => {
 });
 
 
+app.get('/api/analytics/average-rating-by-date', async (req, res) => {
+  try {
+    const pool = await sql.connect(dbConfig);
+    const result = await pool.request().execute('GetAverageRatingByDateForAnecdotes');
+
+    const formatted = result.recordset.map(row => ({
+      date: row.date, // 'YYYY-MM-DD'
+      avgRating: parseFloat(row.avg_rating), // float
+      count: row.count // int
+    }));
+
+    res.json({ success: true, data: formatted });
+  } catch (error) {
+    console.error('Stored procedure error:', error);
+    res.status(500).json({ success: false, message: 'Database error', error: error.message });
+  }
+});
+
+
+app.get('/api/anecdote-ratings', async (req, res) => {
+    try {
+        const pool = await poolPromise; // Ждём подключение пула
+        const request = pool.request();
+        const result = await request.execute('GetAnecdoteRatingWithType');
+
+        res.json({
+            success: true,
+            data: result.recordset,
+        });
+    } catch (err) {
+        console.error('Ошибка при выполнении запроса:', err);
+        res.status(500).json({
+            success: false,
+            message: 'Ошибка сервера',
+        });
+    }
+});
+
+
+
 // Запуск сервера
 const PORT = 5000;
 app.listen(PORT, () => {

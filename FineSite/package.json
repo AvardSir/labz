@@ -9,9 +9,14 @@
         "start:react": "cd funny_site && npm start"
     },
     "devDependencies": {
+        "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
         "concurrently": "^6.5.1"
     },
     "dependencies": {
-        "react-ga4": "^2.1.0"
+        "axios": "^1.9.0",
+        "react": "^19.1.0",
+        "react-dom": "^19.1.0",
+        "react-ga4": "^2.1.0",
+        "recharts": "^2.15.3"
     }
 }

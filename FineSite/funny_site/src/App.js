@@ -13,9 +13,15 @@ import HomePage from "./pages/HomePage";
 import PersonalCabinet from "./pages/PersonalCabinet";
 import PersonalCabinetPage from "./pages/PersonalCabinetPage";
 import RegistrationPage from "./pages/RegistrationPage";
-import { AnalyticsPage } from "./components/Analytics/AnalyticsPage";
+// import { AnalyticsPage } from "./components/Analytics/AnalyticsPage";
 // import { SimpleAnalyticsPage } from "./components/Analytics/SimpleAnalyticsPage";
-import { LighthouseButton } from "./components/Analytics/LighthouseButton";
+// import { LighthouseButton } from "./components/Analytics/LighthouseButton";
+
+// import AnecdotesRatingChart from "./components/Analutics2/AverageRatingChart";
+
+// import { AnalyticsPage} from "./components/Analutics2/AnalyticsPage";
+// import AnalyticsPage from "./components/Analutics/AnalyticsPage";
+import AnalyticsPage from "./components/Analutics/AnalyticsPage";
 function App() {
   return (
     <AuthProvider>
@@ -35,7 +41,7 @@ function App() {
           <Route path="/edit-event/:id" element={<EditEventPage />} />
 
           <Route path="/analytics" element={<AnalyticsPage />} />
-          <Route path="/LighthouseButton" element={<LighthouseButton />} />
+          {/* <Route path="/LighthouseButton" element={<LighthouseButton />} /> */}
 
         </Routes>
       </Router>

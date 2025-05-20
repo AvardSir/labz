@@ -19,7 +19,7 @@ export const Header = () => {
 
 
 
-        <Link to="/LighthouseButton ">LighthouseButton </Link>
+        {/* <Link to="/LighthouseButton ">LighthouseButton </Link> */}
       </nav>
     </header>
   );
