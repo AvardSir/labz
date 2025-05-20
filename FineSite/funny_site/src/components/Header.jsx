@@ -11,13 +11,15 @@ export const Header = () => {
       <nav className="navigation">
         <Link to="/">Главная</Link>
         <Link to="/anecdotes">Анекдоты</Link>
-<Link to="/events">Мероприятия</Link>
-
-        
-        {/* Добавляем ссылку на аналитику для админов */}
+        <Link to="/events">Мероприятия</Link>
         {loginData && parseInt(loginData.IdRights) === 2 && (
           <Link to="/analytics">Аналитика</Link>
         )}
+
+
+
+
+        <Link to="/LighthouseButton ">LighthouseButton </Link>
       </nav>
     </header>
   );

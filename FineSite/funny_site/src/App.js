@@ -13,8 +13,9 @@ import HomePage from "./pages/HomePage";
 import PersonalCabinet from "./pages/PersonalCabinet";
 import PersonalCabinetPage from "./pages/PersonalCabinetPage";
 import RegistrationPage from "./pages/RegistrationPage";
-import {AnalyticsPage} from "./components/Analytics/AnalyticsPage";
+import { AnalyticsPage } from "./components/Analytics/AnalyticsPage";
 // import { SimpleAnalyticsPage } from "./components/Analytics/SimpleAnalyticsPage";
+import { LighthouseButton } from "./components/Analytics/LighthouseButton";
 function App() {
   return (
     <AuthProvider>
@@ -33,7 +34,8 @@ function App() {
           <Route path="/add-event" element={<AddEventPage />} />
           <Route path="/edit-event/:id" element={<EditEventPage />} />
 
-<Route path="/analytics" element={<AnalyticsPage />} />
+          <Route path="/analytics" element={<AnalyticsPage />} />
+          <Route path="/LighthouseButton" element={<LighthouseButton />} />
 
         </Routes>
       </Router>
