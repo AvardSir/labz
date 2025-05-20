@@ -11,7 +11,8 @@ export const Header = () => {
       <nav className="navigation">
         <Link to="/">Главная</Link>
         <Link to="/anecdotes">Анекдоты</Link>
-        <Link to="/events">Мероприятия</Link>
+<Link to="/events">Мероприятия</Link>
+
         
         {/* Добавляем ссылку на аналитику для админов */}
         {loginData && parseInt(loginData.IdRights) === 2 && (

@@ -14,6 +14,7 @@ import PersonalCabinet from "./pages/PersonalCabinet";
 import PersonalCabinetPage from "./pages/PersonalCabinetPage";
 import RegistrationPage from "./pages/RegistrationPage";
 import {AnalyticsPage} from "./components/Analytics/AnalyticsPage";
+import { SimpleAnalyticsPage } from "./components/Analytics/SimpleAnalyticsPage";
 function App() {
   return (
     <AuthProvider>
@@ -32,7 +33,7 @@ function App() {
           <Route path="/add-event" element={<AddEventPage />} />
           <Route path="/edit-event/:id" element={<EditEventPage />} />
 
-          <Route path="/analytics" element={<AnalyticsPage />} />
+<Route path="/analytics" element={<SimpleAnalyticsPage />} />
 
         </Routes>
       </Router>

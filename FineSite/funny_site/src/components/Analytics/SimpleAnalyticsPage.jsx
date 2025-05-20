@@ -3,6 +3,7 @@
 
 import React, { useEffect, useState } from 'react';
 import ReactGA from 'react-ga4';
+import { Header } from '../Header';
 
 ReactGA.initialize('G-XXXXXXXXXX'); // Замените на ваш реальный ID измерения
 
@@ -37,6 +38,7 @@ const [stats, setStats] = useState({
 
 return (
     <div>
+      <Header />
       <h2>Статистика сайта</h2>
       <div>
         <p>Посетители: <strong>{stats.visitors}</strong></p>
