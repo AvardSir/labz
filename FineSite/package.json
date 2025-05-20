@@ -10,5 +10,8 @@
     },
     "devDependencies": {
         "concurrently": "^6.5.1"
+    },
+    "dependencies": {
+        "react-ga4": "^2.1.0"
     }
 }

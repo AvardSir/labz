@@ -10,7 +10,7 @@ export const AnecdoteCommentsComponent = () => {
   const [anecdote, setAnecdote] = useState(null);
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
-const navigate = useNavigate();
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchAnecdoteData = async () => {
       try {

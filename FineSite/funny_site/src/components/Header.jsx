@@ -1,17 +1,23 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
+import { AuthContext } from "./context/AuthContext";
 
 export const Header = () => {
+  const { loginData } = useContext(AuthContext);
+
   return (
     <header className="header">
       <h1 className="logo">FunnySite</h1>
       <nav className="navigation">
-        <a href="/">Главная</a>
-        <a href="/anecdotes">Анекдоты</a>
-        <a href="/events">Мероприятия</a>
+        <Link to="/">Главная</Link>
+        <Link to="/anecdotes">Анекдоты</Link>
+        <Link to="/events">Мероприятия</Link>
+        
+        {/* Добавляем ссылку на аналитику для админов */}
+        {loginData && parseInt(loginData.IdRights) === 2 && (
+          <Link to="/analytics">Аналитика</Link>
+        )}
       </nav>
     </header>
   );
 };
-
-  
