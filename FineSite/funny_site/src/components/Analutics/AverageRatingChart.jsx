@@ -98,7 +98,7 @@ export const AverageRatingChart = () => {
     <div className="bg-white rounded-lg shadow p-4 md:p-6">
       {/* {console.log(chartData)} */}
       <h2 className="text-lg md:text-xl font-bold text-gray-800 mb-4">
-        Динамика рейтинга анекдотов
+        Средний рейтинг по по датам
       </h2>
       
       <div style={{ width: '100%', height: 400 }}>

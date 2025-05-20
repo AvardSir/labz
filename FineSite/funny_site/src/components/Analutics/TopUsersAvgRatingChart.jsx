@@ -14,7 +14,7 @@ import {
 import axios from 'axios';
 import { Spin, Alert } from 'antd';
 
-export const AnecdoteTypeRatingChart = () => {
+export const TopUsersAvgRatingChart = () => {
   const [chartData, setChartData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -22,28 +22,25 @@ export const AnecdoteTypeRatingChart = () => {
   useEffect(() => {
     const fetchChartData = async () => {
       try {
-        const response = await axios.get('/api/anecdote-ratings');
+        const response = await axios.get('/api/top-users-avg-rating?topN=10');
         const apiData = response.data;
-
 
         if (apiData.success) {
           const formattedData = apiData.data.map(item => ({
-            id: item.IdTypeAnecdote,
-            type: item.TypeAnecdote.trim(),   // убираю пробелы
-            avgRating: item.AverageRating !== null && item.AverageRating !== undefined
-              ? Number(item.AverageRating.toFixed(2))
-              : 0,
-            count: item.AnecdoteCount || 0,
+            id: item.IdUser,
+            name: item.Name,
+            avgRating: item.AvgAnecdoteRating !== null && item.AvgAnecdoteRating !== undefined
+  ? Number(item.AvgAnecdoteRating.toFixed(2))
+  : 0,
+
+            anecdoteCount: item.AnecdoteCount || 0,
           }));
 
-          // console.log(formattedData);
           setChartData(formattedData);
         } else {
           throw new Error(apiData.message || 'Ошибка при получении данных');
         }
-
       } catch (err) {
-        console.error('Ошибка:', err);
         setError(err.message);
       } finally {
         setLoading(false);
@@ -58,9 +55,9 @@ export const AnecdoteTypeRatingChart = () => {
       const data = payload[0].payload;
       return (
         <div className="bg-white p-3 border border-gray-200 rounded shadow-md text-sm">
-          <p className="font-semibold mb-1">{data.type}</p>
+          <p className="font-semibold mb-1">{data.name}</p>
           <p className="text-[#8884d8]">Средний рейтинг: {data.avgRating}</p>
-          <p className="text-[#82ca9d]">Количество анекдотов: {data.count}</p>
+          <p className="text-[#82ca9d]">Количество анекдотов: {data.anecdoteCount}</p>
         </div>
       );
     }
@@ -90,7 +87,7 @@ export const AnecdoteTypeRatingChart = () => {
   return (
     <div className="bg-white rounded-lg shadow p-4 md:p-6">
       <h2 className="text-lg md:text-xl font-bold text-gray-800 mb-4">
-        Средний рейтинг по типам анекдотов
+        Топ пользователей по средней оценке анекдотов
       </h2>
       <div style={{ width: '100%', height: 400 }}>
         <ResponsiveContainer width="100%" height="100%">
@@ -100,7 +97,7 @@ export const AnecdoteTypeRatingChart = () => {
           >
             <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
             <XAxis
-              dataKey="type"
+              dataKey="name"
               tick={{ fill: '#666', fontSize: 12 }}
               angle={-45}
               textAnchor="end"
@@ -109,7 +106,7 @@ export const AnecdoteTypeRatingChart = () => {
             />
             <YAxis
               yAxisId="left"
-              domain={[0, 5]}
+              domain={[0, 20]}
               tick={{ fill: '#8884d8', fontSize: 12 }}
               tickCount={6}
             >
@@ -137,7 +134,7 @@ export const AnecdoteTypeRatingChart = () => {
             <Legend />
             <Bar
               yAxisId="right"
-              dataKey="count"
+              dataKey="anecdoteCount"
               name="Количество анекдотов"
               fill="#82ca9d"
               barSize={20}

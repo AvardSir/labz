@@ -972,6 +972,53 @@ app.get('/api/anecdote-ratings', async (req, res) => {
     }
 });
 
+app.get('/api/top-users-avg-rating', async (req, res) => {
+  const topN = parseInt(req.query.topN) || 10; // Можно передать ?topN=число, по умолчанию 10
+
+  try {
+    const pool = await poolPromise;
+    const result = await pool.request()
+      .input('TopN', sql.Int, topN)
+      .execute('GetTopUsersByAvgAnecdoteRating');
+
+    res.json({
+      success: true,
+      data: result.recordset,
+    });
+  } catch (err) {
+    console.error('Error executing procedure:', err);
+    res.status(500).json({
+      success: false,
+      message: 'Ошибка сервера при выполнении процедуры',
+      error: err.message,
+    });
+  }
+});
+
+
+app.get('/top-users-by-anecdotes', async (req, res) => {
+  const topN = parseInt(req.query.top) || 10;
+
+  try {
+    // const pool = await sql.connect(/* твои настройки подключения */);
+    const pool = await poolPromise;
+    const result = await pool.request()
+      .input('TopN', sql.Int, topN)
+      .execute('GetTopUsersByAnecdoteCount');
+
+    res.json({
+      success: true,
+      data: result.recordset,
+    });
+  } catch (error) {
+    console.error('Ошибка при выполнении запроса:', error);  // <-- добавь это
+    res.status(500).json({
+      success: false,
+      message: 'Ошибка сервера',
+    });
+  }
+});
+
 
 
 // Запуск сервера
