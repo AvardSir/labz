@@ -38,7 +38,7 @@ const [stats, setStats] = useState({
 
 return (
     <div>
-      <Header />
+      
       <h2>Статистика сайта</h2>
       <div>
         <p>Посетители: <strong>{stats.visitors}</strong></p>
