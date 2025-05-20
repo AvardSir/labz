@@ -1,6 +1,112 @@
+USE [master]
+GO
+/****** Object:  Database [FunnySite]    Script Date: 20.05.2025 18:29:59 ******/
+CREATE DATABASE [FunnySite]
+ CONTAINMENT = NONE
+ ON  PRIMARY 
+( NAME = N'FunnySite', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL16.MSSQLSERVER2\MSSQL\DATA\FunnySite.mdf' , SIZE = 8192KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )
+ LOG ON 
+( NAME = N'FunnySite_log', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL16.MSSQLSERVER2\MSSQL\DATA\FunnySite_log.ldf' , SIZE = 73728KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )
+ WITH CATALOG_COLLATION = DATABASE_DEFAULT, LEDGER = OFF
+GO
+ALTER DATABASE [FunnySite] SET COMPATIBILITY_LEVEL = 160
+GO
+IF (1 = FULLTEXTSERVICEPROPERTY('IsFullTextInstalled'))
+begin
+EXEC [FunnySite].[dbo].[sp_fulltext_database] @action = 'enable'
+end
+GO
+ALTER DATABASE [FunnySite] SET ANSI_NULL_DEFAULT OFF 
+GO
+ALTER DATABASE [FunnySite] SET ANSI_NULLS OFF 
+GO
+ALTER DATABASE [FunnySite] SET ANSI_PADDING OFF 
+GO
+ALTER DATABASE [FunnySite] SET ANSI_WARNINGS OFF 
+GO
+ALTER DATABASE [FunnySite] SET ARITHABORT OFF 
+GO
+ALTER DATABASE [FunnySite] SET AUTO_CLOSE OFF 
+GO
+ALTER DATABASE [FunnySite] SET AUTO_SHRINK OFF 
+GO
+ALTER DATABASE [FunnySite] SET AUTO_UPDATE_STATISTICS ON 
+GO
+ALTER DATABASE [FunnySite] SET CURSOR_CLOSE_ON_COMMIT OFF 
+GO
+ALTER DATABASE [FunnySite] SET CURSOR_DEFAULT  GLOBAL 
+GO
+ALTER DATABASE [FunnySite] SET CONCAT_NULL_YIELDS_NULL OFF 
+GO
+ALTER DATABASE [FunnySite] SET NUMERIC_ROUNDABORT OFF 
+GO
+ALTER DATABASE [FunnySite] SET QUOTED_IDENTIFIER OFF 
+GO
+ALTER DATABASE [FunnySite] SET RECURSIVE_TRIGGERS OFF 
+GO
+ALTER DATABASE [FunnySite] SET  DISABLE_BROKER 
+GO
+ALTER DATABASE [FunnySite] SET AUTO_UPDATE_STATISTICS_ASYNC OFF 
+GO
+ALTER DATABASE [FunnySite] SET DATE_CORRELATION_OPTIMIZATION OFF 
+GO
+ALTER DATABASE [FunnySite] SET TRUSTWORTHY OFF 
+GO
+ALTER DATABASE [FunnySite] SET ALLOW_SNAPSHOT_ISOLATION OFF 
+GO
+ALTER DATABASE [FunnySite] SET PARAMETERIZATION SIMPLE 
+GO
+ALTER DATABASE [FunnySite] SET READ_COMMITTED_SNAPSHOT OFF 
+GO
+ALTER DATABASE [FunnySite] SET HONOR_BROKER_PRIORITY OFF 
+GO
+ALTER DATABASE [FunnySite] SET RECOVERY FULL 
+GO
+ALTER DATABASE [FunnySite] SET  MULTI_USER 
+GO
+ALTER DATABASE [FunnySite] SET PAGE_VERIFY CHECKSUM  
+GO
+ALTER DATABASE [FunnySite] SET DB_CHAINING OFF 
+GO
+ALTER DATABASE [FunnySite] SET FILESTREAM( NON_TRANSACTED_ACCESS = OFF ) 
+GO
+ALTER DATABASE [FunnySite] SET TARGET_RECOVERY_TIME = 60 SECONDS 
+GO
+ALTER DATABASE [FunnySite] SET DELAYED_DURABILITY = DISABLED 
+GO
+ALTER DATABASE [FunnySite] SET ACCELERATED_DATABASE_RECOVERY = OFF  
+GO
+EXEC sys.sp_db_vardecimal_storage_format N'FunnySite', N'ON'
+GO
+ALTER DATABASE [FunnySite] SET QUERY_STORE = ON
+GO
+ALTER DATABASE [FunnySite] SET QUERY_STORE (OPERATION_MODE = READ_WRITE, CLEANUP_POLICY = (STALE_QUERY_THRESHOLD_DAYS = 30), DATA_FLUSH_INTERVAL_SECONDS = 900, INTERVAL_LENGTH_MINUTES = 60, MAX_STORAGE_SIZE_MB = 1000, QUERY_CAPTURE_MODE = AUTO, SIZE_BASED_CLEANUP_MODE = AUTO, MAX_PLANS_PER_QUERY = 200, WAIT_STATS_CAPTURE_MODE = ON)
+GO
 USE [FunnySite]
 GO
-/****** Object:  Table [dbo].[EventTypeId]    Script Date: 14.04.2025 23:23:44 ******/
+/****** Object:  Table [dbo].[AnikGrades]    Script Date: 20.05.2025 18:30:00 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[AnikGrades](
+	[IdAnikGrade] [int] IDENTITY(1,1) NOT NULL,
+	[IsPlus] [bit] NOT NULL,
+	[IdUser] [int] NOT NULL,
+	[IdAnecdote] [int] NOT NULL,
+	[CreatedDate] [datetime] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[IdAnikGrade] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+ CONSTRAINT [UQ_UserAnecdote] UNIQUE NONCLUSTERED 
+(
+	[IdUser] ASC,
+	[IdAnecdote] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[EventTypeId]    Script Date: 20.05.2025 18:30:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -14,7 +120,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Анекдот]    Script Date: 14.04.2025 23:23:44 ******/
+/****** Object:  Table [dbo].[Анекдот]    Script Date: 20.05.2025 18:30:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -32,7 +138,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Запись_на_мероприятие]    Script Date: 14.04.2025 23:23:44 ******/
+/****** Object:  Table [dbo].[Запись_на_мероприятие]    Script Date: 20.05.2025 18:30:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -47,7 +153,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Коментарий_Мероприятия]    Script Date: 14.04.2025 23:23:44 ******/
+/****** Object:  Table [dbo].[Коментарий_Мероприятия]    Script Date: 20.05.2025 18:30:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -64,7 +170,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Комментарий_анекдота]    Script Date: 14.04.2025 23:23:44 ******/
+/****** Object:  Table [dbo].[Комментарий_анекдота]    Script Date: 20.05.2025 18:30:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -81,7 +187,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Мероприятие]    Script Date: 14.04.2025 23:23:44 ******/
+/****** Object:  Table [dbo].[Мероприятие]    Script Date: 20.05.2025 18:30:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -101,7 +207,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Пользователь]    Script Date: 14.04.2025 23:23:44 ******/
+/****** Object:  Table [dbo].[Пользователь]    Script Date: 20.05.2025 18:30:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -119,7 +225,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Права]    Script Date: 14.04.2025 23:23:44 ******/
+/****** Object:  Table [dbo].[Права]    Script Date: 20.05.2025 18:30:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -133,7 +239,7 @@ CREATE TABLE [dbo].[Права](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Тип_анекдота]    Script Date: 14.04.2025 23:23:44 ******/
+/****** Object:  Table [dbo].[Тип_анекдота]    Script Date: 20.05.2025 18:30:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -147,16 +253,63 @@ CREATE TABLE [dbo].[Тип_анекдота](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
+ALTER TABLE [dbo].[AnikGrades] ADD  DEFAULT (getdate()) FOR [CreatedDate]
+GO
 ALTER TABLE [dbo].[Коментарий_Мероприятия] ADD  DEFAULT (getdate()) FOR [Date]
 GO
 ALTER TABLE [dbo].[Комментарий_анекдота] ADD  DEFAULT (getdate()) FOR [Date]
 GO
-ALTER TABLE [dbo].[Комментарий_анекдота]  WITH CHECK ADD  CONSTRAINT [R_8] FOREIGN KEY([IdUser])
+ALTER TABLE [dbo].[Анекдот]  WITH CHECK ADD  CONSTRAINT [FK_Анекдот_Пользователь] FOREIGN KEY([IdUser])
 REFERENCES [dbo].[Пользователь] ([IdUser])
 GO
-ALTER TABLE [dbo].[Комментарий_анекдота] CHECK CONSTRAINT [R_8]
+ALTER TABLE [dbo].[Анекдот] CHECK CONSTRAINT [FK_Анекдот_Пользователь]
 GO
-/****** Object:  StoredProcedure [dbo].[AddComment]    Script Date: 14.04.2025 23:23:44 ******/
+ALTER TABLE [dbo].[Анекдот]  WITH CHECK ADD  CONSTRAINT [FK_Анекдот_Тип_анекдота] FOREIGN KEY([IdTypeAnecdote])
+REFERENCES [dbo].[Тип_анекдота] ([IdTypeAnecdote])
+GO
+ALTER TABLE [dbo].[Анекдот] CHECK CONSTRAINT [FK_Анекдот_Тип_анекдота]
+GO
+ALTER TABLE [dbo].[Запись_на_мероприятие]  WITH CHECK ADD  CONSTRAINT [FK_Запись_на_мероприятие_Мероприятие] FOREIGN KEY([IdEvent])
+REFERENCES [dbo].[Мероприятие] ([IdEvent])
+GO
+ALTER TABLE [dbo].[Запись_на_мероприятие] CHECK CONSTRAINT [FK_Запись_на_мероприятие_Мероприятие]
+GO
+ALTER TABLE [dbo].[Запись_на_мероприятие]  WITH CHECK ADD  CONSTRAINT [FK_Запись_на_мероприятие_Пользователь] FOREIGN KEY([IdUser])
+REFERENCES [dbo].[Пользователь] ([IdUser])
+GO
+ALTER TABLE [dbo].[Запись_на_мероприятие] CHECK CONSTRAINT [FK_Запись_на_мероприятие_Пользователь]
+GO
+ALTER TABLE [dbo].[Коментарий_Мероприятия]  WITH CHECK ADD  CONSTRAINT [FK_Коментарий_Мероприятия_Мероприятие] FOREIGN KEY([IdEvent])
+REFERENCES [dbo].[Мероприятие] ([IdEvent])
+GO
+ALTER TABLE [dbo].[Коментарий_Мероприятия] CHECK CONSTRAINT [FK_Коментарий_Мероприятия_Мероприятие]
+GO
+ALTER TABLE [dbo].[Коментарий_Мероприятия]  WITH CHECK ADD  CONSTRAINT [FK_Коментарий_Мероприятия_Пользователь] FOREIGN KEY([IdUser])
+REFERENCES [dbo].[Пользователь] ([IdUser])
+GO
+ALTER TABLE [dbo].[Коментарий_Мероприятия] CHECK CONSTRAINT [FK_Коментарий_Мероприятия_Пользователь]
+GO
+ALTER TABLE [dbo].[Комментарий_анекдота]  WITH CHECK ADD  CONSTRAINT [FK_Комментарий_анекдота_Анекдот] FOREIGN KEY([IdAnecdote])
+REFERENCES [dbo].[Анекдот] ([IdAnecdote])
+GO
+ALTER TABLE [dbo].[Комментарий_анекдота] CHECK CONSTRAINT [FK_Комментарий_анекдота_Анекдот]
+GO
+ALTER TABLE [dbo].[Комментарий_анекдота]  WITH CHECK ADD  CONSTRAINT [FK_Комментарий_анекдота_Пользователь] FOREIGN KEY([IdUser])
+REFERENCES [dbo].[Пользователь] ([IdUser])
+GO
+ALTER TABLE [dbo].[Комментарий_анекдота] CHECK CONSTRAINT [FK_Комментарий_анекдота_Пользователь]
+GO
+ALTER TABLE [dbo].[Мероприятие]  WITH CHECK ADD  CONSTRAINT [FK_Мероприятие_EventTypeId] FOREIGN KEY([EventTypeId])
+REFERENCES [dbo].[EventTypeId] ([Id])
+GO
+ALTER TABLE [dbo].[Мероприятие] CHECK CONSTRAINT [FK_Мероприятие_EventTypeId]
+GO
+ALTER TABLE [dbo].[Пользователь]  WITH CHECK ADD  CONSTRAINT [FK_Пользователь_Права] FOREIGN KEY([IdRights])
+REFERENCES [dbo].[Права] ([IdRights])
+GO
+ALTER TABLE [dbo].[Пользователь] CHECK CONSTRAINT [FK_Пользователь_Права]
+GO
+/****** Object:  StoredProcedure [dbo].[AddComment]    Script Date: 20.05.2025 18:30:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -171,7 +324,7 @@ BEGIN
     VALUES (@Text, GETDATE(), @IdUser, @IdAnecdote);
 END
 GO
-/****** Object:  StoredProcedure [dbo].[AddCommentEvent]    Script Date: 14.04.2025 23:23:44 ******/
+/****** Object:  StoredProcedure [dbo].[AddCommentEvent]    Script Date: 20.05.2025 18:30:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -188,7 +341,7 @@ BEGIN
     VALUES (@Text, GETDATE(), @IdEvent, @IdUser);
 END
 GO
-/****** Object:  StoredProcedure [dbo].[AddCommentToAnecdote]    Script Date: 14.04.2025 23:23:44 ******/
+/****** Object:  StoredProcedure [dbo].[AddCommentToAnecdote]    Script Date: 20.05.2025 18:30:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -208,7 +361,7 @@ BEGIN
     SELECT SCOPE_IDENTITY() AS NewCommentId; -- Возвращает ID добавленного комментария
 END;
 GO
-/****** Object:  StoredProcedure [dbo].[AddEntry]    Script Date: 14.04.2025 23:23:44 ******/
+/****** Object:  StoredProcedure [dbo].[AddEntry]    Script Date: 20.05.2025 18:30:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -224,7 +377,7 @@ BEGIN
     VALUES (@IdEvent, @IdUser);
 END
 GO
-/****** Object:  StoredProcedure [dbo].[AddEntryAndDecrementSeats]    Script Date: 14.04.2025 23:23:44 ******/
+/****** Object:  StoredProcedure [dbo].[AddEntryAndDecrementSeats]    Script Date: 20.05.2025 18:30:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -264,7 +417,7 @@ BEGIN
     END
 END;
 GO
-/****** Object:  StoredProcedure [dbo].[AddEvent]    Script Date: 14.04.2025 23:23:44 ******/
+/****** Object:  StoredProcedure [dbo].[AddEvent]    Script Date: 20.05.2025 18:30:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -300,7 +453,7 @@ BEGIN
     );
 END;
 GO
-/****** Object:  StoredProcedure [dbo].[AddNewAnecdote]    Script Date: 14.04.2025 23:23:44 ******/
+/****** Object:  StoredProcedure [dbo].[AddNewAnecdote]    Script Date: 20.05.2025 18:30:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -318,7 +471,41 @@ BEGIN
     VALUES (@Text, GETDATE(), @Rate, @IdUser, @IdTypeAnecdote);
 END
 GO
-/****** Object:  StoredProcedure [dbo].[DeleteAnecdote]    Script Date: 14.04.2025 23:23:44 ******/
+/****** Object:  StoredProcedure [dbo].[AddUser]    Script Date: 20.05.2025 18:30:00 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[AddUser]
+    @Name NVARCHAR(255),
+    @Password NVARCHAR(255),
+    @Email NVARCHAR(255),
+    @Bio NVARCHAR(MAX),
+    @IdRights INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    INSERT INTO [FunnySite].[dbo].[Пользователь] (
+        [Name],
+        [Password],
+        [Email],
+        [Bio],
+        [IdRights]
+    )
+    VALUES (
+        @Name,
+        @Password,
+        @Email,
+        @Bio,
+        @IdRights
+    );
+
+    -- Возвращаем ID нового пользователя
+    SELECT SCOPE_IDENTITY() AS NewUserId;
+END;
+GO
+/****** Object:  StoredProcedure [dbo].[DeleteAnecdote]    Script Date: 20.05.2025 18:30:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -352,7 +539,7 @@ SELECT TOP (1000) [IdAnecdote]
       ,[IdTypeAnecdote]
   FROM [FunnySite].[dbo].[Анекдот]
 GO
-/****** Object:  StoredProcedure [dbo].[DeleteEventById]    Script Date: 14.04.2025 23:23:44 ******/
+/****** Object:  StoredProcedure [dbo].[DeleteEventById]    Script Date: 20.05.2025 18:30:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -376,7 +563,7 @@ BEGIN
     SELECT 'Мероприятие успешно удалено' AS Message;
 END;
 GO
-/****** Object:  StoredProcedure [dbo].[GetAnecdoteById]    Script Date: 14.04.2025 23:23:44 ******/
+/****** Object:  StoredProcedure [dbo].[GetAnecdoteById]    Script Date: 20.05.2025 18:30:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -406,7 +593,7 @@ BEGIN
         a.[IdAnecdote] = @IdAnecdote; -- Фильтрация по IdAnecdote
 END
 GO
-/****** Object:  StoredProcedure [dbo].[GetAnecdotes]    Script Date: 14.04.2025 23:23:44 ******/
+/****** Object:  StoredProcedure [dbo].[GetAnecdotes]    Script Date: 20.05.2025 18:30:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -434,7 +621,7 @@ BEGIN
         [dbo].[Тип_анекдота] t ON a.[IdTypeAnecdote] = t.[IdTypeAnecdote];
 END;
 GO
-/****** Object:  StoredProcedure [dbo].[GetAnecdotesByType]    Script Date: 14.04.2025 23:23:44 ******/
+/****** Object:  StoredProcedure [dbo].[GetAnecdotesByType]    Script Date: 20.05.2025 18:30:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -466,7 +653,7 @@ BEGIN
         a.[IdTypeAnecdote] = @IdTypeAnecdote;  -- Фильтр по параметру IdTypeAnecdote
 END;
 GO
-/****** Object:  StoredProcedure [dbo].[GetAnecdotesByUser]    Script Date: 14.04.2025 23:23:44 ******/
+/****** Object:  StoredProcedure [dbo].[GetAnecdotesByUser]    Script Date: 20.05.2025 18:30:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -495,7 +682,7 @@ BEGIN
         a.[IdUser] = @IdUser;    -- Фильтр по параметру IdUser
 END;
 GO
-/****** Object:  StoredProcedure [dbo].[GetAnecdotesByUserAndType]    Script Date: 14.04.2025 23:23:44 ******/
+/****** Object:  StoredProcedure [dbo].[GetAnecdotesByUserAndType]    Script Date: 20.05.2025 18:30:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -527,7 +714,7 @@ BEGIN
         a.[IdTypeAnecdote] = @IdTypeAnecdote;  -- Фильтр по IdTypeAnecdote
 END;
 GO
-/****** Object:  StoredProcedure [dbo].[GetCommentsForAnecdote]    Script Date: 14.04.2025 23:23:44 ******/
+/****** Object:  StoredProcedure [dbo].[GetCommentsForAnecdote]    Script Date: 20.05.2025 18:30:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -554,7 +741,7 @@ BEGIN
         c.[IdAnecdote] = @AnecdoteId;
 END;
 GO
-/****** Object:  StoredProcedure [dbo].[GetCommentsForEvent]    Script Date: 14.04.2025 23:23:44 ******/
+/****** Object:  StoredProcedure [dbo].[GetCommentsForEvent]    Script Date: 20.05.2025 18:30:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -578,7 +765,7 @@ BEGIN
         c.[Date] DESC;  -- Сортировка по дате комментария
 END
 GO
-/****** Object:  StoredProcedure [dbo].[GetCommentsForEventByIdEvent]    Script Date: 14.04.2025 23:23:44 ******/
+/****** Object:  StoredProcedure [dbo].[GetCommentsForEventByIdEvent]    Script Date: 20.05.2025 18:30:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -606,7 +793,7 @@ BEGIN
         c.[Date] DESC;  -- Сортировка по дате комментария
 END
 GO
-/****** Object:  StoredProcedure [dbo].[GetCommentsWithAuthors]    Script Date: 14.04.2025 23:23:44 ******/
+/****** Object:  StoredProcedure [dbo].[GetCommentsWithAuthors]    Script Date: 20.05.2025 18:30:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -631,7 +818,7 @@ BEGIN
         c.[Date] DESC;  -- Сортировка по дате
 END;
 GO
-/****** Object:  StoredProcedure [dbo].[GetEventDetails]    Script Date: 14.04.2025 23:23:44 ******/
+/****** Object:  StoredProcedure [dbo].[GetEventDetails]    Script Date: 20.05.2025 18:30:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -662,7 +849,7 @@ BEGIN
         [dbo].[EventTypeId] et ON m.[EventTypeId] = et.[Id];  -- Присоединение данных о типах мероприятий
 END;
 GO
-/****** Object:  StoredProcedure [dbo].[GetEventDetailsByIdEvent]    Script Date: 14.04.2025 23:23:44 ******/
+/****** Object:  StoredProcedure [dbo].[GetEventDetailsByIdEvent]    Script Date: 20.05.2025 18:30:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -694,7 +881,7 @@ BEGIN
         m.[IdEvent] = @EventId;  -- Фильтрация по IdEvent
 END;
 GO
-/****** Object:  StoredProcedure [dbo].[GetEventDetailsByType]    Script Date: 14.04.2025 23:23:44 ******/
+/****** Object:  StoredProcedure [dbo].[GetEventDetailsByType]    Script Date: 20.05.2025 18:30:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -726,7 +913,7 @@ BEGIN
         m.[EventTypeId] = @EventTypeId;  -- Фильтрация по переданному параметру
 END;
 GO
-/****** Object:  StoredProcedure [dbo].[GetEvents]    Script Date: 14.04.2025 23:23:44 ******/
+/****** Object:  StoredProcedure [dbo].[GetEvents]    Script Date: 20.05.2025 18:30:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -748,7 +935,27 @@ BEGIN
         [dbo].[Мероприятие];
 END;
 GO
-/****** Object:  StoredProcedure [dbo].[GetUserDetailsById]    Script Date: 14.04.2025 23:23:44 ******/
+/****** Object:  StoredProcedure [dbo].[GetRatedAnecdotesByUser]    Script Date: 20.05.2025 18:30:00 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[GetRatedAnecdotesByUser]
+    @IdUser INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT 
+        IdAnecdote,
+        IsPlus
+    FROM 
+        FunnySite.dbo.AnikGrades
+    WHERE 
+        IdUser = @IdUser;
+END
+GO
+/****** Object:  StoredProcedure [dbo].[GetUserDetailsById]    Script Date: 20.05.2025 18:30:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -772,7 +979,7 @@ BEGIN
         p.[IdUser] = @IdUser;
 END;
 GO
-/****** Object:  StoredProcedure [dbo].[GetUserDetailsByNameAndPassword]    Script Date: 14.04.2025 23:23:44 ******/
+/****** Object:  StoredProcedure [dbo].[GetUserDetailsByNameAndPassword]    Script Date: 20.05.2025 18:30:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -798,7 +1005,7 @@ BEGIN
         p.[Name] = @Name AND p.[Password] = @Password;
 END;
 GO
-/****** Object:  StoredProcedure [dbo].[GetUserIdByName]    Script Date: 14.04.2025 23:23:44 ******/
+/****** Object:  StoredProcedure [dbo].[GetUserIdByName]    Script Date: 20.05.2025 18:30:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -818,7 +1025,24 @@ BEGIN
         p.[Name] = @Name;
 END;
 GO
-/****** Object:  StoredProcedure [dbo].[GetUsersWithRights]    Script Date: 14.04.2025 23:23:44 ******/
+/****** Object:  StoredProcedure [dbo].[GetUserRatingForAnecdote]    Script Date: 20.05.2025 18:30:00 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[GetUserRatingForAnecdote]
+    @IdUser INT,
+    @IdAnecdote INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT TOP 1 [IsPlus]
+    FROM [FunnySite].[dbo].[AnikGrades]
+    WHERE [IdUser] = @IdUser AND [IdAnecdote] = @IdAnecdote;
+END
+GO
+/****** Object:  StoredProcedure [dbo].[GetUsersWithRights]    Script Date: 20.05.2025 18:30:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -844,7 +1068,101 @@ BEGIN
         [FunnySite].[dbo].[Права] r ON p.[IdRights] = r.[IdRights];
 END;
 GO
-/****** Object:  StoredProcedure [dbo].[UpdateAnecdote]    Script Date: 14.04.2025 23:23:44 ******/
+/****** Object:  StoredProcedure [dbo].[sp_AnikGrade_Add]    Script Date: 20.05.2025 18:30:00 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[sp_AnikGrade_Add]
+    @IsPlus BIT,
+    @IdUser INT,
+    @IdAnecdote INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    BEGIN TRY
+        BEGIN TRANSACTION;
+        
+        DECLARE @PreviousGrade BIT = NULL;
+        DECLARE @RatingChange INT = 0;
+        
+        -- Получаем предыдущую оценку пользователя
+        SELECT @PreviousGrade = IsPlus 
+        FROM AnikGrades 
+        WHERE IdUser = @IdUser AND IdAnecdote = @IdAnecdote;
+        
+        -- Определяем изменение рейтинга
+        IF @PreviousGrade IS NULL
+        BEGIN
+            -- Новая оценка
+            SET @RatingChange = CASE WHEN @IsPlus = 1 THEN 1 ELSE -1 END;
+            
+            INSERT INTO AnikGrades (IsPlus, IdUser, IdAnecdote)
+            VALUES (@IsPlus, @IdUser, @IdAnecdote);
+            
+            SELECT 'Grade added successfully' AS Result, 1 AS ActionTaken;
+        END
+        ELSE IF @PreviousGrade = @IsPlus
+        BEGIN
+            -- Удаление существующей оценки (отмена)
+            SET @RatingChange = CASE WHEN @IsPlus = 1 THEN -1 ELSE 1 END;
+            
+            DELETE FROM AnikGrades 
+            WHERE IdUser = @IdUser AND IdAnecdote = @IdAnecdote;
+            
+            SELECT 'Grade deleted successfully' AS Result, 3 AS ActionTaken;
+        END
+        ELSE
+        BEGIN
+            -- Изменение оценки на противоположную
+            SET @RatingChange = CASE WHEN @IsPlus = 1 THEN 2 ELSE -2 END;
+            
+            UPDATE AnikGrades
+            SET IsPlus = @IsPlus
+            WHERE IdUser = @IdUser AND IdAnecdote = @IdAnecdote;
+            
+            SELECT 'Grade updated successfully' AS Result, 2 AS ActionTaken;
+        END
+        
+        -- Обновляем рейтинг в таблице Анекдот
+        IF @RatingChange <> 0
+        BEGIN
+            UPDATE [Анекдот]
+            SET Rate = Rate + @RatingChange
+            WHERE IdAnecdote = @IdAnecdote;
+        END
+        
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0
+            ROLLBACK TRANSACTION;
+            
+        SELECT 'Error: ' + ERROR_MESSAGE() AS Result, 0 AS ActionTaken;
+    END CATCH
+END;
+GO
+/****** Object:  StoredProcedure [dbo].[sp_GetAnecdoteRatings]    Script Date: 20.05.2025 18:30:00 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   PROCEDURE [dbo].[sp_GetAnecdoteRatings]
+    @IdAnecdote INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    SELECT 
+        COUNT(CASE WHEN IsPlus = 1 THEN 1 END) AS PlusCount,
+        COUNT(CASE WHEN IsPlus = 0 THEN 1 END) AS MinusCount,
+        COUNT(*) AS TotalRatings
+    FROM AnikGrades
+    WHERE IdAnecdote = @IdAnecdote;
+END;
+GO
+/****** Object:  StoredProcedure [dbo].[UpdateAnecdote]    Script Date: 20.05.2025 18:30:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -867,7 +1185,7 @@ BEGIN
         [IdAnecdote] = @IdAnecdote;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[UpdateEvent]    Script Date: 14.04.2025 23:23:44 ******/
+/****** Object:  StoredProcedure [dbo].[UpdateEvent]    Script Date: 20.05.2025 18:30:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -896,7 +1214,7 @@ BEGIN
         [IdEvent] = @IdEvent;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[UpdateUserInfo]    Script Date: 14.04.2025 23:23:44 ******/
+/****** Object:  StoredProcedure [dbo].[UpdateUserInfo]    Script Date: 20.05.2025 18:30:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -917,7 +1235,7 @@ BEGIN
     WHERE [IdUser] = @IdUser;
 END;
 GO
-/****** Object:  StoredProcedure [dbo].[ДобавитьПользователя]    Script Date: 14.04.2025 23:23:44 ******/
+/****** Object:  StoredProcedure [dbo].[ДобавитьПользователя]    Script Date: 20.05.2025 18:30:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -937,4 +1255,8 @@ BEGIN
     VALUES
         (@Name, @Password, @Email, @Bio, @IdRights);
 END;
+GO
+USE [master]
+GO
+ALTER DATABASE [FunnySite] SET  READ_WRITE 
 GO
