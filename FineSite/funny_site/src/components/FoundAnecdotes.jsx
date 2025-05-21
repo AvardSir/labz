@@ -7,7 +7,7 @@ export const FoundAnecdotes = ({ anecdotes }) => {
   const navigate = useNavigate();
   const { loginData } = useContext(AuthContext);
   const [localAnecdotes, setLocalAnecdotes] = useState([]);
-
+  
 
   useEffect(() => {
     const fetchRatedAnecdotes = async () => {
@@ -92,13 +92,7 @@ export const FoundAnecdotes = ({ anecdotes }) => {
     const rights = parseInt(loginData.IdRights);
     return rights === 1 || rights === 2;
   };
-const copyToClipboard = () => {
-    navigator.clipboard.writeText(anecdote.Text).then(() => {
-      alert('Текст скопирован в буфер обмена');
-    }).catch(err => {
-      console.error('Ошибка копирования:', err);
-    });
-  };
+
   return (
     <div className="found-anecdotes">
       {parseInt(loginData.IdRights) === 2 && (
