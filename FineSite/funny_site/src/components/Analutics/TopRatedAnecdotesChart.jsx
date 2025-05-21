@@ -39,6 +39,13 @@ export const TopRatedAnecdotesChart = () => {
             }
         }
     };
+    const getBarColor = (rating) => {
+        // Основной цвет: #82ca9d (130, 202, 157)
+        // Сделаем прозрачность в зависимости от рейтинга (от 0.3 до 1)
+        const opacity = 0.3 + (rating / 5) * 0.7;
+        return `rgba(130, 202, 157, ${opacity.toFixed(2)})`;
+    };
+
 
     useEffect(() => {
         const fetchChartData = async () => {
@@ -146,11 +153,11 @@ export const TopRatedAnecdotesChart = () => {
             </div>
             <div style={{ width: '100%', height: 400 }}>
                 <ResponsiveContainer width="100%" height="100%">
-                   <BarChart
-  data={displayedData}
-  margin={{ top: 20, right: 20, left: 20, bottom: 60 }}
-  onClick={handleBarClick}
->
+                    <BarChart
+                        data={displayedData}
+                        margin={{ top: 20, right: 20, left: 20, bottom: 60 }}
+                        onClick={handleBarClick}
+                    >
                         <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                         <XAxis
                             dataKey="text"
@@ -179,12 +186,12 @@ export const TopRatedAnecdotesChart = () => {
                         <Tooltip content={<CustomTooltip />} />
                         <Legend />
                         <Bar
-                            dataKey="rating"
-                            name="Рейтинг"
-                            fill="#8884d8"
-                            barSize={20}
-                            radius={[4, 4, 0, 0]}
-                        />
+    dataKey="rating"
+    name="Рейтинг"
+    fill="#82ca9d"
+    barSize={20}
+    radius={[4, 4, 0, 0]}
+/>
                     </BarChart>
                 </ResponsiveContainer>
             </div>

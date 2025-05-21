@@ -1,12 +1,13 @@
 import React from 'react';
 // import AnecdoteDateRatingChart from './AnecdoteDateRatingChart'; // Твой график по датам
-import { AverageRatingChart } from './AverageRatingChart';
-import { AnecdoteTypeRatingChart } from './AnecdoteTypeRatingChart'; // График по типам анекдотов
+import { AverageRatingChart } from '../AverageRatingChart';
+import { AnecdoteTypeRatingChart } from '../AnecdoteTypeRatingChart'; // График по типам анекдотов
 // import AnecdoteDateRatingChart
-import { TopUsersAvgRatingChart } from './TopUsersAvgRatingChart';
-import { TopUsersByAnecdotesChart } from './TopUsersByAnecdotesChart';
-import { TopRatedAnecdotesChart } from './TopRatedAnecdotesChart';
-import { Header } from '../Header';
+import { TopUsersAvgRatingChart } from '../TopUsersAvgRatingChart';
+import { TopUsersByAnecdotesChart } from '../TopUsersByAnecdotesChart';
+import { TopRatedAnecdotesChart } from '../TopRatedAnecdotesChart';
+import { Header } from '../../Header';
+import { AnecdoteRatingDistributionChart } from '../AnecdoteRatingDistributionChart';
 
 const AnalyticsPage = () => {
   return (
@@ -43,6 +44,11 @@ const AnalyticsPage = () => {
         <TopRatedAnecdotesChart />
       </section>
 
+
+      <section>
+        {/* <h2 className="text-xl font-semibold mb-4">Топ пользователей по среднему рейтингу</h2> */}
+        <AnecdoteRatingDistributionChart />
+      </section>
 
 
     </div>

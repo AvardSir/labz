@@ -21,7 +21,7 @@ import RegistrationPage from "./pages/RegistrationPage";
 
 // import { AnalyticsPage} from "./components/Analutics2/AnalyticsPage";
 // import AnalyticsPage from "./components/Analutics/AnalyticsPage";
-import AnalyticsPage from "./components/Analutics/AnalyticsPage";
+import AnalyticsPage from "./components/Analutics/main/AnalyticsPage";
 function App() {
   return (
     <AuthProvider>
