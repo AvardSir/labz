@@ -16,9 +16,9 @@ const HomePage = ({ what = 'anecdote' }) => {
 
       {/* Flex-контейнер для двух блоков */}
       <div className="ads-row">
-  <AdBlock />
-  <ContactForAds />
-</div>
+        <AdBlock />
+        <ContactForAds />
+      </div>
 
     </div>
   );

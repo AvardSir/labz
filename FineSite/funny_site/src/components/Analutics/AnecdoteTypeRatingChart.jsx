@@ -29,38 +29,38 @@ export const AnecdoteTypeRatingChart = () => {
   const [sortOrder, setSortOrder] = useState('desc');
 
   useEffect(() => {
-  const fetchChartData = async () => {
-    try {
-      const response = await axios.get('/api/anecdote-ratings');
-      const apiData = response.data;
+    const fetchChartData = async () => {
+      try {
+        const response = await axios.get('/api/anecdote-ratings');
+        const apiData = response.data;
 
-      if (apiData.success) {
-        const formattedData = apiData.data.map(item => ({
-          id: item.IdTypeAnecdote,
-          type: item.TypeAnecdote.trim(),
-          avgRating: item.AverageRating !== null && item.AverageRating !== undefined
-            ? Number(item.AverageRating.toFixed(2))
-            : 0,
-          count: item.AnecdoteCount || 0,
-        }));
+        if (apiData.success) {
+          const formattedData = apiData.data.map(item => ({
+            id: item.IdTypeAnecdote,
+            type: item.TypeAnecdote.trim(),
+            avgRating: item.AverageRating !== null && item.AverageRating !== undefined
+              ? Number(item.AverageRating.toFixed(2))
+              : 0,
+            count: item.AnecdoteCount || 0,
+          }));
 
-        setChartData(formattedData);
-        if (topN === null) {
-          setTopN(formattedData.length);
+          setChartData(formattedData);
+          if (topN === null) {
+            setTopN(formattedData.length);
+          }
+        } else {
+          throw new Error(apiData.message || 'Ошибка при получении данных');
         }
-      } else {
-        throw new Error(apiData.message || 'Ошибка при получении данных');
+      } catch (err) {
+        console.error('Ошибка:', err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      console.error('Ошибка:', err);
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
 
-  fetchChartData();
-}, []);
+    fetchChartData();
+  }, []);
 
 
   useEffect(() => {
@@ -110,27 +110,24 @@ export const AnecdoteTypeRatingChart = () => {
         Средний рейтинг по типам анекдотов
       </h2>
 
-      <div className="flex flex-wrap gap-4 mb-4 items-center">
-        <div style={{ marginBottom: '16px' }}>
-          <label className="mr-2 font-medium">Сколько типов отобразить:</label>
+      <div className="flex items-center gap-3 mb-4">
+        <div style={{ marginBottom: '12px' }}>
+          <span className="mr-2">Количество пользователей:</span>
           <InputNumber
-  min={1}
-  max={chartData.length || 1}
-  value={topN || chartData.length || 1}
-  onChange={value => setTopN(value || 1)}
-/>
+            min={1}
+            max={chartData.length}
+            value={topN || chartData.length}
+            onChange={value => setTopN(value)}
+          />
         </div>
-        <label> </label>
         <div>
           <label className="mr-2 font-medium">Сортировка:</label>
-          <Select value={sortOrder} onChange={setSortOrder} style={{ width: 160 }}>
+          <Select value={sortOrder} onChange={setSortOrder} style={{ width: 200 }}>
             <Option value="desc">По убыванию рейтинга</Option>
             <Option value="asc">По возрастанию рейтинга</Option>
           </Select>
         </div>
-
       </div>
-
       <div style={{ width: '100%', height: 400 }}>
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart

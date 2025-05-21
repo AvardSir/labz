@@ -223,14 +223,13 @@ ul {
   background-color: #451740; /* Цвет для мероприятий */
 }
 
-
 .ads-row {
   display: flex;
   justify-content: center;
   align-items: flex-start;
   gap: 20px;
-  flex-wrap: wrap; /* Для адаптивности на маленьких экранах */
   margin-top: 20px;
+  /* Убираем flex-wrap, чтобы элементы не переносились на следующую строку */
 }
 
 
@@ -350,17 +349,6 @@ ul {
 
 /* Группы кнопок */
 /* Группы кнопок */
-.action-buttons {
-  display: flex;
-  /* убираем перенос строк */
-  flex-wrap: nowrap;
-  gap: 10px;
-  margin-top: 15px;
-  padding-top: 15px;
-  border-top: 1px dashed rgba(255,255,255,0.2);
-  justify-content: center; /* Центрирование кнопок */
-  overflow-x: auto; /* чтобы при нехватке места была горизонтальная прокрутка */
-}
 
 /* Адаптивность */
 @media (max-width: 768px) {
@@ -369,11 +357,6 @@ ul {
     font-size: 0.9rem;
   }
   
-  .action-buttons {
-    flex-direction: row; /* оставляем в ряд */
-    flex-wrap: nowrap; /* не переносим */
-    overflow-x: auto; /* включаем прокрутку на мобильных */
-  }
   
   .action-btn {
     flex-shrink: 0; /* не сжимать кнопки */
@@ -412,28 +395,6 @@ button:active {
   transform: translateY(0);
 }
 
-/* Группы кнопок */
-.action-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 15px;
-  padding-top: 15px;
-  border-top: 1px dashed rgba(255,255,255,0.2);
-}
-
-/* Адаптивность */
-@media (max-width: 768px) {
-  button {
-    width: 100%;
-    justify-content: center;
-    margin-right: 0;
-  }
-  
-  .action-buttons {
-    flex-direction: column;
-  }
-}
 
 
 
@@ -540,15 +501,6 @@ button:active {
   border-bottom: 1px dashed rgba(255,255,255,0.15);
 }
 
-/* Стили для кнопок */
-.action-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 20px;
-  padding-top: 20px;
-  border-top: 1px solid rgba(149, 51, 138, 0.3);
-}
 
 /* Адаптивность */
 @media (max-width: 768px) {
@@ -918,4 +870,20 @@ button {
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 1rem;
 }
+
+
+.action-buttons {
+  display: flex;
+  flex-wrap: nowrap;        /* отключаем перенос строк */
+  gap: 10px;                /* расстояние между кнопками */
+  margin-top: 15px;         /* отступ сверху */
+  padding-top: 15px;        /* внутренний отступ сверху */
+  border-top: 1px dashed rgba(255, 255, 255, 0.2); /* верхняя граница */
+  justify-content: center;  /* центрируем кнопки по горизонтали */
+  overflow-x: auto;         /* горизонтальная прокрутка при нехватке места */
+}
+
+
+
+
 

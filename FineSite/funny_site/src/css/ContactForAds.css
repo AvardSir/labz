@@ -1,9 +1,12 @@
 .contact-ads-block {
     background-color: rgba(255, 255, 255, 0.1);
-    padding: 20px;
+    padding: 0px;
     border-radius: 10px;
     text-align: center;
     width: 300px; /* ограничиваем ширину */
     box-sizing: border-box;
   }
-  
+  .contact-ads-title {
+    margin-top: 4px; /* Устанавливаем мелкий отступ сверху */
+    margin-bottom: 0px; /* Устанавливаем отступ снизу */
+}
