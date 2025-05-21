@@ -12,12 +12,21 @@ import {
   Label,
 } from 'recharts';
 import axios from 'axios';
-import { Spin, Alert } from 'antd';
+import { Spin, Alert, InputNumber, Select } from 'antd';
+
+// import { Spin, Alert, InputNumber, Select } from 'antd';
+// const { Option } = Select;
+
+
+const { Option } = Select;
 
 export const AnecdoteTypeRatingChart = () => {
   const [chartData, setChartData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [topN, setTopN] = useState(10);
+  const [sortOrder, setSortOrder] = useState('desc');
 
   useEffect(() => {
     const fetchChartData = async () => {
@@ -25,23 +34,20 @@ export const AnecdoteTypeRatingChart = () => {
         const response = await axios.get('/api/anecdote-ratings');
         const apiData = response.data;
 
-
         if (apiData.success) {
           const formattedData = apiData.data.map(item => ({
             id: item.IdTypeAnecdote,
-            type: item.TypeAnecdote.trim(),   // убираю пробелы
+            type: item.TypeAnecdote.trim(),
             avgRating: item.AverageRating !== null && item.AverageRating !== undefined
               ? Number(item.AverageRating.toFixed(2))
               : 0,
             count: item.AnecdoteCount || 0,
           }));
 
-          // console.log(formattedData);
           setChartData(formattedData);
         } else {
           throw new Error(apiData.message || 'Ошибка при получении данных');
         }
-
       } catch (err) {
         console.error('Ошибка:', err);
         setError(err.message);
@@ -52,6 +58,13 @@ export const AnecdoteTypeRatingChart = () => {
 
     fetchChartData();
   }, []);
+
+  useEffect(() => {
+    const sorted = [...chartData].sort((a, b) =>
+      sortOrder === 'desc' ? b.avgRating - a.avgRating : a.avgRating - b.avgRating
+    );
+    setFilteredData(sorted.slice(0, topN));
+  }, [chartData, topN, sortOrder]);
 
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
@@ -92,10 +105,32 @@ export const AnecdoteTypeRatingChart = () => {
       <h2 className="text-lg md:text-xl font-bold text-gray-800 mb-4">
         Средний рейтинг по типам анекдотов
       </h2>
+
+      <div className="flex flex-wrap gap-4 mb-4 items-center">
+        <div style={{ marginBottom: '16px' }}>
+          <label className="mr-2 font-medium">Сколько типов отобразить:</label>
+          <InputNumber
+            min={1}
+            max={chartData.length}
+            value={topN}
+            onChange={setTopN}
+          />
+        </div>
+        <label> </label>
+        <div>
+          <label className="mr-2 font-medium">Сортировка:</label>
+          <Select value={sortOrder} onChange={setSortOrder} style={{ width: 160 }}>
+            <Option value="desc">По убыванию рейтинга</Option>
+            <Option value="asc">По возрастанию рейтинга</Option>
+          </Select>
+        </div>
+
+      </div>
+
       <div style={{ width: '100%', height: 400 }}>
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart
-            data={chartData}
+            data={filteredData}
             margin={{ top: 20, right: 20, left: 20, bottom: 60 }}
           >
             <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
