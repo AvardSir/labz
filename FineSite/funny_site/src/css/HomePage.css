@@ -352,14 +352,15 @@ ul {
 /* Группы кнопок */
 .action-buttons {
   display: flex;
-  flex-wrap: wrap;
+  /* убираем перенос строк */
+  flex-wrap: nowrap;
   gap: 10px;
   margin-top: 15px;
   padding-top: 15px;
   border-top: 1px dashed rgba(255,255,255,0.2);
   justify-content: center; /* Центрирование кнопок */
+  overflow-x: auto; /* чтобы при нехватке места была горизонтальная прокрутка */
 }
-
 
 /* Адаптивность */
 @media (max-width: 768px) {
@@ -369,15 +370,16 @@ ul {
   }
   
   .action-buttons {
-    flex-direction: column;
+    flex-direction: row; /* оставляем в ряд */
+    flex-wrap: nowrap; /* не переносим */
+    overflow-x: auto; /* включаем прокрутку на мобильных */
   }
   
   .action-btn {
-    width: 100%;
-    margin-right: 0;
-    justify-content: center;
+    flex-shrink: 0; /* не сжимать кнопки */
   }
 }
+
 
 
 /* Глобальные стили для ВСЕХ кнопок */
@@ -611,8 +613,8 @@ button:active {
   border-bottom: 1px dashed rgba(255, 255, 255, 0.15);
   color: #e0e0e0;
   font-size: 0.9rem;
-  justify-content: center; /* Центрирование по горизонтали */
-  align-items: center; /* Центрирование по вертикали */
+  justify-content: center;
+  align-items: center;
 }
 
 .card-meta span {
@@ -620,39 +622,22 @@ button:active {
   align-items: center;
   gap: 5px;
 }
-
-
-/* Стили кнопок */
-.card-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 20px;
-  padding-top: 20px;
-  border-top: 1px solid rgba(149, 51, 138, 0.3);
+.card-meta button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 6px;      /* Меньше внутренние отступы */
+  font-size: 0.8rem;     /* Немного меньше шрифт */
+  white-space: nowrap;
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+  line-height: 1;
+  height: 26px;          /* Фиксированная высота для компактности */
+  min-width: 50px;       /* Минимальная ширина */
 }
 
-/* Адаптивность */
-@media (max-width: 768px) {
-  .card {
-    padding: 15px;
-    margin-bottom: 20px;
-  }
-  
-  .card:not(:last-child)::after {
-    left: 15%;
-    right: 15%;
-  }
-  
-  .card-actions {
-    gap: 8px;
-  }
-  
-  .card-meta {
-    gap: 10px;
-    font-size: 0.85rem;
-  }
-}
+
 
 
 
