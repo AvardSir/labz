@@ -923,3 +923,14 @@ button {
 .back-button:hover {
     background-color: #0056b3;
 }
+
+.list-container > section {
+  margin-bottom: 1rem;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+}
+

@@ -8,6 +8,7 @@ export const FoundAnecdotes = ({ anecdotes }) => {
   const { loginData } = useContext(AuthContext);
   const [localAnecdotes, setLocalAnecdotes] = useState([]);
 
+
   useEffect(() => {
     const fetchRatedAnecdotes = async () => {
       try {
@@ -61,10 +62,10 @@ export const FoundAnecdotes = ({ anecdotes }) => {
         const updated = localAnecdotes.map((a) =>
           a.IdAnecdote === idAnecdote
             ? {
-                ...a,
-                Rate: data.newRating,
-                UserRating: isSameRating ? null : isPlus,
-              }
+              ...a,
+              Rate: data.newRating,
+              UserRating: isSameRating ? null : isPlus,
+            }
             : a
         );
         setLocalAnecdotes(updated);
@@ -91,7 +92,13 @@ export const FoundAnecdotes = ({ anecdotes }) => {
     const rights = parseInt(loginData.IdRights);
     return rights === 1 || rights === 2;
   };
-
+const copyToClipboard = () => {
+    navigator.clipboard.writeText(anecdote.Text).then(() => {
+      alert('Текст скопирован в буфер обмена');
+    }).catch(err => {
+      console.error('Ошибка копирования:', err);
+    });
+  };
   return (
     <div className="found-anecdotes">
       {parseInt(loginData.IdRights) === 2 && (

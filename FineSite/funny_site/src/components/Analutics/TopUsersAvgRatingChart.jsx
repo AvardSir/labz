@@ -105,25 +105,25 @@ export const TopUsersAvgRatingChart = () => {
                 Топ пользователей по средней оценке анекдотов
             </h2>
 
-            <div className="flex items-center gap-4 mb-4">
-                <div style={{ marginBottom: '24px' }}>
-                    <span className="mr-2">Количество пользователей:</span>
-                    <InputNumber
-                        min={1}
-                        max={chartData.length }
-                        value={topN || chartData.length }
-                        onChange={value => setTopN(value )}
-                    />
-                </div>
-                <div>
-                    <label className="mr-2 font-medium">Сортировка:</label>
-                    <Select value={sortOrder} onChange={setSortOrder} style={{ width: 200 }}>
-                        <Option value="desc">По убыванию рейтинга</Option>
-                        <Option value="asc">По возрастанию рейтинга</Option>
-                    </Select>
-                </div>
+            <div className="flex items-center gap-3 mb-4">
+  <div style={{ marginBottom: '12px' }}>
+    <span className="mr-2">Количество пользователей:</span>
+    <InputNumber
+      min={1}
+      max={chartData.length}
+      value={topN || chartData.length}
+      onChange={value => setTopN(value)}
+    />
+  </div>
+  <div>
+    <label className="mr-2 font-medium">Сортировка:</label>
+    <Select value={sortOrder} onChange={setSortOrder} style={{ width: 200 }}>
+      <Option value="desc">По убыванию рейтинга</Option>
+      <Option value="asc">По возрастанию рейтинга</Option>
+    </Select>
+  </div>
+</div>
 
-            </div>
 
             {loading ? (
                 <div className="flex justify-center items-center h-64">

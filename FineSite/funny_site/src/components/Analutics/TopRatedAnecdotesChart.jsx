@@ -133,24 +133,30 @@ export const TopRatedAnecdotesChart = () => {
             <h2 className="text-lg md:text-xl font-bold text-gray-800 mb-4">
                 Топ анекдотов по рейтингу
             </h2>
-            <div className="flex flex-wrap gap-4 mb-4 items-center">
-                <div>
+            <div
+                className="flex flex-wrap items-center mb-6"
+                style={{ gap: '32px' /* это примерно gap-8 */, rowGap: '32px' }}
+            >
+                <div style={{ marginBottom: '8px' }}>
                     <label className="mr-2 font-medium">Сортировка:</label>
                     <Select value={sortOrder} onChange={setSortOrder} style={{ width: 160 }}>
                         <Option value="desc">По убыванию</Option>
                         <Option value="asc">По возрастанию</Option>
                     </Select>
                 </div>
-                <div>
+                <div style={{ marginBottom: '8px' }}>
                     <label className="mr-2 font-medium">Количество элементов:</label>
                     <InputNumber
                         min={1}
                         max={chartData.length}
-                        value={topN}
+                        value={topN || chartData.length}
                         onChange={value => setTopN(value)}
                     />
                 </div>
             </div>
+
+
+
             <div style={{ width: '100%', height: 400 }}>
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart
@@ -186,12 +192,12 @@ export const TopRatedAnecdotesChart = () => {
                         <Tooltip content={<CustomTooltip />} />
                         <Legend />
                         <Bar
-    dataKey="rating"
-    name="Рейтинг"
-    fill="#82ca9d"
-    barSize={20}
-    radius={[4, 4, 0, 0]}
-/>
+                            dataKey="rating"
+                            name="Рейтинг"
+                            fill="#82ca9d"
+                            barSize={20}
+                            radius={[4, 4, 0, 0]}
+                        />
                     </BarChart>
                 </ResponsiveContainer>
             </div>
