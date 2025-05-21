@@ -6,10 +6,19 @@ import { AnecdoteTypeRatingChart } from './AnecdoteTypeRatingChart'; // Граф
 import { TopUsersAvgRatingChart } from './TopUsersAvgRatingChart';
 import { TopUsersByAnecdotesChart } from './TopUsersByAnecdotesChart';
 import { TopRatedAnecdotesChart } from './TopRatedAnecdotesChart';
+import { Header } from '../Header';
+
 const AnalyticsPage = () => {
   return (
+
     <div className="container mx-auto p-4 space-y-12">
-      <h1 className="text-2xl font-bold mb-6 text-center">Аналитика анекдотов</h1>
+      <Header />
+      <h1
+        className="text-2xl font-bold mb-6"
+        style={{ textAlign: 'center' }}
+      >
+        Аналитика анекдотов
+      </h1>
 
       <section>
         {/* <h2 className="text-xl font-semibold mb-4">Рейтинг анекдотов по датам</h2> */}
@@ -34,8 +43,8 @@ const AnalyticsPage = () => {
         <TopRatedAnecdotesChart />
       </section>
 
-      
-      
+
+
     </div>
   );
 };
