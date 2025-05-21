@@ -1019,6 +1019,28 @@ app.get('/top-users-by-anecdotes', async (req, res) => {
   }
 });
 
+app.get('/top-rated-anecdotes', async (req, res) => {
+  const topN = parseInt(req.query.top) || 10;
+
+  try {
+    const pool = await poolPromise;
+    const result = await pool.request()
+      .input('TopN', sql.Int, topN)
+      .execute('GetTopRatedAnecdotes');
+
+    res.json({
+      success: true,
+      data: result.recordset,
+    });
+  } catch (error) {
+    console.error('Ошибка при выполнении запроса:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Ошибка сервера',
+    });
+  }
+});
+
 
 
 // Запуск сервера

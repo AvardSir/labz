@@ -5,6 +5,7 @@ import { AnecdoteTypeRatingChart } from './AnecdoteTypeRatingChart'; // Граф
 // import AnecdoteDateRatingChart
 import { TopUsersAvgRatingChart } from './TopUsersAvgRatingChart';
 import { TopUsersByAnecdotesChart } from './TopUsersByAnecdotesChart';
+import { TopRatedAnecdotesChart } from './TopRatedAnecdotesChart';
 const AnalyticsPage = () => {
   return (
     <div className="container mx-auto p-4 space-y-12">
@@ -28,6 +29,12 @@ const AnalyticsPage = () => {
         {/* <h2 className="text-xl font-semibold mb-4">Топ пользователей по среднему рейтингу</h2> */}
         <TopUsersByAnecdotesChart />
       </section>
+      <section>
+        {/* <h2 className="text-xl font-semibold mb-4">Топ пользователей по среднему рейтингу</h2> */}
+        <TopRatedAnecdotesChart />
+      </section>
+
+      
       
     </div>
   );
