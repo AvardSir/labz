@@ -25,39 +25,43 @@ export const AnecdoteTypeRatingChart = () => {
   const [filteredData, setFilteredData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [topN, setTopN] = useState(10);
+  const [topN, setTopN] = useState();
   const [sortOrder, setSortOrder] = useState('desc');
 
   useEffect(() => {
-    const fetchChartData = async () => {
-      try {
-        const response = await axios.get('/api/anecdote-ratings');
-        const apiData = response.data;
+  const fetchChartData = async () => {
+    try {
+      const response = await axios.get('/api/anecdote-ratings');
+      const apiData = response.data;
 
-        if (apiData.success) {
-          const formattedData = apiData.data.map(item => ({
-            id: item.IdTypeAnecdote,
-            type: item.TypeAnecdote.trim(),
-            avgRating: item.AverageRating !== null && item.AverageRating !== undefined
-              ? Number(item.AverageRating.toFixed(2))
-              : 0,
-            count: item.AnecdoteCount || 0,
-          }));
+      if (apiData.success) {
+        const formattedData = apiData.data.map(item => ({
+          id: item.IdTypeAnecdote,
+          type: item.TypeAnecdote.trim(),
+          avgRating: item.AverageRating !== null && item.AverageRating !== undefined
+            ? Number(item.AverageRating.toFixed(2))
+            : 0,
+          count: item.AnecdoteCount || 0,
+        }));
 
-          setChartData(formattedData);
-        } else {
-          throw new Error(apiData.message || 'Ошибка при получении данных');
+        setChartData(formattedData);
+        if (topN === null) {
+          setTopN(formattedData.length);
         }
-      } catch (err) {
-        console.error('Ошибка:', err);
-        setError(err.message);
-      } finally {
-        setLoading(false);
+      } else {
+        throw new Error(apiData.message || 'Ошибка при получении данных');
       }
-    };
+    } catch (err) {
+      console.error('Ошибка:', err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchChartData();
-  }, []);
+  fetchChartData();
+}, []);
+
 
   useEffect(() => {
     const sorted = [...chartData].sort((a, b) =>
@@ -110,11 +114,11 @@ export const AnecdoteTypeRatingChart = () => {
         <div style={{ marginBottom: '16px' }}>
           <label className="mr-2 font-medium">Сколько типов отобразить:</label>
           <InputNumber
-            min={1}
-            max={chartData.length}
-            value={topN}
-            onChange={setTopN}
-          />
+  min={1}
+  max={chartData.length || 1}
+  value={topN || chartData.length || 1}
+  onChange={value => setTopN(value || 1)}
+/>
         </div>
         <label> </label>
         <div>

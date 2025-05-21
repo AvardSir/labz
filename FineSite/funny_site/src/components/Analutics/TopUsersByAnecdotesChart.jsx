@@ -12,21 +12,25 @@ import {
 } from 'recharts';
 import axios from 'axios';
 import { Spin, Alert } from 'antd';
-
+import { Select, InputNumber } from 'antd';
+const { Option } = Select;
 export const TopUsersByAnecdotesChart = () => {
     const [chartData, setChartData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [topN, setTopN] = useState();
+    const [sortOrder, setSortOrder] = useState('desc'); // 'asc'
 
     useEffect(() => {
         const fetchChartData = async () => {
+            setLoading(true);
             try {
-                const response = await axios.get('/top-users-by-anecdotes?top=10');
+                const response = await axios.get('/top-users-by-anecdotes');
                 const apiData = response.data;
 
                 if (apiData.success) {
-                    const filteredData = apiData.data
-                        .filter(item => item.AnecdoteCount > 0) // убираем с 0 анекдотов
+                    let filteredData = apiData.data
+                        .filter(item => item.AnecdoteCount > 0)
                         .map(item => ({
                             id: item.IdUser,
                             name: item.Name,
@@ -46,6 +50,30 @@ export const TopUsersByAnecdotesChart = () => {
 
         fetchChartData();
     }, []);
+    useEffect(() => {
+        if (chartData.length > 0 && (topN === null || topN === 0)) {
+            setTopN(chartData.length);
+        }
+    }, [chartData, topN]);
+
+
+
+
+    const displayedData = React.useMemo(() => {
+        if (!chartData.length) return [];
+
+        // сортируем
+        const sorted = [...chartData].sort((a, b) => {
+            if (sortOrder === 'asc') {
+                return a.anecdoteCount - b.anecdoteCount;
+            }
+            return b.anecdoteCount - a.anecdoteCount;
+        });
+
+        // отрезаем topN
+        return sorted.slice(0, topN);
+    }, [chartData, sortOrder, topN]);
+
 
 
     const CustomTooltip = ({ active, payload }) => {
@@ -86,10 +114,28 @@ export const TopUsersByAnecdotesChart = () => {
             <h2 className="text-lg md:text-xl font-bold text-gray-800 mb-4">
                 Топ пользователей по количеству анекдотов
             </h2>
+            <div className="flex flex-wrap gap-4 mb-4 items-center">
+                <div>
+                    <label className="mr-2 font-medium">Сортировка:</label>
+                    <Select value={sortOrder} onChange={setSortOrder} style={{ width: 160 }}>
+                        <Option value="desc">По убыванию</Option>
+                        <Option value="asc">По возрастанию</Option>
+                    </Select>
+                </div>
+                <div>
+                    <label className="mr-2 font-medium">Количество элементов:</label>
+                    <InputNumber
+                        min={1}
+                        max={chartData.length}
+                        value={topN ||chartData.length}
+                        onChange={value => setTopN(value )}
+                    />
+                </div>
+            </div>
             <div style={{ width: '100%', height: 400 }}>
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart
-                        data={chartData}
+                        data={displayedData}
                         margin={{ top: 20, right: 20, left: 20, bottom: 60 }}
                     >
                         <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />

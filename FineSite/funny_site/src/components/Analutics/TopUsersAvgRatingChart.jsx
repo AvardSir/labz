@@ -26,56 +26,62 @@ export const TopUsersAvgRatingChart = () => {
 
 
     const fetchChartData = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-        const response = await axios.get(`/api/top-users-avg-rating?topN=1000`);
-        const apiData = response.data;
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await axios.get(`/api/top-users-avg-rating?topN=1000`);
+            const apiData = response.data;
 
-        if (apiData.success) {
-            let formattedData = apiData.data.map(item => ({
-                id: item.IdUser,
-                name: item.Name,
-                avgRating:
-                    item.AvgAnecdoteRating !== null && item.AvgAnecdoteRating !== undefined
-                        ? Number(item.AvgAnecdoteRating.toFixed(2))
-                        : 0,
-                anecdoteCount: item.AnecdoteCount || 0,
-            }));
+            if (apiData.success) {
+                let formattedData = apiData.data.map(item => ({
+                    id: item.IdUser,
+                    name: item.Name,
+                    avgRating:
+                        item.AvgAnecdoteRating !== null && item.AvgAnecdoteRating !== undefined
+                            ? Number(item.AvgAnecdoteRating.toFixed(2))
+                            : 0,
+                    anecdoteCount: item.AnecdoteCount || 0,
+                }));
 
-            formattedData.sort((a, b) =>
-                sortOrder === 'asc' ? a.avgRating - b.avgRating : b.avgRating - a.avgRating
-            );
+                formattedData.sort((a, b) =>
+                    sortOrder === 'asc' ? a.avgRating - b.avgRating : b.avgRating - a.avgRating
+                );
 
-            // если topN ещё не установлен — установить в длину данных
-            if (topN === null) {
-                setTopN(formattedData.length);
+                // если topN ещё не установлен — установить в длину данных
+                if (topN === null) {
+                    setTopN(formattedData.length);
+                }
+
+                // отображать слайс отрезка
+                if (topN === null) {
+                    setTopN(formattedData.length); // Установим максимум, если ещё не задано
+                    setChartData(formattedData); // показываем всё
+                } else {
+                    setChartData(formattedData.slice(0, topN));
+                }
+
+            } else {
+                throw new Error(apiData.message || 'Ошибка при получении данных');
             }
-
-            // отображать слайс отрезка
-            setChartData(formattedData.slice(0, topN ?? formattedData.length));
-        } else {
-            throw new Error(apiData.message || 'Ошибка при получении данных');
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
         }
-    } catch (err) {
-        setError(err.message);
-    } finally {
-        setLoading(false);
-    }
-};
+    };
 
-useEffect(() => {
-    fetchChartData();
-    // не включаем topN в зависимости, иначе будет перезапуск на первый setTopN
-    // только sortOrder влияет на сортировку
-}, [sortOrder]);
-
-// второй useEffect чтобы реагировать на изменение topN после первой загрузки
-useEffect(() => {
-    if (topN !== null) {
+    useEffect(() => {
         fetchChartData();
-    }
-}, [topN]);
+        // не включаем topN в зависимости, иначе будет перезапуск на первый setTopN
+        // только sortOrder влияет на сортировку
+    }, [sortOrder]);
+
+    // второй useEffect чтобы реагировать на изменение topN после первой загрузки
+    useEffect(() => {
+        if (topN !== null) {
+            fetchChartData();
+        }
+    }, [topN]);
 
 
 
@@ -104,9 +110,9 @@ useEffect(() => {
                     <span className="mr-2">Количество пользователей:</span>
                     <InputNumber
                         min={1}
-                        max={1000}
-                        value={topN}
-                        onChange={value => setTopN(value || 1)}
+                        max={chartData.length }
+                        value={topN || chartData.length }
+                        onChange={value => setTopN(value )}
                     />
                 </div>
                 <div>
