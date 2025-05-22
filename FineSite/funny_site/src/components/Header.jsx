@@ -12,6 +12,7 @@ export const Header = () => {
         <Link to="/">Главная</Link>
         <Link to="/anecdotes">Анекдоты</Link>
         <Link to="/events">Мероприятия</Link>
+        <Link to="/anecdoteator">Анекдотатор — пользовательская игра </Link>
         {loginData && parseInt(loginData.IdRights) === 2 && (
           <Link to="/analytics">Аналитика</Link>
         )}

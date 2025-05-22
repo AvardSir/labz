@@ -22,12 +22,14 @@ import RegistrationPage from "./pages/RegistrationPage";
 // import { AnalyticsPage} from "./components/Analutics2/AnalyticsPage";
 // import AnalyticsPage from "./components/Analutics/AnalyticsPage";
 import AnalyticsPage from "./components/Analutics/main/AnalyticsPage";
+import Anecdoteator from "./components/Anecdoteator";
 function App() {
   return (
     <AuthProvider>
       <Router>
         <Routes>
-
+          
+          <Route path="/anecdoteator" element={<Anecdoteator />} />
           <Route path="/" element={<AnecdotesPage />} />
           <Route path="/anecdotes" element={<AnecdotesPage />} />
           <Route path="/events" element={<EventsPage />} />
