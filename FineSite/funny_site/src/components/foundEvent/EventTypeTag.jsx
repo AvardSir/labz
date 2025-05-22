@@ -1,17 +1,17 @@
-export const EventTypeTag = ({ type, IdEvent, setFoundEvents }) => {
+export const EventTypeTag = ({ type, EventTypeId, setFoundEvents }) => {
   const handleSearchButtonClick = async () => {
     try {
         
-        console.log('::fasfs: ');
+        
 const response = await fetch(
-    `/api/events/by-type?idTypeEvent=${(IdEvent)}`
+    `/api/events/by-type?idTypeEvent=${(EventTypeId)}`
 );
-console.log('IdEvent::: ', IdEvent);
+
       const result = await response.json();
-      console.log(result);
+      
       setFoundEvents(Array.isArray(result) ? result : []);
     } catch (error) {
-      // console.error("Ошибка при поиске мероприятий:", error);
+      
       setFoundEvents([]);
     }
   };

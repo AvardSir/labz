@@ -21,12 +21,13 @@ export const AnecdoteTypeTag = ({ type, typeId, onSearch, setFoundAnecdotes }) =
 
     return (
         <span
-            onClick={handleClick}
-            style={{ cursor: "pointer" }}
-            title="Кликните для фильтрации по этому типу"
-            className="anecdote-type-tag"
-        >
-            🏷️{type}
-        </span>
+    onClick={handleClick}
+    style={{ cursor: "pointer" }}
+    title="Кликните для фильтрации по этому типу"
+    className="anecdote-type-tag"
+>
+    🏷️<u>{type}</u>
+</span>
+
     );
 };
