@@ -6,6 +6,7 @@ import axios from "axios";
 import vkIcon from '../image/vk_ico.png'; // путь относительно файла компонента
 import { AnecdoteTypeTag } from "./foundAnekdot/AnecdoteTypeTag";
 import AnecdoteAudioButton from "./AnecdoteAudioButton";
+import FavoriteButton from "./FavoriteButton";
 
 
 export const FoundAnecdotes = ({ anecdotes, setFoundAnecdotes, fetchAnecdotes }) => {
@@ -226,6 +227,10 @@ export const FoundAnecdotes = ({ anecdotes, setFoundAnecdotes, fetchAnecdotes })
                   💬 Комментарии
                 </button>
               <AnecdoteAudioButton idAnecdote={anecdote.IdAnecdote}/>
+              
+              
+              <FavoriteButton userId={loginData.IdUser} anecdoteId={anecdote.IdAnecdote} />
+
               
                 {parseInt(loginData.IdRights) === 2 && (
                   <>

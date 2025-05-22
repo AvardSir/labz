@@ -99,7 +99,7 @@ app.put('/api/update-user', async (req, res) => {
   const { IdUser, Name, Password, Email, Bio } = req.body;
 
   try {
-    const pool = await  poolPromise;
+    const pool = await poolPromise;
 
     const result = await pool.request()
       .input('IdUser', sql.Int, IdUser)
@@ -136,7 +136,7 @@ app.get('/api/events', async (req, res) => {
 app.get('/api/anecdotes/types', async (req, res) => {
   try {
     // Подключаемся к базе данных
-    let pool =  await poolPromise;
+    let pool = await poolPromise;
 
     // Выполняем запрос на получение типов анекдотов
     let result = await pool.query(`
@@ -168,7 +168,7 @@ app.get('/api/anecdotes/by-type', async (req, res) => {
   const { idTypeAnecdote } = req.query; // Получаем параметр из запроса
 
   try {
-    let pool =  await poolPromise;
+    let pool = await poolPromise;
     let result = await pool
       .request()
       .input("IdTypeAnecdote", sql.Int, idTypeAnecdote)  // Передаем параметр в запрос
@@ -185,7 +185,7 @@ app.get('/api/anecdotes/by-type', async (req, res) => {
 
 app.get('/api/events/types', async (req, res) => {
   try {
-    let pool = await  poolPromise;
+    let pool = await poolPromise;
 
     // Выполняем запрос на получение типов мероприятий
     let result = await pool.query(`
@@ -216,7 +216,7 @@ app.get('/api/events/by-type', async (req, res) => {
 
   try {
     // Подключаемся к базе данных
-    let pool = await  poolPromise;
+    let pool = await poolPromise;
 
     // Выполняем запрос, передавая параметр для типа мероприятия
     let result = await pool
@@ -234,7 +234,9 @@ app.get('/api/events/by-type', async (req, res) => {
 
 app.get("/api/events/get-events", async (req, res) => {
   try {
-    await (config);
+    // await (config);
+    const pool = await poolPromise;
+
     const result = await pool.request().query`exec [dbo].[GetEvents]`;
     res.json(result.recordset); // Возвращаем результат из SQL запроса
   } catch (err) {
@@ -249,7 +251,7 @@ app.post('/api/add-user', async (req, res) => {
   const { Name, Password, Email, Bio, IdRights } = req.body;
 
   try {
-    const pool = await  poolPromise;
+    const pool = await poolPromise;
 
     const result = await pool.request()
       .input('Name', sql.NVarChar(255), Name)
@@ -270,7 +272,7 @@ app.post('/api/add-user', async (req, res) => {
 
 app.get('/api/users/users', async (req, res) => {
   try {
-    let pool = await  poolPromise;
+    let pool = await poolPromise;
 
     // Выполнение хранимой процедуры
     let result = await pool.request().execute('GetUsersWithRights');
@@ -312,7 +314,7 @@ app.put('/api/update-user', async (req, res) => {
   const { IdUser, Name, Password, Email, Bio } = req.body;
 
   try {
-    const pool = await  poolPromise;
+    const pool = await poolPromise;
 
     const result = await pool.request()
       .input('IdUser', sql.Int, IdUser)
@@ -391,8 +393,6 @@ app.post('/api/GetUserDetailsByNameAndPassword', async (req, res) => {
 // Запрос для получения данных пользователя (GET /api/users/:id)
 app.get('/api/users/:id', async (req, res) => {
   const { id } = req.params;
-
-  // Преобразуем id в целое число
   const userId = parseInt(id, 10);
 
   if (isNaN(userId)) {
@@ -400,15 +400,18 @@ app.get('/api/users/:id', async (req, res) => {
   }
 
   try {
-    const result = await pool.request().query`EXEC [dbo].[GetUserDetailsById] @IdUser=${userId}`;
+    const pool = await poolPromise;
+    const result = await pool.request()
+      .input('IdUser', sql.Int, userId)
+      .execute('[dbo].[GetUserDetailsById]');
 
     if (result.recordset.length > 0) {
-      res.json(result.recordset[0]); // Возвращаем данные пользователя по ID
+      res.json(result.recordset[0]);
     } else {
       res.status(404).send('Пользователь не найден');
     }
   } catch (err) {
-    console.error('Ошибка при получении данных пользователя:', err);
+    console.error('Ошибка:', err);
     res.status(500).send('Ошибка сервера');
   }
 });
@@ -435,30 +438,28 @@ app.get('/api/comments', async (req, res) => {
 
 
 
-app.get("/api/IdByUsername", (req, res) => {
-  const { Name } = req.query; // Получаем параметр Name из строки запроса
+app.get("/api/IdByUsername", async (req, res) => { // Добавлен async
+  const { Name } = req.query;
 
   if (!Name) {
     return res.status(400).json({ error: "Параметр Name обязателен." });
   }
 
-  // Вызов хранимой процедуры
-  const query = "EXEC GetUserIdByName @Name = @Name";
-  const request = new sql.Request();
-  request.input("Name", sql.NVarChar, Name);
-
-  request.query(query, (err, result) => {
-    if (err) {
-      console.error("Ошибка выполнения запроса:", err);
-      return res.status(500).json({ error: "Ошибка сервера." });
-    }
+  try {
+    const pool = await poolPromise;
+    const result = await pool.request()
+      .input("Name", sql.NVarChar, Name)
+      .query("EXEC GetUserIdByName @Name");
 
     if (result.recordset.length === 0) {
       return res.status(404).json({ error: "Пользователь не найден." });
     }
 
-    res.status(200).json(result.recordset[0]); // Возвращаем первый найденный результат
-  });
+    res.status(200).json(result.recordset[0]);
+  } catch (err) {
+    console.error("Ошибка:", err);
+    res.status(500).json({ error: "Ошибка сервера." });
+  }
 });
 
 // sss
@@ -534,19 +535,20 @@ app.get('/event-details/:IdEvent', async (req, res) => {
   const { IdEvent } = req.params;
 
   try {
-    await  poolPromise;
-    const result = await pool.request().query`EXEC GetEventDetailsByIdEvent @EventId = ${IdEvent}`;
+    const pool = await poolPromise;
+    const result = await pool.request()
+      .input('EventId', sql.Int, IdEvent)
+      .execute('GetEventDetailsByIdEvent');
 
-    // Если нет данных
     if (result.recordset.length === 0) {
       return res.status(404).send('Event not found');
     }
 
     res.json(result.recordset);
   } catch (err) {
-    console.error('Error executing query:', err.message);
+    console.error('Error:', err);
     res.status(500).send(`Server error: ${err.message}`);
-  } 
+  }
 });
 
 
@@ -590,27 +592,20 @@ app.post("/api/add-entry", async (req, res) => {
     return res.status(400).json({ error: "Параметры IdEvent и IdUser обязательны." });
   }
 
-  if (isNaN(IdEvent) || isNaN(IdUser)) {
-    return res.status(400).json({ error: "IdEvent и IdUser должны быть числами." });
-  }
-
   try {
-    const request = new sql.Request();
-    request.input("IdEvent", sql.Int, IdEvent);
-    request.input("IdUser", sql.Int, IdUser);
-
-    const result = await request.execute("AddEntryAndDecrementSeats");
+    const pool = await poolPromise;
+    const result = await pool.request()
+      .input("IdEvent", sql.Int, IdEvent)
+      .input("IdUser", sql.Int, IdUser)
+      .execute("AddEntryAndDecrementSeats");
 
     if (result.returnValue !== 0) {
-      return res.status(400).json({ error: "Не удалось записаться на мероприятие. Возможно, мест больше нет." });
+      return res.status(400).json({ error: "Не удалось записаться на мероприятие." });
     }
 
-    res.status(200).json({ message: "Вы успешно записались на мероприятие." });
+    res.status(200).json({ message: "Успешно!" });
   } catch (err) {
-    console.error("Ошибка выполнения процедуры:", {
-      message: err.message,
-      stack: err.stack,
-    });
+    console.error("Ошибка:", err);
     res.status(500).json({ error: "Ошибка сервера." });
   }
 });
@@ -650,7 +645,7 @@ app.put('/api/update-anecdote', async (req, res) => {
 
   try {
     // Подключение к базе данных
-    let pool = await  poolPromise;
+    let pool = await poolPromise;
 
     // Вызов хранимой процедуры
     await pool
@@ -665,7 +660,7 @@ app.put('/api/update-anecdote', async (req, res) => {
   } catch (error) {
     console.error('Ошибка при обновлении анекдота:', error);
     res.status(500).json({ error: 'Произошла ошибка на сервере' });
-  } 
+  }
 });
 
 
@@ -674,7 +669,7 @@ app.get('/api/anecdotes/:id', async (req, res) => {
 
   try {
     // Подключение к базе данных
-    let pool = await  poolPromise;
+    let pool = await poolPromise;
 
     // Вызов хранимой процедуры
     const result = await pool
@@ -691,7 +686,7 @@ app.get('/api/anecdotes/:id', async (req, res) => {
   } catch (error) {
     console.error('Ошибка при получении анекдота:', error);
     res.status(500).json({ error: 'Произошла ошибка на сервере' });
-  } 
+  }
 });
 
 app.post('/api/add_events', async (req, res) => {
@@ -699,7 +694,7 @@ app.post('/api/add_events', async (req, res) => {
 
   try {
     // Подключение к базе данных
-    let pool = await  poolPromise;
+    let pool = await poolPromise;
 
     // Вызов хранимой процедуры
     await pool
@@ -716,7 +711,7 @@ app.post('/api/add_events', async (req, res) => {
   } catch (error) {
     console.error('Ошибка при добавлении мероприятия:', error);
     res.status(500).json({ error: 'Произошла ошибка на сервере' });
-  } 
+  }
 });
 
 app.put('/api/update_event', async (req, res) => {
@@ -738,7 +733,7 @@ app.put('/api/update_event', async (req, res) => {
 
 
   try {
-    let pool = await  poolPromise;
+    let pool = await poolPromise;
     console.log("Параметры запроса:", { idEvent, description, cost, howManyFreeSeats, name, conducted, eventTypeId });
 
     await pool
@@ -759,14 +754,14 @@ app.put('/api/update_event', async (req, res) => {
   } catch (error) {
     console.error("Ошибка при обновлении мероприятия:", error.message, error.stack);
     res.status(500).json({ error: 'Произошла ошибка на сервере' });
-  } 
+  }
 });
 
 
 app.get('/api/event-types', async (req, res) => {
   try {
     // Подключаемся к базе данных
-    let pool = await  poolPromise;
+    const pool = await poolPromise;
 
     // Выполняем запрос для получения всех типов мероприятий
     const result = await pool.request().query('SELECT Id, EventTypeName FROM EventTypeId');
@@ -776,7 +771,7 @@ app.get('/api/event-types', async (req, res) => {
   } catch (err) {
     console.error('Ошибка при загрузке типов мероприятий:', err.message);
     res.status(500).json({ error: 'Ошибка при загрузке типов мероприятий' });
-  } 
+  }
 });
 
 app.delete('/api/delete_event/:idEvent', async (req, res) => {
@@ -788,7 +783,7 @@ app.delete('/api/delete_event/:idEvent', async (req, res) => {
   }
 
   try {
-    const pool = await  poolPromise;
+    const pool = await poolPromise;
 
     // Проверка существования мероприятия
     const checkResult = await pool
@@ -810,7 +805,7 @@ app.delete('/api/delete_event/:idEvent', async (req, res) => {
   } catch (error) {
     console.error('Ошибка при удалении мероприятия:', error);
     res.status(500).json({ error: 'Ошибка сервера при удалении мероприятия' });
-  } 
+  }
 });
 
 // все привет чекаем комиты
@@ -915,7 +910,7 @@ app.get('/api/rated-anecdotes', async (req, res) => {
 
 app.get('/api/analytics/average-rating-by-date', async (req, res) => {
   try {
-    const pool = await  poolPromise;
+    const pool = await poolPromise;
     const result = await pool.request().execute('GetAverageRatingByDateForAnecdotes');
 
     const formatted = result.recordset.map(row => ({
@@ -1024,6 +1019,8 @@ app.get('/top-rated-anecdotes', async (req, res) => {
 // server/index.js или где у тебя app и pool
 app.get('/api/anecdote-audio-paths', async (req, res) => {
   try {
+    const pool = await poolPromise;
+
     const result = await pool.request().query(`
       SELECT IdAnecdote, AudioPath
       FROM [FunnySite].[dbo].[Анекдот]
@@ -1040,31 +1037,62 @@ app.get('/api/anecdote-audio-paths', async (req, res) => {
 
 // Создать начало цепочки
 app.post('/api/chain/start', async (req, res) => {
+  const { Text } = req.body;
   try {
-    let pool = await  poolPromise;
-    const { text } = req.body;
-
-    const resultMax = await pool.request().query('SELECT ISNULL(MAX(ChainId), 0) as maxId FROM AnecdoteChainParts');
-    const newChainId = resultMax.recordset[0].maxId + 1;
+    let pool = await sql.connect(dbConfig);
+    const result = await pool.request().query(`
+      SELECT ISNULL(MAX(ChainId), 0) + 1 AS NewChainId FROM AnecdoteChainParts
+    `);
+    const newId = result.recordset[0].NewChainId;
 
     await pool.request()
-      .input('ChainId', sql.Int, newChainId)
+      .input('ChainId', sql.Int, newId)
       .input('ParentId', sql.Int, null)
-      .input('Text', sql.NVarChar, text)
-      .query(`INSERT INTO AnecdoteChainParts (ChainId, ParentId, Text) VALUES (@ChainId, @ParentId, @Text)`);
+      .input('Text', sql.NVarChar, Text)
+      .query(`
+        INSERT INTO AnecdoteChainParts (ChainId, ParentId, Text, DateCreated)
+        VALUES (@ChainId, @ParentId, @Text, GETDATE())
+      `);
 
-    res.json({ success: true, ChainId: newChainId });
+    // 🔥 добавляем запись в таблицу состояний
+    await pool.request()
+      .input('ChainId', sql.Int, newId)
+      .query(`INSERT INTO AnecdoteChains (ChainId, IsClosed) VALUES (@ChainId, 0)`);
+
+    res.json({ ChainId: newId });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, message: 'Ошибка сервера' });
+    console.error('Ошибка создания цепочки:', err);
+    res.status(500).json({ message: 'Ошибка сервера' });
   }
 });
 
 
+
+
+app.get('/api/chain/list', async (req, res) => {
+  try {
+    const pool = await poolPromise;
+    const result = await pool.request().query(`
+      SELECT DISTINCT c.ChainId, p.Text AS StartText
+      FROM AnecdoteChainParts p
+      JOIN (
+          SELECT ChainId, MIN(IdPart) AS FirstPartId
+          FROM AnecdoteChainParts
+          WHERE ParentId IS NULL
+          GROUP BY ChainId
+      ) c ON p.IdPart = c.FirstPartId
+      ORDER BY c.ChainId
+    `);
+    res.json(result.recordset);
+  } catch (err) {
+    console.error('Ошибка получения списка цепочек:', err);
+    res.status(500).json({ message: 'Ошибка сервера' });
+  }
+});
 // Получить всю цепочку по ChainId
 app.get('/api/chain/:id', async (req, res) => {
   try {
-    let pool = await  poolPromise;
+    let pool = await poolPromise;
     const id = parseInt(req.params.id);
 
     const result = await pool.request()
@@ -1086,7 +1114,7 @@ app.get('/api/chain/:id', async (req, res) => {
 app.get('/api/chain/:chainId/parts', async (req, res) => {
   const { chainId } = req.params;
   try {
-    let pool = await  poolPromise;
+    let pool = await poolPromise;
     const result = await pool.request()
       .input('chainId', sql.Int, chainId)
       .query(`
@@ -1124,7 +1152,7 @@ app.post('/api/chain/continue', async (req, res) => {
 
 app.get('/api/test/all-parts', async (req, res) => {
   try {
-    const pool = await  poolPromise;
+    const pool = await poolPromise;
     const result = await pool.request().query('SELECT TOP 10 * FROM AnecdoteChainParts');
     res.json(result.recordset);
   } catch (error) {
@@ -1134,27 +1162,153 @@ app.get('/api/test/all-parts', async (req, res) => {
 });
 
 
-
-app.get('/api/chain/list', async (req, res) => {
+app.post('/api/chain/:id/close', async (req, res) => {
   try {
-    const pool = await poolPromise;
-    const result = await pool.request().query(`
-      SELECT DISTINCT c.ChainId, p.Text AS StartText
-      FROM AnecdoteChainParts p
-      JOIN (
-          SELECT ChainId, MIN(IdPart) AS FirstPartId
-          FROM AnecdoteChainParts
-          WHERE ParentId IS NULL
-          GROUP BY ChainId
-      ) c ON p.IdPart = c.FirstPartId
-      ORDER BY c.ChainId
-    `);
-    res.json(result.recordset);
+    const chainId = parseInt(req.params.id);
+    const pool = await sql.connect(dbConfig);
+
+    await pool.request()
+      .input('ChainId', sql.Int, chainId)
+      .query(`UPDATE AnecdoteChains SET IsClosed = 1 WHERE ChainId = @ChainId`);
+
+    res.json({ success: true });
   } catch (err) {
-    console.error('Ошибка получения списка цепочек:', err);
+    console.error('Ошибка закрытия цепочки:', err);
     res.status(500).json({ message: 'Ошибка сервера' });
   }
 });
+
+
+app.get('/api/chain/:id/status', async (req, res) => {
+  try {
+    const chainId = parseInt(req.params.id);
+    const pool = await sql.connect(dbConfig);
+
+    const result = await pool.request()
+      .input('ChainId', sql.Int, chainId)
+      .query(`SELECT IsClosed FROM AnecdoteChains WHERE ChainId = @ChainId`);
+
+    const isClosed = result.recordset[0]?.IsClosed === true || result.recordset[0]?.IsClosed === 1;
+    res.json({ isClosed });
+  } catch (err) {
+    console.error('Ошибка получения статуса цепочки:', err);
+    res.status(500).json({ message: 'Ошибка сервера' });
+  }
+});
+
+app.get('/api/guess-random', async (req, res) => {
+  try {
+    const pool = await sql.connect(dbConfig);
+    const result = await pool.request().query(`
+      SELECT TOP 1 *
+      FROM AnecdoteGuess
+      ORDER BY NEWID()
+    `);
+
+    if (!result.recordset[0]) {
+      return res.status(404).send('Нет анекдотов для угадывания');
+    }
+
+    const row = result.recordset[0];
+    const options = [
+      { text: row.RealEnding, isCorrect: true },
+      { text: row.Fake1, isCorrect: false },
+      { text: row.Fake2, isCorrect: false },
+    ].sort(() => Math.random() - 0.5);
+
+    res.json({
+      beginning: row.Beginning,
+      options,
+      correct: row.RealEnding,
+    });
+  } catch (err) {
+    console.error('Ошибка в /api/guess-random:', err);
+    res.status(500).send('Ошибка сервера');
+  }
+});
+
+
+app.post('/api/favorites/add', async (req, res) => {
+  const { userId, anecdoteId } = req.body;
+
+  try {
+    let pool = await sql.connect(dbConfig);
+
+    const check = await pool.request()
+  .input('userId', sql.Int, userId)
+  .input('anecdoteId', sql.Int, anecdoteId)
+  .query(`
+    SELECT 1 FROM [dbo].[FavoriteAnecdotes] 
+    WHERE UserId = @userId AND AnecdoteId = @anecdoteId
+  `);
+
+await pool.request()
+  .input('userId', sql.Int, userId)
+  .input('anecdoteId', sql.Int, anecdoteId)
+  .query(`
+    INSERT INTO [dbo].[FavoriteAnecdotes] (UserId, AnecdoteId)
+    VALUES (@userId, @anecdoteId)
+  `);
+
+
+    res.status(200).json({ message: 'Добавлено' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Ошибка сервера' });
+  }
+});
+app.get('/api/favorites/check', async (req, res) => {
+  const userId = Number(req.query.userId);
+  const anecdoteId = Number(req.query.anecdoteId);
+
+  if (isNaN(userId) || isNaN(anecdoteId)) {
+    return res.status(400).json({ error: 'Invalid userId or anecdoteId' });
+  }
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    const result = await pool.request()
+      .input('UserId', sql.Int, userId)        // Обратите внимание на UserId
+      .input('AnecdoteId', sql.Int, anecdoteId)
+      .query('SELECT 1 FROM FavoriteAnecdotes WHERE UserId = @UserId AND AnecdoteId = @AnecdoteId');
+
+    res.json({ exists: result.recordset.length > 0 });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+app.get('/api/favorites/:idUser', async (req, res) => {
+  try {
+    let pool = await sql.connect(dbConfig);
+    const idUser = req.params.idUser;
+
+    const result = await pool.request()
+      .input('idUser', sql.Int, idUser)
+      .query(`
+        SELECT 
+          a.IdAnecdote, a.Text, a.Date, a.Rate, a.IdUser, 
+          u.Name AS UserName, a.IdTypeAnecdote, t.TypeAnecdote
+        FROM FavoriteAnecdotes f
+        JOIN [Анекдот] a ON f.AnecdoteId = a.IdAnecdote
+        JOIN [Пользователь] u ON a.IdUser = u.IdUser
+        JOIN [Тип_анекдота] t ON a.IdTypeAnecdote = t.IdTypeAnecdote
+        WHERE f.UserId = @idUser
+        ORDER BY a.Date DESC
+      `);
+
+    res.json(result.recordset);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Ошибка сервера" });
+  }
+});
+
+
+
+
+
+
 
 
 

@@ -23,6 +23,9 @@ import RegistrationPage from "./pages/RegistrationPage";
 // import AnalyticsPage from "./components/Analutics/AnalyticsPage";
 import AnalyticsPage from "./components/Analutics/main/AnalyticsPage";
 import Anecdoteator from "./components/Anecdoteator";
+import AnecdoteGuessGame from "./components/AnecdoteGuessGame";
+// import FavoriteAnecdotesList from "./components/FavoriteAnecdotesList";
+import { FavoriteAnecdotesList } from "./components/FavoriteAnecdotesList";
 function App() {
   return (
     <AuthProvider>
@@ -44,6 +47,11 @@ function App() {
 
           <Route path="/analytics" element={<AnalyticsPage />} />
           {/* <Route path="/LighthouseButton" element={<LighthouseButton />} /> */}
+    
+    <Route path="/AnecdoteGuessGame" element={<AnecdoteGuessGame />} />
+    <Route path="/FavoriteAnecdotesList" element={<FavoriteAnecdotesList />} />
+
+
 
         </Routes>
       </Router>
