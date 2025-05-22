@@ -3,8 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { SignUpButton } from "./SignUpButton";
 import { AuthContext } from "./context/AuthContext";
 import axios from "axios";
-
-export const FoundEvents = ({ events }) => {
+import { EventTypeTag } from "./foundEvent/EventTypeTag";
+export const FoundEvents = ({ events,fetchEvents ,setFoundEvents}) => {
   const navigate = useNavigate();
   const { loginData } = useContext(AuthContext);
 
@@ -21,6 +21,9 @@ export const FoundEvents = ({ events }) => {
 };
 
   return  <div className="found-events">
+    <button onClick={fetchEvents} className="action-btn"> 
+        Сбросить поиск по типам
+      </button>
   {loginData.IdRights == 2 && (
     <button 
       onClick={() => navigate(`/add-event`)}
@@ -44,10 +47,11 @@ export const FoundEvents = ({ events }) => {
         </div>
         
         <div className="card-meta">
+          
+          <EventTypeTag type={event.ТипМероприятия} IdEvent={event.IdEvent} setFoundEvents={setFoundEvents}/>
           <span>💰 {event.Стоимость} ₽</span>
-          <span>📅 {new Date(event.Date).toLocaleDateString()}</span>
           <span>🪑 {event.HowManyFreeSeats} мест</span>
-          <span>🏷️ {event.ТипМероприятия}</span>
+          <span>📅 {new Date(event.Date).toLocaleDateString()}</span>
           
           <span>{event.Проведено === true ? '✅ Проведено' : '🕒 Запланировано'}</span>
         </div>

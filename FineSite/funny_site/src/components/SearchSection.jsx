@@ -6,7 +6,7 @@ import { FoundEvents } from "./FoundEvents";
 import { AnecdoteSearch } from "./AnecdoteSearch";
 import { EventSearch } from "./EventSearch";
 
-export const SearchSection = ({ what ='anecdote'}) => {
+export const SearchSection = ({ what = 'anecdote' }) => {
   const [searchData, setSearchData] = useState({
     anecdote: "", // id типа анекдота
     event: "",
@@ -20,6 +20,7 @@ export const SearchSection = ({ what ='anecdote'}) => {
   // Функция для загрузки анекдотов
   const fetchAnecdotes = async () => {
     try {
+      
       const response = await fetch(`/api/anecdotes`);
       const result = await response.json();
       setFoundAnecdotes(Array.isArray(result) ? result : []); // Обновляем найденные анекдоты
@@ -33,6 +34,7 @@ export const SearchSection = ({ what ='anecdote'}) => {
   // Функция для загрузки мероприятий
   const fetchEvents = async () => {
     try {
+      
       const response = await fetch(`/api/events`);
       const result = await response.json();
       setFoundEvents(Array.isArray(result) ? result : []); // Обновляем найденные мероприятия
@@ -56,47 +58,59 @@ export const SearchSection = ({ what ='anecdote'}) => {
 
   // Выполняем запросы при загрузке компонента, с учетом параметра what
   useEffect(() => {
-    
+
     // {console.log(showEvents)}
     if (what === "events") {
-      
+
       handleSearchEvents();
       fetchEvents();
-      
+
     } else if (what === "anecdote") {
       // Если передан параметр what == "anecdote", выполняем запрос на анекдоты
       fetchAnecdotes();
       // setShowAnecdotes(true); // Показываем анекдоты
     }
-  }, [what]) ; // Зависимость от what для динамического обновления
+  }, [what]); // Зависимость от what для динамического обновления
 
-  
+
   return (
     <section className="search">
-      
+
       <div className="search-options">
+
         <AnecdoteSearch
           searchData={searchData}
           setSearchData={setSearchData}
           setFoundAnecdotes={setFoundAnecdotes}
           handleSearchAnecdotes={handleSearchAnecdotes}  // Передаем handleSearchAnecdotes
         />
-        
+
         {/*  TODO: перекинь этот див ниже ивентов после уборки с ивентами */}
         <EventSearch
           searchData={searchData}
           setSearchData={setSearchData}
           setFoundEvents={setFoundEvents}
           handleSearchEvents={handleSearchEvents}  // Передаем handleSearchEvents
+          
+          
         />
-      
-      </div>
-{/* Отображение найденных мероприятий */}
-{showEvents && <FoundEvents events={foundEvents} />}
-      {/* Отображение найденных анекдотов */}
-      {showAnecdotes && <FoundAnecdotes anecdotes={foundAnecdotes} />}
 
-      
+      </div>
+      {/* Отображение найденных мероприятий */}
+      {showEvents && <FoundEvents events={foundEvents} 
+      fetchEvents={fetchEvents}
+      setFoundEvents={setFoundEvents}
+      />}
+      {/* Отображение найденных анекдотов */}
+      {showAnecdotes &&
+        <FoundAnecdotes
+          anecdotes={foundAnecdotes}
+          setFoundAnecdotes={setFoundAnecdotes}
+          fetchAnecdotes={fetchAnecdotes}
+          
+        />}
+
+
     </section>
   );
 };
