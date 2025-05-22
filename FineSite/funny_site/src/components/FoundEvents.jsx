@@ -4,9 +4,22 @@ import { SignUpButton } from "./SignUpButton";
 import { AuthContext } from "./context/AuthContext";
 import axios from "axios";
 import { EventTypeTag } from "./foundEvent/EventTypeTag";
+import TelegramIcon from "./TelegramIcon";
+import vkIcon from '../image/vk_ico.png';
+
 export const FoundEvents = ({ events, fetchEvents, setFoundEvents }) => {
   const navigate = useNavigate();
   const { loginData } = useContext(AuthContext);
+
+  const handleShareClick = (platform, event) => {
+    let url;
+    if (platform === 'telegram') {
+      url = `https://t.me/share/url?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(event.Name)}`;
+    } else if (platform === 'vk') {
+      url = `https://vk.com/share.php?url=${encodeURIComponent(window.location.href)}&title=${encodeURIComponent(event.Name)}`;
+    }
+    window.open(url, '_blank');
+  };
 
   const handleDelete = async (eventId) => {
     try {
@@ -55,6 +68,22 @@ export const FoundEvents = ({ events, fetchEvents, setFoundEvents }) => {
               <span>📅 {new Date(event.Date).toLocaleDateString()}</span>
 
               <span>{event.Проведено === true ? '✅ Проведено' : '🕒 Запланировано'}</span>
+
+<span
+  className="share-icon telegram"
+  title="Поделиться в Telegram"
+  onClick={() => handleShareClick("telegram", event)}
+>
+  <TelegramIcon style={{ width: 16, height: 16, cursor: "pointer" }} />
+</span>
+              
+<span
+  className="share-icon vk"
+  title="Поделиться в VK"
+  onClick={() => handleShareClick("vk", event)}
+>
+  <img src={vkIcon} alt="VK" width={16} height={16} style={{ cursor: "pointer" }} />
+</span>
             </div>
 
             {/* Блок кнопок */}
