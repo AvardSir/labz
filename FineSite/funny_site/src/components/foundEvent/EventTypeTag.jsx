@@ -17,8 +17,16 @@ const response = await fetch(
   };
 
   return (
-    <span className="cursor-pointer text-blue-600 hover:underline" onClick={handleSearchButtonClick}>
-      🏷️ {type}
+    <span
+    className="relative cursor-pointer text-blue-600 hover:underline"
+    onClick={handleSearchButtonClick}
+>
+    🏷️ <u>{type}</u>
+    <span className="absolute left-full ml-2 opacity-0 hover:opacity-100 transition-opacity duration-200">
+        
     </span>
+</span>
+
+
   );
 };

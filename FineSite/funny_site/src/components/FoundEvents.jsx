@@ -48,7 +48,7 @@ export const FoundEvents = ({ events, fetchEvents, setFoundEvents }) => {
 
             <div className="card-meta">
 
-{console.log('event::: ', event)}
+
               <EventTypeTag type={event.ТипМероприятия} EventTypeId={event.EventTypeId} setFoundEvents={setFoundEvents} />
               <span>💰 {event.Стоимость} ₽</span>
               <span>🪑 {event.HowManyFreeSeats} мест</span>
