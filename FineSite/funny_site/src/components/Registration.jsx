@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-// Стили (можно вынести в отдельный файл)
 const styles = {
   container: {
     maxWidth: '800px',
@@ -156,7 +155,8 @@ const Registration = () => {
 
   return (
     <div style={styles.container}>
-      <h2 style={styles.title}>Регистрация</h2>
+      <h2 style={{ color: 'white' }}>Регистрация</h2>
+
       <form onSubmit={handleSubmit} style={styles.form}>
         <div style={styles.formGroup}>
           <label style={styles.label}>

@@ -140,9 +140,9 @@ export const FoundAnecdotes = ({ anecdotes, setFoundAnecdotes, fetchAnecdotes })
         </button>
       )}
 
-      <h3 className="section-title">Найденные анекдоты</h3>
+      <h3 className="section-title">Найденные анекдоты (💡 Нажмите на анекдот, чтобы скопировать его текст)</h3>
       <p className="text-sm text-gray-600 bg-gray-100 bg-opacity-75 rounded px-3 py-2 mb-4 w-fit">
-        💡 Нажмите на анекдот, чтобы скопировать его текст
+        
       </p>
       {localAnecdotes.length === 0 ? (
         <p className="empty-message">Ничего не найдено</p>
@@ -171,6 +171,23 @@ export const FoundAnecdotes = ({ anecdotes, setFoundAnecdotes, fetchAnecdotes })
 
 
               <div className="card-meta">
+                {showRatingButtons() && (
+                <div className="rating-buttons">
+                  <button
+                    onClick={() => handleRate(anecdote.IdAnecdote, true)}
+                    className={`rate-btn plus-btn ${anecdote.UserRating === true ? 'active' : ''}`}
+                  >
+                    +
+                  </button>
+                  <button
+                    onClick={() => handleRate(anecdote.IdAnecdote, false)}
+                    className={`rate-btn minus-btn ${anecdote.UserRating === false ? 'active' : ''}`}
+                  >
+                    –
+                  </button>
+                </div>
+              )}
+
                 {/* {console.log(anecdote)} */}
                 {/* {console.log(setFoundAnecdotes)} */}
                 <AnecdoteTypeTag
@@ -202,23 +219,7 @@ export const FoundAnecdotes = ({ anecdotes, setFoundAnecdotes, fetchAnecdotes })
               </div>
 
 
-              {showRatingButtons() && (
-                <div className="rating-buttons">
-                  <button
-                    onClick={() => handleRate(anecdote.IdAnecdote, true)}
-                    className={`rate-btn plus-btn ${anecdote.UserRating === true ? 'active' : ''}`}
-                  >
-                    +
-                  </button>
-                  <button
-                    onClick={() => handleRate(anecdote.IdAnecdote, false)}
-                    className={`rate-btn minus-btn ${anecdote.UserRating === false ? 'active' : ''}`}
-                  >
-                    –
-                  </button>
-                </div>
-              )}
-
+              
               <div className="action-buttons">
 
 
@@ -229,7 +230,7 @@ export const FoundAnecdotes = ({ anecdotes, setFoundAnecdotes, fetchAnecdotes })
               <AnecdoteAudioButton idAnecdote={anecdote.IdAnecdote}/>
               
               
-              <FavoriteButton userId={loginData.IdUser} anecdoteId={anecdote.IdAnecdote} />
+              {(parseInt(loginData.IdRights) === 2|| parseInt(loginData.IdRights) == 1)&&  <FavoriteButton userId={loginData.IdUser} anecdoteId={anecdote.IdAnecdote} />}
 
               
                 {parseInt(loginData.IdRights) === 2 && (

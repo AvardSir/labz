@@ -11,16 +11,22 @@ import "../css/ContactForAds.css";
 const HomePage = ({ what = 'anecdote' }) => {
   return (
     <div className="main-container">
-      <Header />
-      <Autification />
-
-      {/* Flex-контейнер для двух блоков */}
-      <div className="ads-row">
-        <AdBlock />
-        <ContactForAds />
-      </div>
-
+  <Header />
+  
+  {/* Основной контейнер с flex-расположением */}
+  <div className="content-wrapper">
+    {/* Блок рекламы (горизонтальный) */}
+    <div className="ads-block">
+      <AdBlock />
     </div>
+
+    {/* Боковой блок с вертикальным расположением элементов */}
+    <div className="side-block">
+      <Autification />
+      <ContactForAds />
+    </div>
+  </div>
+</div>
   );
 };
 

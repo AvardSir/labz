@@ -65,11 +65,28 @@ const Anecdoteator = () => {
       console.error('Ошибка добавления продолжения', e);
     }
   };
+  const deleteChain = async () => {
+    if (!selectedChainId) return;
+    if (!window.confirm('Вы точно хотите удалить эту цепочку? Это действие нельзя отменить.')) return;
+
+    try {
+      await axios.delete(`/api/chain/${selectedChainId}`);
+      setSelectedChainId(null);
+      await fetchChainList();
+      setParts([]);
+      setIsClosed(false);
+    } catch (e) {
+      console.error('Ошибка удаления цепочки', e);
+    }
+  };
 
   const createNewChain = async () => {
     if (!startText.trim()) return;
     try {
-      const res = await axios.post('/api/chain/start', { Text: startText.trim() });
+      const res = await axios.post('/api/chain/start', {
+        Text: startText.trim(),
+        AuthorId: loginData?.IdUser, // ← передаём ID пользователя
+      });
       const newId = res.data.ChainId;
       setStartText('');
       await fetchChainList();
@@ -79,6 +96,7 @@ const Anecdoteator = () => {
     }
   };
 
+
   const closeChain = async () => {
     try {
       await axios.post(`/api/chain/${selectedChainId}/close`);
@@ -87,10 +105,18 @@ const Anecdoteator = () => {
       console.error('Ошибка закрытия цепочки', e);
     }
   };
+const openChain = async () => {
+  try {
+    await axios.post(`/api/chain/${selectedChainId}/open`);
+    await fetchChainStatus(selectedChainId); // обновим флаг
+  } catch (e) {
+    console.error('Ошибка открытия цепочки', e);
+  }
+};
 
   return (
     <div>
-        <Header/>
+      <Header />
       <h2>Выберите цепочку</h2>
       <select
         value={selectedChainId || ''}
@@ -123,7 +149,27 @@ const Anecdoteator = () => {
           </div>
 
           {isClosed ? (
-            <p style={{ color: 'red' }}>❌ Цепочка закрыта для продолжения</p>
+  <div>
+    {loginData?.IdRights == 2 && (
+      <div style={{ marginTop: 20 }}>
+        <button
+          onClick={deleteChain}
+          style={{ background: 'darkred', color: 'white', marginLeft: 10 }}
+        >
+          🗑 Удалить цепочку
+        </button>
+        <button
+          onClick={openChain}
+          style={{ background: 'green', color: 'white', marginLeft: 10 }}
+        >
+          🔓 Открыть цепочку
+        </button>
+      </div>
+    )}
+
+              <p style={{ color: 'red' }}>❌ Цепочка закрыта для продолжения</p>
+            </div>
+            
           ) : (
             <>
               <textarea
@@ -138,6 +184,12 @@ const Anecdoteator = () => {
 
           {loginData?.IdRights == 2 && !isClosed && (
             <div style={{ marginTop: 20 }}>
+              <button
+                onClick={deleteChain}
+                style={{ background: 'darkred', color: 'white', marginLeft: 10 }}
+              >
+                🗑 Удалить цепочку
+              </button>
               <button onClick={closeChain} style={{ background: 'darkred', color: 'white' }}>
                 ❌ Закрыть анекдот
               </button>

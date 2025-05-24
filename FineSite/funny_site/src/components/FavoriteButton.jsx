@@ -3,7 +3,7 @@ import axios from 'axios';
 
 const FavoriteButton = ({ userId, anecdoteId }) => {
   const [added, setAdded] = useState(false);
-  const [message, setMessage] = useState('Добавить в избранное');
+  const [message, setMessage] = useState('❤️ Добавить в избранное');
 
   const checkFavoriteAndAdd = async () => {
     try {

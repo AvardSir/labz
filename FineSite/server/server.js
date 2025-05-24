@@ -1037,27 +1037,27 @@ app.get('/api/anecdote-audio-paths', async (req, res) => {
 
 // Создать начало цепочки
 app.post('/api/chain/start', async (req, res) => {
-  const { Text } = req.body;
+  const { Text, AuthorId } = req.body;
   try {
-    let pool = await sql.connect(dbConfig);
+    const pool = await sql.connect(dbConfig);
+
+    // Получаем новый ChainId — это можно сделать просто так,
+    // например, max ChainId в AnecdoteChainParts + 1
     const result = await pool.request().query(`
       SELECT ISNULL(MAX(ChainId), 0) + 1 AS NewChainId FROM AnecdoteChainParts
     `);
     const newId = result.recordset[0].NewChainId;
 
+    // Создаём первую часть цепочки (она и создаёт цепочку)
     await pool.request()
       .input('ChainId', sql.Int, newId)
       .input('ParentId', sql.Int, null)
       .input('Text', sql.NVarChar, Text)
+      .input('AuthorId', sql.Int, AuthorId)
       .query(`
-        INSERT INTO AnecdoteChainParts (ChainId, ParentId, Text, DateCreated)
-        VALUES (@ChainId, @ParentId, @Text, GETDATE())
+        INSERT INTO AnecdoteChainParts (ChainId, ParentId, Text, DateCreated, AuthorId, IsClosed)
+        VALUES (@ChainId, @ParentId, @Text, GETDATE(), @AuthorId, 0)
       `);
-
-    // 🔥 добавляем запись в таблицу состояний
-    await pool.request()
-      .input('ChainId', sql.Int, newId)
-      .query(`INSERT INTO AnecdoteChains (ChainId, IsClosed) VALUES (@ChainId, 0)`);
 
     res.json({ ChainId: newId });
   } catch (err) {
@@ -1065,6 +1065,8 @@ app.post('/api/chain/start', async (req, res) => {
     res.status(500).json({ message: 'Ошибка сервера' });
   }
 });
+
+
 
 
 
@@ -1169,7 +1171,10 @@ app.post('/api/chain/:id/close', async (req, res) => {
 
     await pool.request()
       .input('ChainId', sql.Int, chainId)
-      .query(`UPDATE AnecdoteChains SET IsClosed = 1 WHERE ChainId = @ChainId`);
+      .query(`UPDATE AnecdoteChainParts
+SET IsClosed = 1
+WHERE ChainId = @ChainId
+`);
 
     res.json({ success: true });
   } catch (err) {
@@ -1186,7 +1191,11 @@ app.get('/api/chain/:id/status', async (req, res) => {
 
     const result = await pool.request()
       .input('ChainId', sql.Int, chainId)
-      .query(`SELECT IsClosed FROM AnecdoteChains WHERE ChainId = @ChainId`);
+      .query(`SELECT TOP 1 IsClosed
+FROM AnecdoteChainParts
+WHERE ChainId = @ChainId
+ORDER BY DateCreated DESC
+`);
 
     const isClosed = result.recordset[0]?.IsClosed === true || result.recordset[0]?.IsClosed === 1;
     res.json({ isClosed });
@@ -1235,17 +1244,17 @@ app.post('/api/favorites/add', async (req, res) => {
     let pool = await sql.connect(dbConfig);
 
     const check = await pool.request()
-  .input('userId', sql.Int, userId)
-  .input('anecdoteId', sql.Int, anecdoteId)
-  .query(`
+      .input('userId', sql.Int, userId)
+      .input('anecdoteId', sql.Int, anecdoteId)
+      .query(`
     SELECT 1 FROM [dbo].[FavoriteAnecdotes] 
     WHERE UserId = @userId AND AnecdoteId = @anecdoteId
   `);
 
-await pool.request()
-  .input('userId', sql.Int, userId)
-  .input('anecdoteId', sql.Int, anecdoteId)
-  .query(`
+    await pool.request()
+      .input('userId', sql.Int, userId)
+      .input('anecdoteId', sql.Int, anecdoteId)
+      .query(`
     INSERT INTO [dbo].[FavoriteAnecdotes] (UserId, AnecdoteId)
     VALUES (@userId, @anecdoteId)
   `);
@@ -1304,8 +1313,55 @@ app.get('/api/favorites/:idUser', async (req, res) => {
   }
 });
 
+app.delete('/api/chain/:id', async (req, res) => {
+  const id = parseInt(req.params.id);
+  if (isNaN(id)) {
+    return res.status(400).json({ message: 'Некорректный ID цепочки' });
+  }
 
+  try {
+    let pool = await poolPromise;
 
+    const transaction = new sql.Transaction(pool);
+    await transaction.begin();
+
+    try {
+      const request = new sql.Request(transaction);
+
+      // Удаляем части цепочки по ChainId
+      await request
+        .input('ChainId', sql.Int, id)
+        .query('DELETE FROM [FunnySite].[dbo].[AnecdoteChainParts] WHERE ChainId = @ChainId');
+
+      await transaction.commit();
+
+      res.json({ message: 'Части цепочки удалены' });
+    } catch (err) {
+      await transaction.rollback();
+      console.error('Ошибка в транзакции удаления:', err);
+      res.status(500).json({ message: 'Ошибка при удалении частей цепочки' });
+    }
+  } catch (e) {
+    console.error('Ошибка подключения к БД:', e);
+    res.status(500).json({ message: 'Ошибка сервера' });
+  }
+});
+
+app.post('/api/chain/:id/open', async (req, res) => {
+  const id = parseInt(req.params.id);
+  if (isNaN(id)) return res.status(400).json({ message: 'Некорректный ID цепочки' });
+
+  try {
+    const pool = await sql.connect(dbConfig);
+    await pool.request()
+      .input('ChainId', sql.Int, id)
+      .query('UPDATE dbo.AnecdoteChainParts SET IsClosed = 0 WHERE ChainId = @ChainId');
+    res.json({ message: 'Цепочка открыта' });
+  } catch (e) {
+    console.error('Ошибка открытия цепочки:', e);
+    res.status(500).json({ message: 'Ошибка сервера' });
+  }
+});
 
 
 
