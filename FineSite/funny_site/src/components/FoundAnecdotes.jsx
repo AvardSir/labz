@@ -151,10 +151,10 @@ export const FoundAnecdotes = ({ anecdotes, setFoundAnecdotes, fetchAnecdotes })
                   type={anecdote.AnecdoteType}
                   typeId={anecdote.IdTypeAnecdote}
                   setFoundAnecdotes={setFoundAnecdotes}
-                // onSearch={handleTypeSearch} 
+                
                 />
-                {/* <span>🏷️ {anecdote.AnecdoteType.trim()}</span> */}
-                <span>⭐ {anecdote.Rate || 0}</span>
+                
+                
                 <span>👤 {anecdote.UserName}</span>
                 <span>📅 {new Date(anecdote.Date).toLocaleDateString()}</span>
 
