@@ -1226,10 +1226,12 @@ app.get('/api/guess-random', async (req, res) => {
     ].sort(() => Math.random() - 0.5);
 
     res.json({
-      beginning: row.Beginning,
-      options,
-      correct: row.RealEnding,
-    });
+  id: row.Id, // 👈 добавь это
+  beginning: row.Beginning,
+  options,
+  correct: row.RealEnding,
+});
+
   } catch (err) {
     console.error('Ошибка в /api/guess-random:', err);
     res.status(500).send('Ошибка сервера');
@@ -1366,6 +1368,62 @@ app.post('/api/chain/:id/open', async (req, res) => {
 
 
 
+app.post('/api/guess-add', async (req, res) => {
+  const { Beginning, RealEnding, Fake1, Fake2, AuthorId } = req.body;
+
+  if (!Beginning || !RealEnding || !Fake1 || !Fake2 || !AuthorId) {
+    return res.status(400).json({
+      success: false,
+      message: 'Все поля обязательны: Beginning, RealEnding, Fake1, Fake2, AuthorId',
+    });
+  }
+
+  try {
+    const pool = await poolPromise;
+
+    await pool.request()
+      .input('Beginning', sql.NVarChar, Beginning)
+      .input('RealEnding', sql.NVarChar, RealEnding)
+      .input('Fake1', sql.NVarChar, Fake1)
+      .input('Fake2', sql.NVarChar, Fake2)
+      .input('AuthorId', sql.Int, AuthorId)
+      .query(`
+        INSERT INTO AnecdoteGuess (Beginning, RealEnding, Fake1, Fake2, AuthorId)
+        VALUES (@Beginning, @RealEnding, @Fake1, @Fake2, @AuthorId)
+      `);
+
+    res.json({ success: true, message: 'Анекдот успешно добавлен' });
+  } catch (err) {
+    console.error('Ошибка при добавлении анекдота:', err);
+    res.status(500).json({ success: false, message: 'Ошибка сервера' });
+  }
+});
+
+app.delete('/api/guess-delete/:id', async (req, res) => {
+  const { id } = req.params;
+  const numericId = parseInt(id);
+
+  if (isNaN(numericId)) {
+    return res.status(400).json({ success: false, message: 'Некорректный ID' });
+  }
+
+  try {
+    const pool = await poolPromise;
+
+    const result = await pool.request()
+      .input('Id', sql.Int, numericId)
+      .query('DELETE FROM AnecdoteGuess WHERE Id = @Id');
+
+    if (result.rowsAffected[0] === 0) {
+      return res.status(404).json({ success: false, message: 'Анекдот не найден' });
+    }
+
+    res.json({ success: true, message: 'Анекдот удалён' });
+  } catch (err) {
+    console.error('Ошибка при удалении анекдота:', err);
+    res.status(500).json({ success: false, message: 'Ошибка сервера' });
+  }
+});
 
 
 // Запуск сервера
