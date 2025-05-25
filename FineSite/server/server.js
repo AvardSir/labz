@@ -1451,6 +1451,44 @@ app.delete('/api/favorites/:userId/:anecdoteId', async (req, res) => {
 
 
 
+app.delete('/api/comment-delete/:id', async (req, res) => {
+  const id = req.params.id;
+  try {
+    let pool = await sql.connect(dbConfig);
+    await pool.request()
+      .input('IdCommentsontheAnecdote', sql.Int, id)
+      .query('DELETE FROM [FunnySite].[dbo].[Комментарий_анекдота] WHERE IdCommentsontheAnecdote = @IdCommentsontheAnecdote');
+    res.status(200).send({ message: 'Комментарий удалён' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error: 'Ошибка удаления комментария' });
+  }
+});
+app.delete('/api/event-comment-delete/:id', async (req, res) => {
+  const id = req.params.id;
+
+  if (!id) {
+    return res.status(400).json({ error: "Не указан id комментария" });
+  }
+
+  try {
+    let pool = await sql.connect(dbConfig);
+    const result = await pool.request()
+      .input('IdCommentsEvents', sql.Int, id)
+      .query('DELETE FROM [FunnySite].[dbo].[Коментарий_Мероприятия] WHERE IdCommentsEvents = @IdCommentsEvents');
+
+    if (result.rowsAffected[0] === 0) {
+      return res.status(404).json({ error: "Комментарий не найден" });
+    }
+
+    res.status(200).json({ message: "Комментарий мероприятия удалён" });
+  } catch (error) {
+    console.error("Ошибка при удалении комментария мероприятия:", error);
+    res.status(500).json({ error: "Ошибка сервера при удалении комментария" });
+  }
+});
+
+
 // Запуск сервера
 const PORT = 5000;
 app.listen(PORT, () => {

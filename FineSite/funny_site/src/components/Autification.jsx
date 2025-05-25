@@ -24,7 +24,7 @@ export const Autification = () => {
       setError(""); // Сброс ошибок перед новым запросом
       setIsSubmitting(true); // Инициализация отправки данных
 
-      console.log("Submitting login:", localLoginData.login, localLoginData.password); // Логируем login и password в консоль
+      // console.log("Submitting login:", localLoginData.login, localLoginData.password); // Логируем login и password в консоль
 
       try {
         const response = await fetch("/api/users/users", {

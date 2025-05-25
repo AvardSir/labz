@@ -124,7 +124,7 @@ export const EventCommentsComponent = () => {
       <li key={index} className="comment-item">
         {/* Основной текст комментария */}
         <div className="comment-bubble">
-          {console.log(comment)}
+          {/* {console.log(comment)} */}
           <p className="comment-text">{comment.CommentText}</p>
         </div>
         

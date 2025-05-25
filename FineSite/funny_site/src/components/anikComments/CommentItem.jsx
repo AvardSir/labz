@@ -1,6 +1,22 @@
 import React from "react";
+import axios from "axios";
+import { AuthContext } from "../context/AuthContext";
+import { useContext } from "react";
+export const CommentItem = ({ comment, onDelete }) => {
+  const { loginData } = useContext(AuthContext);
+  const handleDelete = async () => {
+    if (!window.confirm("Удалить этот комментарий?")) return;
+    try {
+      await axios.delete(`/api/comment-delete/${comment.IdCommentsontheAnecdote}`);
+      if (onDelete) {
+        onDelete(comment.IdCommentsontheAnecdote);
+      }
+    } catch (error) {
+      alert("Ошибка удаления комментария");
+      console.error(error);
+    }
+  };
 
-export const CommentItem = ({ comment }) => {
   return (
     <li className="comment-item">
       <div className="comment-bubble">
@@ -10,7 +26,7 @@ export const CommentItem = ({ comment }) => {
         <div className="comment-author">
           <strong className="author-name">{comment.AuthorName}</strong>
         </div>
-        <time 
+        <time
           dateTime={new Date(comment.Date).toISOString()}
           className="comment-date"
         >
@@ -23,6 +39,11 @@ export const CommentItem = ({ comment }) => {
           })}
         </time>
       </div>
+      
+      {loginData.IdRights == 2 && (
+      <button onClick={handleDelete} style={{ marginTop: "5px" }}>
+        Удалить
+      </button>)}
     </li>
   );
 };
