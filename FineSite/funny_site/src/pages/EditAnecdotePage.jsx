@@ -157,6 +157,8 @@ export const EditAnecdotePage = () => {
 
     try {
       setLoading(true);
+
+      // сначала обновляем текст, рейтинг и тип
       const response = await fetch("/api/update-anecdote", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -167,7 +169,13 @@ export const EditAnecdotePage = () => {
           NewIdTypeAnecdote: parseInt(formData.IdTypeAnecdote, 10),
         }),
       });
+
       if (!response.ok) throw new Error("Ошибка при обновлении анекдота");
+
+      // теперь грузим аудио отдельно, если выбрано
+      await uploadAudioOnly(id, audioFile);
+
+
       navigate("/");
     } catch (error) {
       console.error(error);
@@ -176,6 +184,31 @@ export const EditAnecdotePage = () => {
       setLoading(false);
     }
   };
+
+  const uploadAudioOnly = async (id, file) => {
+  const formData = new FormData();
+  formData.append('audio', file);
+
+  try {
+    const response = await fetch(`/api/upload-audio?id=${id}`, {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error('Ошибка при загрузке аудиофайла');
+    }
+
+    const result = await response.json();
+    console.log('Аудио загружено:', result);
+    return result;
+  } catch (error) {
+    console.error('Ошибка загрузки аудио:', error);
+    throw error;
+  }
+};
+
+
 
   return (
     <div style={styles.container}>
@@ -222,17 +255,15 @@ export const EditAnecdotePage = () => {
               ))}
             </select>
           </div>
-<div style={styles.formGroup}>
-  <label htmlFor="audio" style={styles.label}>
-    Аудиофайл (заменить/добавить):
-  </label>
-  <input
-    type="file"
-    id="audio"
-    accept="audio/mp3"
-    onChange={(e) => setAudioFile(e.target.files[0])}
-  />
-</div>
+          <div style={styles.formGroup}>
+            <label htmlFor="audio" style={styles.label}>Заменить аудиофайл:</label>
+            <input
+              type="file"
+              id="audio"
+              accept=".mp3"
+              onChange={(e) => setAudioFile(e.target.files[0])}
+            />
+          </div>
           <div style={styles.buttonGroup}>
             <button
               type="submit"

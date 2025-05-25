@@ -1,25 +1,34 @@
-
 const express = require('express');
 const sql = require('mssql');
 const path = require('path');
+const fs = require('fs');
+const multer = require('multer');
+const bodyParser = require('body-parser');
 
 const app = express();
-const bodyParser = require('body-parser');
-app.use(bodyParser.json()); // Для обработки JSON-запросов
-app.use('/audio', express.static(path.join(__dirname, 'audio')));
+app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: true }));
 
-// Настройки подключения к SQL Server
+// Папка для хранения аудио
+const audioDir = path.join(__dirname, 'audio');
+if (!fs.existsSync(audioDir)) {
+  fs.mkdirSync(audioDir);
+}
+app.use('/audio', express.static(audioDir));
+
+// Настройки подключения к базе данных
 const dbConfig = {
-  server: 'DESKTOP-97TS327\\MSSQLSERVER2', // Укажите правильное имя вашего сервера
+  server: 'DESKTOP-97TS327\\MSSQLSERVER2',
   database: 'FunnySite',
-  user: 'sa', // Имя пользователя
-  password: '1234', // Пароль
+  user: 'sa',
+  password: '1234',
   options: {
-    encrypt: true, // Если требуется шифрование соединения
-    trustServerCertificate: true, // Для локальной разработки
+    encrypt: true,
+    trustServerCertificate: true,
   },
 };
 
+// Подключение к SQL Server
 const poolPromise = new sql.ConnectionPool(dbConfig)
   .connect()
   .then(pool => {
@@ -28,59 +37,43 @@ const poolPromise = new sql.ConnectionPool(dbConfig)
   })
   .catch(err => {
     console.error('Ошибка подключения к БД:', err);
-    process.exit(1); // Завершаем процесс при ошибке подключения
+    process.exit(1);
   });
 
-
-
-const fs = require('fs');
-const multer = require('multer');
-
-// Убедиться, что папка 'audio' существует
-const audioDir = path.join(__dirname, 'audio');
-if (!fs.existsSync(audioDir)) {
-  fs.mkdirSync(audioDir);
-}
-// app.use(express.urlencoded({ extended: true }));
-
+// Настройка Multer
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
+  destination: (req, file, cb) => {
     cb(null, audioDir);
   },
-  filename: function (req, file, cb) {
-    // Получаем ID из тела запроса
-    const id = req.body.IdAnecdote;
-    console.log('Received IdAnecdote:', id);
-    
+  filename: (req, file, cb) => {
+    const id = req.query.id;
     if (!id) {
-      console.error('IdAnecdote не указан в запросе');
-      return cb(new Error('IdAnecdote не указан'));
+      return cb(new Error('ID анекдота не указан'));
     }
     cb(null, `${id}.mp3`);
   }
 });
 
 const upload = multer({
-  
-  storage: multer.diskStorage({
-    destination: (req, file, cb) => {
-      cb(null, path.join(__dirname, 'audio'));
-    },
-    filename: (req, file, cb) => {
-      const id = req.query.id; // Читаем из query
-      console.log('id::: ', id);
-      if (!id) {
-        return cb(new Error('ID анекдота не указан'));
-      }
-      cb(null, `${id}.mp3`);
-    }
+  storage: storage,
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
+});
 
-  }),
-  limits: { fileSize: 10 * 1024 * 1024 } // 10MB
+// 📌 ЕДИНЫЙ ЭНДПОИНТ загрузки аудио
+app.post('/api/upload-audio', upload.single('audio'), (req, res) => {
+  const id = req.query.id;
+
+  if (!req.file) {
+    return res.status(400).json({ error: 'Файл не был загружен' });
+  }
+
+  res.status(200).json({
+    message: `Аудио для анекдота ${id} успешно загружено`,
+    filename: req.file.filename,
+  });
 });
 
 
-app.use(express.urlencoded({ extended: true }));
 
 app.post('/api/upload-audio', upload.single('audio'), (req, res) => {
   console.log('Uploaded file:', req.file);
