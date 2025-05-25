@@ -33,6 +33,28 @@ const poolPromise = new sql.ConnectionPool(dbConfig)
 
 
 
+const multer = require('multer');
+const fs = require('fs');
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, path.join(__dirname, 'audio'));
+  },
+  filename: (req, file, cb) => {
+    const id = req.body.IdAnecdote;
+    const ext = path.extname(file.originalname);
+    cb(null, `${id}${ext}`);
+  },
+});
+
+const upload = multer({ storage });
+app.post('/api/upload-audio', upload.single('audio'), (req, res) => {
+  if (!req.file || !req.body.IdAnecdote) {
+    return res.status(400).json({ error: 'Файл или IdAnecdote не переданы' });
+  }
+
+  return res.json({ message: 'Файл успешно загружен' });
+});
 
 // Эндпоинт для получения анекдотов
 app.get('/api/anecdotes', async (req, res) => {
@@ -1465,16 +1487,16 @@ app.delete('/api/comment-delete/:id', async (req, res) => {
   }
 });
 app.delete('/api/event-comment-delete/:id', async (req, res) => {
-  const id = req.params.id;
+  const id = parseInt(req.params.id, 10); // преобразуем в число
 
-  if (!id) {
-    return res.status(400).json({ error: "Не указан id комментария" });
+  if (isNaN(id)) {
+    return res.status(400).json({ error: "Неверный id комментария" });
   }
 
   try {
     let pool = await sql.connect(dbConfig);
     const result = await pool.request()
-      .input('IdCommentsEvents', sql.Int, id)
+      .input('IdCommentsEvents', sql.Int, id)  // теперь id — число
       .query('DELETE FROM [FunnySite].[dbo].[Коментарий_Мероприятия] WHERE IdCommentsEvents = @IdCommentsEvents');
 
     if (result.rowsAffected[0] === 0) {
@@ -1487,6 +1509,7 @@ app.delete('/api/event-comment-delete/:id', async (req, res) => {
     res.status(500).json({ error: "Ошибка сервера при удалении комментария" });
   }
 });
+
 
 
 // Запуск сервера
