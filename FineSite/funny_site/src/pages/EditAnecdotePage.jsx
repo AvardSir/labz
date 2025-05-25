@@ -98,6 +98,7 @@ const styles = {
 export const EditAnecdotePage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [audioFile, setAudioFile] = useState(null);
 
   const [formData, setFormData] = useState({
     Text: "",
@@ -182,7 +183,7 @@ export const EditAnecdotePage = () => {
 
       <div style={styles.form}>
         <h2 style={styles.title}>Редактировать анекдот</h2>
-        
+
         {loading && <p style={styles.loadingText}>Загрузка...</p>}
         {error && <p style={styles.errorMessage}>{error}</p>}
 
@@ -221,10 +222,20 @@ export const EditAnecdotePage = () => {
               ))}
             </select>
           </div>
-
+<div style={styles.formGroup}>
+  <label htmlFor="audio" style={styles.label}>
+    Аудиофайл (заменить/добавить):
+  </label>
+  <input
+    type="file"
+    id="audio"
+    accept="audio/mp3"
+    onChange={(e) => setAudioFile(e.target.files[0])}
+  />
+</div>
           <div style={styles.buttonGroup}>
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               disabled={loading}
               style={{
                 ...styles.primaryButton,
@@ -233,7 +244,7 @@ export const EditAnecdotePage = () => {
             >
               {loading ? "Сохранение..." : "Сохранить изменения"}
             </button>
-            <button 
+            <button
               type="button"
               onClick={() => navigate('/')}
               style={styles.primaryButton}

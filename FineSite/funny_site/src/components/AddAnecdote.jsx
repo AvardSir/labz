@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "./context/AuthContext";
 import { Header } from "../components/Header";
-
+import { AudioUploader } from "./AudioUploader";
 const styles = {
   container: {
     maxWidth: '800px',
@@ -94,6 +94,8 @@ const styles = {
 export const AddAnecdoteComponent = () => {
   const { loginData } = useContext(AuthContext);
   const navigate = useNavigate();
+  const [audioFile, setAudioFile] = useState(null);
+  const [tempAudioFile, setTempAudioFile] = useState(null); // временное хранение файла до отправки
 
   const [formData, setFormData] = useState({
     Text: "",
@@ -138,41 +140,70 @@ export const AddAnecdoteComponent = () => {
     setSuccessMessage(null);
     setLoading(true);
 
-    const requestData = {
-      ...formData,
-      Rate: Number(formData.Rate),
-      IdTypeAnecdote: Number(formData.IdTypeAnecdote),
-      IdUser: loginData.IdUser,
-    };
-
     try {
-      console.log(requestData)
+      // 1. Сначала добавляем анекдот
       const response = await fetch("/api/add-anecdote", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(requestData),
+        body: JSON.stringify({
+          ...formData,
+          Rate: Number(formData.Rate),
+          IdTypeAnecdote: Number(formData.IdTypeAnecdote),
+          IdUser: loginData.IdUser,
+        }),
       });
 
       const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "Ошибка при добавлении");
 
-      if (!response.ok) {
-        throw new Error(result.error || "Не удалось добавить анекдот");
+      const addedId = result.IdAnecdote;
+      console.log('Created anecdote ID:', addedId);
+
+      // 2. Если есть аудиофайл - загружаем его
+      if (tempAudioFile && addedId) {
+        const formData = new FormData();
+        formData.append("audio", tempAudioFile);
+        formData.append("IdAnecdote", addedId.toString()); // Явное преобразование в строку
+
+        console.log('FormData entries:');
+        for (const [key, value] of formData.entries()) {
+          console.log(key, value);
+        }
+
+
+        const uploadResp = await fetch(`/api/upload-audio?id=${addedId}`, {
+  method: 'POST',
+  body: formData
+});
+
+
+        if (!uploadResp.ok) {
+          const errorData = await uploadResp.json();
+          throw new Error(errorData.error || "Ошибка при загрузке аудио");
+        }
       }
 
       setSuccessMessage("Анекдот успешно добавлен!");
       setTimeout(() => navigate("/"), 2000);
     } catch (err) {
       setError(err.message);
+      console.error('Error:', err);
     } finally {
       setLoading(false);
     }
   };
 
+
+  const handleFileSelect = (file) => {
+    setTempAudioFile(file);
+  };
+
+
   return (
     <div style={styles.container}>
-      
+
       <div style={styles.form}>
         <h2 style={styles.title}>Добавить анекдот</h2>
 
@@ -192,18 +223,7 @@ export const AddAnecdoteComponent = () => {
             />
           </div>
 
-          {/* <div style={styles.formGroup}>
-            <label htmlFor="Rate" style={styles.label}>Рейтинг:</label>
-            <input
-              type="number"
-              id="Rate"
-              name="Rate"
-              value={formData.Rate}
-              onChange={handleChange}
-              required
-              style={styles.input}
-            />
-          </div> */}
+
 
           <div style={styles.formGroup}>
             <label htmlFor="IdTypeAnecdote" style={styles.label}>Тип анекдота:</label>
@@ -234,9 +254,12 @@ export const AddAnecdoteComponent = () => {
             >
               {loading ? "Добавление..." : "Добавить"}
             </button>
+            <AudioUploader onFileSelect={handleFileSelect} />
+
+
             <button
               type="button"
-              onClick={() => navigate("/events")}
+              onClick={() => navigate("/")}
               style={styles.primaryButton}
             >
               Назад

@@ -33,28 +33,71 @@ const poolPromise = new sql.ConnectionPool(dbConfig)
 
 
 
-const multer = require('multer');
 const fs = require('fs');
+const multer = require('multer');
+
+// Убедиться, что папка 'audio' существует
+const audioDir = path.join(__dirname, 'audio');
+if (!fs.existsSync(audioDir)) {
+  fs.mkdirSync(audioDir);
+}
+// app.use(express.urlencoded({ extended: true }));
 
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, 'audio'));
+  destination: function (req, file, cb) {
+    cb(null, audioDir);
   },
-  filename: (req, file, cb) => {
+  filename: function (req, file, cb) {
+    // Получаем ID из тела запроса
     const id = req.body.IdAnecdote;
-    const ext = path.extname(file.originalname);
-    cb(null, `${id}${ext}`);
-  },
-});
-
-const upload = multer({ storage });
-app.post('/api/upload-audio', upload.single('audio'), (req, res) => {
-  if (!req.file || !req.body.IdAnecdote) {
-    return res.status(400).json({ error: 'Файл или IdAnecdote не переданы' });
+    console.log('Received IdAnecdote:', id);
+    
+    if (!id) {
+      console.error('IdAnecdote не указан в запросе');
+      return cb(new Error('IdAnecdote не указан'));
+    }
+    cb(null, `${id}.mp3`);
   }
-
-  return res.json({ message: 'Файл успешно загружен' });
 });
+
+const upload = multer({
+  
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, path.join(__dirname, 'audio'));
+    },
+    filename: (req, file, cb) => {
+      const id = req.query.id; // Читаем из query
+      console.log('id::: ', id);
+      if (!id) {
+        return cb(new Error('ID анекдота не указан'));
+      }
+      cb(null, `${id}.mp3`);
+    }
+
+  }),
+  limits: { fileSize: 10 * 1024 * 1024 } // 10MB
+});
+
+
+app.use(express.urlencoded({ extended: true }));
+
+app.post('/api/upload-audio', upload.single('audio'), (req, res) => {
+  console.log('Uploaded file:', req.file);
+  console.log('Request body:', req.body);
+  
+  if (!req.file) {
+    return res.status(400).json({ error: 'Файл не был загружен' });
+  }
+  
+  res.status(200).json({ 
+    message: 'Файл успешно загружен',
+    filename: req.file.filename
+  });
+});
+
+
+
 
 // Эндпоинт для получения анекдотов
 app.get('/api/anecdotes', async (req, res) => {
@@ -643,19 +686,23 @@ app.post('/api/add-anecdote', async (req, res) => {
 
   try {
     const pool = await poolPromise;
-    await pool.request()
+    const result = await pool.request()
       .input('Text', sql.NVarChar(sql.MAX), Text)
       .input('Rate', sql.Int, Rate)
       .input('IdUser', sql.Int, IdUser)
       .input('IdTypeAnecdote', sql.Int, IdTypeAnecdote)
+      .output('IdAnecdote', sql.Int)
       .execute('AddNewAnecdote');
 
-    res.status(200).json({ message: 'Анекдот успешно добавлен!' });
+    const addedId = result.output.IdAnecdote;
+    res.status(200).json({ message: 'Анекдот успешно добавлен!', IdAnecdote: addedId });
   } catch (error) {
     console.error('Ошибка при выполнении запроса:', error);
     res.status(500).json({ error: 'Ошибка сервера' });
   }
 });
+
+
 
 app.put('/api/update-anecdote', async (req, res) => {
   const { IdAnecdote, NewText, NewRate, NewIdTypeAnecdote } = req.body;
