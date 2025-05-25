@@ -1425,6 +1425,31 @@ app.delete('/api/guess-delete/:id', async (req, res) => {
   }
 });
 
+app.delete('/api/favorites/:userId/:anecdoteId', async (req, res) => {
+  const { userId, anecdoteId } = req.params;
+
+  try {
+    let pool = await sql.connect(dbConfig);
+    const result = await pool.request()
+      .input('UserId', sql.Int, userId)
+      .input('AnecdoteId', sql.Int, anecdoteId)
+      .query(`
+        DELETE FROM [FavoriteAnecdotes]
+        WHERE [UserId] = @UserId AND [AnecdoteId] = @AnecdoteId
+      `);
+
+    if (result.rowsAffected[0] === 0) {
+      return res.status(404).json({ message: 'Запись не найдена' });
+    }
+
+    res.json({ message: 'Удалено из избранного' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Ошибка сервера' });
+  }
+});
+
+
 
 // Запуск сервера
 const PORT = 5000;
