@@ -8,39 +8,39 @@ export const FavoriteAnecdotesList = () => {
     const [favorites, setFavorites] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-// Вверху компонента
-const fetchFavorites = async () => {
-  if (!loginData?.IdUser) {
-    setFavorites([]);
-    setLoading(false);
-    return;
-  }
-  try {
-    setLoading(true);
-    const res = await axios.get(`/api/favorites/${loginData.IdUser}`);
-    setFavorites(res.data);
-    setError(null);
-  } catch (err) {
-    setError("Ошибка загрузки избранных анекдотов");
-  } finally {
-    setLoading(false);
-  }
-};
+    // Вверху компонента
+    const fetchFavorites = async () => {
+        if (!loginData?.IdUser) {
+            setFavorites([]);
+            setLoading(false);
+            return;
+        }
+        try {
+            setLoading(true);
+            const res = await axios.get(`/api/favorites/${loginData.IdUser}`);
+            setFavorites(res.data);
+            setError(null);
+        } catch (err) {
+            setError("Ошибка загрузки избранных анекдотов");
+        } finally {
+            setLoading(false);
+        }
+    };
 
-useEffect(() => {
-  fetchFavorites();
-}, [loginData]);
+    useEffect(() => {
+        fetchFavorites();
+    }, [loginData]);
 
-const handleRemoveFavorite = async (IdAnecdote) => {
-  try {
-    await axios.delete(`/api/favorites/${loginData.IdUser}/${IdAnecdote}`);
-    // После удаления обновляем список
-    fetchFavorites();
-  } catch (err) {
-    alert("Ошибка при удалении из избранного");
-    console.error(err);
-  }
-};
+    const handleRemoveFavorite = async (IdAnecdote) => {
+        try {
+            await axios.delete(`/api/favorites/${loginData.IdUser}/${IdAnecdote}`);
+            // После удаления обновляем список
+            fetchFavorites();
+        } catch (err) {
+            alert("Ошибка при удалении из избранного");
+            console.error(err);
+        }
+    };
 
     if (loading) return <p>Загрузка избранных анекдотов...</p>;
     if (error) return <p style={{ color: "red" }}>{error}</p>;
@@ -54,7 +54,7 @@ const handleRemoveFavorite = async (IdAnecdote) => {
 
     return (
         <div className="favorite-anecdotes" style={{ maxWidth: 600, margin: "auto" }}>
-            <Header/>
+            <Header />
             <h3>Личный архив избранных анекдотов</h3>
             <ul style={{ listStyle: "none", padding: 0 }}>
                 {favorites.map((anecdote) => (
@@ -77,21 +77,21 @@ const handleRemoveFavorite = async (IdAnecdote) => {
                                 <br />
                             </React.Fragment>
                         ))}
-                        <div style={{ marginTop: 8, fontSize: "0.85em", color: "#555" }}>
+                        <div style={{ marginTop: 8, fontSize: "0.85em", color: "white" }}>
                             <span>⭐ {anecdote.Rate || 0}</span>{" "}
                             <span>👤 {anecdote.UserName || "неизвестно"}</span>{" "}
                             <span>📅 {new Date(anecdote.Date).toLocaleDateString()}</span>
-                             <button
-    onClick={(e) => {
-      e.stopPropagation(); // чтобы не срабатывал клик по карточке (копирование)
-      if (window.confirm("Удалить из избранного?")) {
-        handleRemoveFavorite(anecdote.IdAnecdote);
-      }
-    }}
-    style={{ marginLeft: 10, backgroundColor: "#f44336", color: "white", border: "none", borderRadius: 4, padding: "4px 8px", cursor: "pointer" }}
-  >
-    Удалить
-  </button>
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation(); // чтобы не срабатывал клик по карточке (копирование)
+                                    if (window.confirm("Удалить из избранного?")) {
+                                        handleRemoveFavorite(anecdote.IdAnecdote);
+                                    }
+                                }}
+                                style={{ marginLeft: 10, backgroundColor: "#f44336", color: "white", border: "none", borderRadius: 4, padding: "4px 8px", cursor: "pointer" }}
+                            >
+                                Удалить из избранного
+                            </button>
                         </div>
                     </li>
                 ))}
