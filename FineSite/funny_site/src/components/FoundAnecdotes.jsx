@@ -26,10 +26,6 @@ export const FoundAnecdotes = ({ anecdotes, setFoundAnecdotes, fetchAnecdotes })
     </svg>
   );
 
-
-
-
-
   const handleShareClick = (platform, anecdote) => {
     const text = encodeURIComponent(anecdote.Text);
     const url = encodeURIComponent(window.location.origin + `/anecdote-comments/${anecdote.IdAnecdote}`);

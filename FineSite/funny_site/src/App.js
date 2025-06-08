@@ -31,7 +31,7 @@ function App() {
     <AuthProvider>
       <Router>
         <Routes>
-          
+
           <Route path="/anecdoteator" element={<Anecdoteator />} />
           <Route path="/" element={<AnecdotesPage />} />
           <Route path="/anecdotes" element={<AnecdotesPage />} />
@@ -44,15 +44,9 @@ function App() {
           <Route path="/edit-anecdote/:id" element={<EditAnecdotePage />} />
           <Route path="/add-event" element={<AddEventPage />} />
           <Route path="/edit-event/:id" element={<EditEventPage />} />
-
           <Route path="/analytics" element={<AnalyticsPage />} />
-          {/* <Route path="/LighthouseButton" element={<LighthouseButton />} /> */}
-    
-    <Route path="/AnecdoteGuessGame" element={<AnecdoteGuessGame />} />
-    <Route path="/FavoriteAnecdotesList" element={<FavoriteAnecdotesList />} />
-
-
-
+          <Route path="/AnecdoteGuessGame" element={<AnecdoteGuessGame />} />
+          <Route path="/FavoriteAnecdotesList" element={<FavoriteAnecdotesList />} />
         </Routes>
       </Router>
     </AuthProvider>

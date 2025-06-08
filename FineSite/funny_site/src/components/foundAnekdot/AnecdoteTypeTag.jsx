@@ -13,10 +13,6 @@ export const AnecdoteTypeTag = ({ type, typeId, onSearch, setFoundAnecdotes }) =
             console.error("Ошибка при поиске анекдотов:", error);
             setFoundAnecdotes([]);
         }
-        // if (onSearch && typeId !== undefined) {
-        //     console.log(typeId)
-        //     onSearch(typeId); // Вызываем поиск при клике
-        // }
     };
 
     return (
