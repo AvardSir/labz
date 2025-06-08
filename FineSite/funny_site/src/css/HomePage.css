@@ -910,3 +910,16 @@ button {
     
     box-sizing: border-box;
   }
+
+
+  
+  .logo-link {
+  text-decoration: none; /* Убираем подчеркивание */
+  color: inherit; /* Наследуем цвет текста */
+  margin-right: 3rem; /* Сохраняем отступ */
+  transition: opacity 0.3s ease; /* Плавное изменение прозрачности */
+}
+
+.logo-link:hover {
+  opacity: 0.9; /* Легкое затемнение при наведении */
+}

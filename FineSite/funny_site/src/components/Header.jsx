@@ -7,9 +7,11 @@ export const Header = () => {
 
   return (
     <header className="header">
-      <h1 className="logo">FunnySite</h1>
+      <Link to="/" className="logo-link"> {/* Добавляем Link вокруг логотипа */}
+        <h1 className="logo">FunnySite</h1>
+      </Link>
       <nav className="navigation">
-        <Link to="/">Главная</Link>
+        {/* <Link to="/">Главная</Link> */}
         <Link to="/anecdotes">Анекдоты</Link>
         <Link to="/events">Мероприятия</Link>
 
