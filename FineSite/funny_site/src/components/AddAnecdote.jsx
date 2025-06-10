@@ -174,9 +174,9 @@ export const AddAnecdoteComponent = () => {
 
 
         const uploadResp = await fetch(`/api/upload-audio?id=${addedId}`, {
-  method: 'POST',
-  body: formData
-});
+          method: 'POST',
+          body: formData
+        });
 
 
         if (!uploadResp.ok) {

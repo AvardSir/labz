@@ -923,3 +923,112 @@ button {
 .logo-link:hover {
   opacity: 0.9; /* Легкое затемнение при наведении */
 }
+
+
+/* Убираем все эффекты подчеркивания для кнопки */
+.dropdown-toggle {
+  background: none;
+  border: none;
+  color: white;
+  font-weight: 500;
+  font-size: 1rem;
+  padding: 0.4rem 0;
+  cursor: pointer;
+  font-family: inherit;
+  text-shadow: 1px 1px 2px black;
+  margin: 0 8px;
+  box-shadow: none; /* убираем box-shadow от глобальных стилей */
+  border-radius: 0;  /* убираем border-radius, если нужно */
+}
+
+.dropdown-toggle:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+
+/* Убираем псевдоэлемент с подчеркиванием */
+.dropdown-toggle::after {
+  display: none;
+}
+
+/* Оставляем только изменение цвета при наведении */
+.dropdown-toggle:hover {
+  color: #e1bee7;
+}
+
+/* Остальные стили dropdown оставляем без изменений */
+.dropdown-container {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: #4a148c;
+  border: 1px solid #7b1fa2;
+  border-radius: 4px;
+  min-width: 180px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  z-index: 10;
+}
+
+.dropdown-item {
+  display: block;
+  padding: 0.6rem 1rem;
+  color: white;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.dropdown-item:hover {
+  background: rgba(149, 51, 138, 0.5);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+.dropdown-button {
+  background: none;
+  border: none;
+  color: white;
+  font-weight: 500;
+  font-size: 1rem;
+  padding: 0.4rem 0;
+  cursor: pointer;
+  font-family: inherit;
+  text-shadow: 1px 1px 2px black;
+  margin-left: 1.5rem; /* как у кнопки Выйти */
+  box-shadow: none;
+  border-radius: 0;
+}
+
+/* Отступ снизу формы */
+.dropdown-menu form {
+  margin-bottom: 1rem;
+}
+
+/* Общий отступ слева для элементов внутри dropdown-menu (кроме, например, самого контейнера) */
+.dropdown-menu input,
+.dropdown-menu button,
+.dropdown-menu p a {
+  margin-left: 1.5rem;
+  display: block; /* чтобы margin работал корректно, и элементы шли вниз */
+  /* margin-bottom: 0.5rem; небольшой отступ снизу для эстетики */
+}
+
+/* Убираем нижний margin у последнего элемента, если нужно */
+.dropdown-menu p {
+  margin: 0;
+  padding: 0;
+}

@@ -17,14 +17,14 @@ const HomePage = ({ what = 'anecdote' }) => {
   <div className="content-wrapper">
     {/* Блок рекламы (горизонтальный) */}
     <div className="ads-block">
-      <AdBlock />
+      {/* <AdBlock /> */}
     </div>
 
     {/* Боковой блок с вертикальным расположением элементов */}
-    <div className="side-block">
+    {/* <div className="side-block">
       <Autification />
       <ContactForAds />
-    </div>
+    </div> */}
   </div>
 </div>
   );
