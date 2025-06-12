@@ -119,7 +119,9 @@ const Anecdoteator = () => {
     <div className="anecdoteator-container">
       <Header />
       <div className="anecdoteator-form">
-        <h2 className="anecdoteator-title">Управление анекдотами</h2>
+        <h2 className="anecdoteator-title">
+Анекдотатор
+</h2>
 
         <div className="anecdoteator-section">
           <label className="anecdoteator-label">Выберите цепочку:</label>
@@ -158,13 +160,13 @@ const Anecdoteator = () => {
             {isClosed ? (
               <>
                 <p className="anecdoteator-closed-note">❌ Цепочка закрыта для продолжения</p>
-                {loginData?.IdRights === 2 && (
+                {loginData?.IdRights == 2 && (
                   <div className="anecdoteator-button-group">
                     <button
                       className="anecdoteator-button anecdoteator-danger-button"
                       onClick={deleteChain}
                     >
-                      🗑 Удалить цепочку
+                      🗑️ Удалить цепочку
                     </button>
                     <button
                       className="anecdoteator-button anecdoteator-green-button"
@@ -186,7 +188,7 @@ const Anecdoteator = () => {
                 />
                 <button className="anecdoteator-button" onClick={addContinue}>Добавить продолжение</button>
 
-                {loginData?.IdRights === 2 && (
+                {loginData?.IdRights == 2 && (
                   <div className="anecdoteator-button-group">
                     <button
                       className="anecdoteator-button anecdoteator-danger-button"
