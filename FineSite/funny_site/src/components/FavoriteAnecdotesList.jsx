@@ -54,7 +54,7 @@ export const FavoriteAnecdotesList = () => {
 
     return (
         <div className="favorite-anecdotes" style={{ maxWidth: 600, margin: "auto" }}>
-            
+            <Header/>
             <h3>Личный архив избранных анекдотов</h3>
             <ul style={{ listStyle: "none", padding: 0 }}>
                 {favorites.map((anecdote) => (

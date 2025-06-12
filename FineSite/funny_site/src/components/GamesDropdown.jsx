@@ -1,18 +1,11 @@
 "use client"
 
-import { useState } from "react"
 import { Link } from "react-router-dom"
+import { useDropdown } from "./context/DropdownContext"
 
 export const GamesDropdown = () => {
-  const [isOpen, setIsOpen] = useState(false)
-
-  const toggleDropdown = () => {
-    setIsOpen((prev) => !prev)
-  }
-
-  const closeDropdown = () => {
-    setIsOpen(false)
-  }
+  const { isOpen, toggleDropdown } = useDropdown()
+  const dropdownName = "games"
 
   const games = [
     {
@@ -27,16 +20,23 @@ export const GamesDropdown = () => {
       description: "Создавай свои анекдоты",
       icon: "✍️",
     },
-    
   ]
+
+  const handleToggle = () => {
+    toggleDropdown(dropdownName)
+  }
+
+  const handleLinkClick = () => {
+    toggleDropdown(null) // Закрываем dropdown при клике на ссылку
+  }
 
   return (
     <div className="games-dropdown dropdown-container" style={{ textShadow: 'none' }}
 >
-      <button onClick={toggleDropdown} className="dropdown-toggle nav-link">
+      <button onClick={handleToggle} className="dropdown-toggle nav-link">
         🎮 Игры ▼
       </button>
-      {isOpen && (
+      {isOpen(dropdownName) && (
         <div
           className="dropdown-menu games-menu"
           style={{
@@ -78,7 +78,7 @@ export const GamesDropdown = () => {
               <Link
                 key={index}
                 to={game.path}
-                onClick={closeDropdown}
+                onClick={handleLinkClick}
                 className="game-item"
                 style={{
                   display: "flex",

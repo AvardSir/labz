@@ -3,10 +3,13 @@
 import { useState, useContext, useEffect } from "react"
 import { AuthContext } from "./context/AuthContext"
 import { useNavigate, Link } from "react-router-dom"
+import { useDropdown } from "./context/DropdownContext"
 
 export const DropdownLogin = () => {
   const { isLoggedIn, login, logout, loginData } = useContext(AuthContext)
-  const [isOpen, setIsOpen] = useState(false)
+  const { isOpen, toggleDropdown } = useDropdown()
+  const dropdownName = "login"
+
   const [credentials, setCredentials] = useState({ login: "", password: "" })
   const [error, setError] = useState("")
   const [showForgotPassword, setShowForgotPassword] = useState(false)
@@ -15,9 +18,9 @@ export const DropdownLogin = () => {
   const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
 
-  // Сбрасываем dropdown при смене isLoggedIn (логин/логаут)
+  // Сбрасываем состояние при смене isLoggedIn (логин/логаут)
   useEffect(() => {
-    setIsOpen(false)
+    toggleDropdown(null) // Закрываем dropdown
     setError("")
     setCredentials({ login: "", password: "" })
     setShowForgotPassword(false)
@@ -25,8 +28,8 @@ export const DropdownLogin = () => {
     setForgotPasswordMessage("")
   }, [isLoggedIn])
 
-  const toggleDropdown = () => {
-    setIsOpen((prev) => !prev)
+  const handleToggle = () => {
+    toggleDropdown(dropdownName)
     setError("")
     setShowForgotPassword(false)
     setForgotPasswordMessage("")
@@ -62,7 +65,7 @@ export const DropdownLogin = () => {
       const user = await response.json()
       login(credentials.login, credentials.password, user.IdRights)
       navigate("/")
-      setIsOpen(false)
+      toggleDropdown(null) // Закрываем dropdown
     } catch (err) {
       console.error("Ошибка авторизации:", err)
       setError("Ошибка связи с сервером")
@@ -106,7 +109,7 @@ export const DropdownLogin = () => {
   const handleLogout = () => {
     logout()
     navigate("/")
-    setIsOpen(false)
+    toggleDropdown(null) // Закрываем dropdown
   }
 
   const toggleForgotPassword = () => {
@@ -116,143 +119,468 @@ export const DropdownLogin = () => {
     setForgotPasswordEmail("")
   }
 
+  const handleLinkClick = () => {
+    toggleDropdown(null) // Закрываем dropdown при клике на ссылку
+  }
+
+  // Пункты меню для авторизованного пользователя
+  const userMenuItems = [
+    {
+      name: "Профиль",
+      path: "/personal_cabinet",
+      icon: "👤",
+      description: "Личный кабинет",
+    },
+    {
+      name: "Избранное",
+      path: "/FavoriteAnecdotesList",
+      icon: "❤️",
+      description: "Любимые анекдоты",
+    },
+    ...(Number.parseInt(loginData?.IdRights) === 2
+      ? [
+          {
+            name: "Аналитика",
+            path: "/analytics",
+            icon: "📊",
+            description: "Статистика сайта",
+          },
+        ]
+      : []),
+  ]
+
   return (
-    <div className="dropdown-login dropdown-container">
+    <div className="dropdown-login dropdown-container" style={{ textShadow: "none" }}>
       {isLoggedIn ? (
         <>
-          <button onClick={toggleDropdown} className="dropdown-toggle">
-            {loginData.login} ▼
+          <button onClick={handleToggle} className="dropdown-toggle nav-link">
+            👤 {loginData.login} ▼
           </button>
-          {isOpen && (
-            <div className="dropdown-menu">
-              <Link to="/personal_cabinet" onClick={() => setIsOpen(false)} className="dropdown-item">
-                Профиль
-              </Link>
-              <Link to="/FavoriteAnecdotesList" onClick={() => setIsOpen(false)} className="dropdown-item">
-                Избранное
-              </Link>
-              {Number.parseInt(loginData.IdRights) === 2 && (
-                <Link to="/analytics" onClick={() => setIsOpen(false)} className="dropdown-item">
-                  Аналитика
-                </Link>
-              )}
-              <button
-                onClick={handleLogout}
-                className="dropdown-toggle"
+          {isOpen(dropdownName) && (
+            <div
+              className="dropdown-menu login-menu"
+              style={{
+                position: "absolute",
+                top: "100%",
+                right: "0",
+                background: "#ffffff",
+                border: "1px solid #e0e0e0",
+                borderRadius: "8px",
+                boxShadow: "0 8px 24px rgba(0, 0, 0, 0.12)",
+                minWidth: "280px",
+                zIndex: 1000,
+                overflow: "hidden",
+                marginTop: "8px",
+              }}
+            >
+              <div
+                className="login-header"
                 style={{
-                  textDecoration: "none",
-                  color: "inherit",
-                  marginLeft: "1.5rem",
-                  transition: "opacity 0.3s ease",
+                  padding: "12px 16px 8px 16px",
+                  background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                  color: "white",
                 }}
               >
-                Выйти
-              </button>
+                <h4
+                  style={{
+                    margin: "0",
+                    fontSize: "14px",
+                    fontWeight: "600",
+                    color: "white",
+                  }}
+                >
+                  👋 Привет, {loginData.login}!
+                </h4>
+              </div>
+
+              <div className="user-menu-list">
+                {userMenuItems.map((item, index) => (
+                  <Link
+                    key={index}
+                    to={item.path}
+                    onClick={handleLinkClick}
+                    className="user-menu-item"
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      padding: "12px 16px",
+                      textDecoration: "none",
+                      color: "#333",
+                      borderBottom: index < userMenuItems.length - 1 ? "1px solid #f0f0f0" : "none",
+                      transition: "all 0.2s ease",
+                      backgroundColor: "transparent",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = "#f8f9ff"
+                      e.currentTarget.style.borderLeft = "4px solid #667eea"
+                      e.currentTarget.style.paddingLeft = "12px"
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = "transparent"
+                      e.currentTarget.style.borderLeft = "none"
+                      e.currentTarget.style.paddingLeft = "16px"
+                    }}
+                  >
+                    <span
+                      className="menu-icon"
+                      style={{
+                        fontSize: "18px",
+                        marginRight: "12px",
+                        minWidth: "24px",
+                        textAlign: "center",
+                      }}
+                    >
+                      {item.icon}
+                    </span>
+                    <div className="menu-info">
+                      <div
+                        className="menu-name"
+                        style={{
+                          fontWeight: "600",
+                          fontSize: "14px",
+                          marginBottom: "2px",
+                          color: "#2d3748",
+                        }}
+                      >
+                        {item.name}
+                      </div>
+                      <div
+                        className="menu-description"
+                        style={{
+                          fontSize: "11px",
+                          color: "#718096",
+                          lineHeight: "1.3",
+                        }}
+                      >
+                        {item.description}
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+
+              <div
+                className="logout-section"
+                style={{
+                  padding: "8px",
+                  borderTop: "1px solid #f0f0f0",
+                  background: "#fafbfc",
+                }}
+              >
+                <button
+                  onClick={handleLogout}
+                  style={{
+                    width: "100%",
+                    padding: "10px 16px",
+                    background: "linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%)",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "6px",
+                    fontSize: "14px",
+                    fontWeight: "600",
+                    cursor: "pointer",
+                    transition: "all 0.2s ease",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.transform = "translateY(-1px)"
+                    e.target.style.boxShadow = "0 4px 12px rgba(255, 107, 107, 0.3)"
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.transform = "translateY(0)"
+                    e.target.style.boxShadow = "none"
+                  }}
+                >
+                  🚪 Выйти
+                </button>
+              </div>
             </div>
           )}
         </>
       ) : (
         <>
-          <button onClick={toggleDropdown} className="dropdown-toggle">
-            Войти ▼
+          <button onClick={handleToggle} className="dropdown-toggle nav-link">
+            🔐 Войти ▼
           </button>
-          {isOpen && (
-            <div className="dropdown-menu">
-              {!showForgotPassword ? (
-                <>
-                  <form onSubmit={handleSubmit}>
-                    <input
-                      type="text"
-                      name="login"
-                      placeholder="Логин"
-                      value={credentials.login}
-                      onChange={handleChange}
-                      required
-                    />
-                    <input
-                      type="password"
-                      name="password"
-                      placeholder="Пароль"
-                      value={credentials.password}
-                      onChange={handleChange}
-                      required
-                    />
-                    <button type="submit" className="dropdown-button">
-                      Войти
-                    </button>
-                  </form>
-                  <div className="dropdown-links">
-                    <p>
-                      <a href="/registration">Регистрация</a>
-                    </p>
-                    <p>
+          {isOpen(dropdownName) && (
+            <div
+              className="dropdown-menu login-form-menu"
+              style={{
+                position: "absolute",
+                top: "100%",
+                right: "0",
+                background: "#ffffff",
+                border: "1px solid #e0e0e0",
+                borderRadius: "8px",
+                boxShadow: "0 8px 24px rgba(0, 0, 0, 0.12)",
+                minWidth: "300px",
+                zIndex: 1000,
+                overflow: "hidden",
+                marginTop: "8px",
+              }}
+            >
+              <div
+                className="login-form-header"
+                style={{
+                  padding: "16px",
+                  background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                  color: "white",
+                  textAlign: "center",
+                }}
+              >
+                <h4
+                  style={{
+                    margin: "0",
+                    fontSize: "16px",
+                    fontWeight: "600",
+                    color: "white",
+                  }}
+                >
+                  {showForgotPassword ? "🔑 Восстановление пароля" : "🔐 Вход в аккаунт"}
+                </h4>
+              </div>
+
+              <div style={{ padding: "20px" }}>
+                {!showForgotPassword ? (
+                  <>
+                    <form onSubmit={handleSubmit} style={{ marginBottom: "16px" }}>
+                      <div style={{ marginBottom: "12px" }}>
+                        <input
+                          type="text"
+                          name="login"
+                          placeholder="Логин"
+                          value={credentials.login}
+                          onChange={handleChange}
+                          required
+                          style={{
+                            width: "100%",
+                            padding: "12px",
+                            border: "2px solid #e2e8f0",
+                            borderRadius: "6px",
+                            fontSize: "14px",
+                            transition: "border-color 0.2s ease",
+                            outline: "none",
+                          }}
+                          onFocus={(e) => {
+                            e.target.style.borderColor = "#667eea"
+                          }}
+                          onBlur={(e) => {
+                            e.target.style.borderColor = "#e2e8f0"
+                          }}
+                        />
+                      </div>
+                      <div style={{ marginBottom: "16px" }}>
+                        <input
+                          type="password"
+                          name="password"
+                          placeholder="Пароль"
+                          value={credentials.password}
+                          onChange={handleChange}
+                          required
+                          style={{
+                            width: "100%",
+                            padding: "12px",
+                            border: "2px solid #e2e8f0",
+                            borderRadius: "6px",
+                            fontSize: "14px",
+                            transition: "border-color 0.2s ease",
+                            outline: "none",
+                          }}
+                          onFocus={(e) => {
+                            e.target.style.borderColor = "#667eea"
+                          }}
+                          onBlur={(e) => {
+                            e.target.style.borderColor = "#e2e8f0"
+                          }}
+                        />
+                      </div>
                       <button
-                        type="button"
-                        onClick={toggleForgotPassword}
-                        className="forgot-password-link"
+                        type="submit"
                         style={{
-                          background: "none",
+                          width: "100%",
+                          padding: "12px",
+                          background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                          color: "white",
                           border: "none",
-                          color: "inherit",
-                          textDecoration: "underline",
+                          borderRadius: "6px",
+                          fontSize: "14px",
+                          fontWeight: "600",
                           cursor: "pointer",
-                          padding: 0,
-                          font: "inherit",
+                          transition: "all 0.2s ease",
+                        }}
+                        onMouseEnter={(e) => {
+                          e.target.style.transform = "translateY(-1px)"
+                          e.target.style.boxShadow = "0 4px 12px rgba(102, 126, 234, 0.3)"
+                        }}
+                        onMouseLeave={(e) => {
+                          e.target.style.transform = "translateY(0)"
+                          e.target.style.boxShadow = "none"
                         }}
                       >
-                        Забыли пароль?
-                      </button>
-                    </p>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="forgot-password-form">
-                    <h4 style={{ margin: "0 0 10px 0", fontSize: "14px" }}>Восстановление пароля</h4>
-                    <form onSubmit={handleForgotPassword}>
-                      <input
-                        type="email"
-                        placeholder="Введите ваш email"
-                        value={forgotPasswordEmail}
-                        onChange={(e) => setForgotPasswordEmail(e.target.value)}
-                        required
-                      />
-                      <button type="submit" className="dropdown-button" disabled={isLoading}>
-                        {isLoading ? "Отправка..." : "Отправить"}
+                        Войти
                       </button>
                     </form>
-                    <p>
+
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "8px",
+                        paddingTop: "12px",
+                        borderTop: "1px solid #f0f0f0",
+                      }}
+                    >
+                      <Link
+                        to="/registration"
+                        onClick={handleLinkClick}
+                        style={{
+                          color: "#667eea",
+                          textDecoration: "none",
+                          fontSize: "13px",
+                          textAlign: "center",
+                          padding: "4px",
+                        }}
+                        onMouseEnter={(e) => {
+                          e.target.style.textDecoration = "underline"
+                        }}
+                        onMouseLeave={(e) => {
+                          e.target.style.textDecoration = "none"
+                        }}
+                      >
+                        📝 Регистрация
+                      </Link>
                       <button
                         type="button"
                         onClick={toggleForgotPassword}
-                        className="back-to-login-link"
                         style={{
                           background: "none",
                           border: "none",
-                          color: "inherit",
-                          textDecoration: "underline",
-                          cursor: "pointer",
-                          padding: 0,
-                          font: "inherit",
+                          color: "#718096",
                           fontSize: "12px",
+                          cursor: "pointer",
+                          textAlign: "center",
+                          padding: "4px",
+                        }}
+                        onMouseEnter={(e) => {
+                          e.target.style.color = "#667eea"
+                          e.target.style.textDecoration = "underline"
+                        }}
+                        onMouseLeave={(e) => {
+                          e.target.style.color = "#718096"
+                          e.target.style.textDecoration = "none"
                         }}
                       >
-                        ← Назад к входу
+                        🔑 Забыли пароль?
                       </button>
-                    </p>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <form onSubmit={handleForgotPassword} style={{ marginBottom: "16px" }}>
+                      <div style={{ marginBottom: "16px" }}>
+                        <input
+                          type="email"
+                          placeholder="Введите ваш email"
+                          value={forgotPasswordEmail}
+                          onChange={(e) => setForgotPasswordEmail(e.target.value)}
+                          required
+                          style={{
+                            width: "100%",
+                            padding: "12px",
+                            border: "2px solid #e2e8f0",
+                            borderRadius: "6px",
+                            fontSize: "14px",
+                            transition: "border-color 0.2s ease",
+                            outline: "none",
+                          }}
+                          onFocus={(e) => {
+                            e.target.style.borderColor = "#667eea"
+                          }}
+                          onBlur={(e) => {
+                            e.target.style.borderColor = "#e2e8f0"
+                          }}
+                        />
+                      </div>
+                      <button
+                        type="submit"
+                        disabled={isLoading}
+                        style={{
+                          width: "100%",
+                          padding: "12px",
+                          background: isLoading ? "#cbd5e0" : "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                          color: "white",
+                          border: "none",
+                          borderRadius: "6px",
+                          fontSize: "14px",
+                          fontWeight: "600",
+                          cursor: isLoading ? "not-allowed" : "pointer",
+                          transition: "all 0.2s ease",
+                        }}
+                      >
+                        {isLoading ? "⏳ Отправка..." : "📧 Отправить"}
+                      </button>
+                    </form>
+
+                    <button
+                      type="button"
+                      onClick={toggleForgotPassword}
+                      style={{
+                        background: "none",
+                        border: "none",
+                        color: "#718096",
+                        fontSize: "12px",
+                        cursor: "pointer",
+                        width: "100%",
+                        textAlign: "center",
+                        padding: "8px",
+                      }}
+                      onMouseEnter={(e) => {
+                        e.target.style.color = "#667eea"
+                        e.target.style.textDecoration = "underline"
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.color = "#718096"
+                        e.target.style.textDecoration = "none"
+                      }}
+                    >
+                      ← Назад к входу
+                    </button>
+                  </>
+                )}
+
+                {error && (
+                  <div
+                    style={{
+                      marginTop: "12px",
+                      padding: "8px 12px",
+                      background: "#fed7d7",
+                      border: "1px solid #feb2b2",
+                      borderRadius: "4px",
+                      color: "#c53030",
+                      fontSize: "12px",
+                      textAlign: "center",
+                    }}
+                  >
+                    ❌ {error}
                   </div>
-                </>
-              )}
-              {error && (
-                <p className="error-message" style={{ color: "red", fontSize: "12px" }}>
-                  {error}
-                </p>
-              )}
-              {forgotPasswordMessage && (
-                <p className="success-message" style={{ color: "green", fontSize: "12px" }}>
-                  {forgotPasswordMessage}
-                </p>
-              )}
+                )}
+
+                {forgotPasswordMessage && (
+                  <div
+                    style={{
+                      marginTop: "12px",
+                      padding: "8px 12px",
+                      background: "#c6f6d5",
+                      border: "1px solid #9ae6b4",
+                      borderRadius: "4px",
+                      color: "#2f855a",
+                      fontSize: "12px",
+                      textAlign: "center",
+                    }}
+                  >
+                    ✅ {forgotPasswordMessage}
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </>
