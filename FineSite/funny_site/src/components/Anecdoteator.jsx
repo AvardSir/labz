@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
-// import { AuthContext } from '../context/AuthContext'; // путь подстрой под свой
 import { AuthContext } from './context/AuthContext';
 import { Header } from './Header';
+// import './Anecdoteator.css';
+
 const Anecdoteator = () => {
   const [chainList, setChainList] = useState([]);
   const [selectedChainId, setSelectedChainId] = useState(null);
@@ -10,8 +11,8 @@ const Anecdoteator = () => {
   const [continueText, setContinueText] = useState('');
   const [startText, setStartText] = useState('');
   const [isClosed, setIsClosed] = useState(false);
+  const { loginData } = useContext(AuthContext);
 
-  const { loginData } = useContext(AuthContext); // ← используется для прав доступа
 
   const fetchChainList = async () => {
     try {
@@ -41,7 +42,7 @@ const Anecdoteator = () => {
       try {
         const res = await axios.get(`/api/chain/${selectedChainId}/parts`);
         setParts(res.data);
-        fetchChainStatus(selectedChainId); // обновим статус
+        fetchChainStatus(selectedChainId);
       } catch (e) {
         console.error('Ошибка загрузки частей цепочки', e);
       }
@@ -65,10 +66,10 @@ const Anecdoteator = () => {
       console.error('Ошибка добавления продолжения', e);
     }
   };
+
   const deleteChain = async () => {
     if (!selectedChainId) return;
     if (!window.confirm('Вы точно хотите удалить эту цепочку? Это действие нельзя отменить.')) return;
-
     try {
       await axios.delete(`/api/chain/${selectedChainId}`);
       setSelectedChainId(null);
@@ -85,7 +86,7 @@ const Anecdoteator = () => {
     try {
       const res = await axios.post('/api/chain/start', {
         Text: startText.trim(),
-        AuthorId: loginData?.IdUser, // ← передаём ID пользователя
+        AuthorId: loginData?.IdUser,
       });
       const newId = res.data.ChainId;
       setStartText('');
@@ -96,107 +97,116 @@ const Anecdoteator = () => {
     }
   };
 
-
   const closeChain = async () => {
     try {
       await axios.post(`/api/chain/${selectedChainId}/close`);
-      await fetchChainStatus(selectedChainId); // обновим флаг
+      await fetchChainStatus(selectedChainId);
     } catch (e) {
       console.error('Ошибка закрытия цепочки', e);
     }
   };
-const openChain = async () => {
-  try {
-    await axios.post(`/api/chain/${selectedChainId}/open`);
-    await fetchChainStatus(selectedChainId); // обновим флаг
-  } catch (e) {
-    console.error('Ошибка открытия цепочки', e);
-  }
-};
+
+  const openChain = async () => {
+    try {
+      await axios.post(`/api/chain/${selectedChainId}/open`);
+      await fetchChainStatus(selectedChainId);
+    } catch (e) {
+      console.error('Ошибка открытия цепочки', e);
+    }
+  };
 
   return (
-    <div>
+    <div className="anecdoteator-container">
       <Header />
-      <h2>Выберите цепочку</h2>
-      <select
-        value={selectedChainId || ''}
-        onChange={e => setSelectedChainId(Number(e.target.value) || null)}
-      >
-        <option value="">-- Выберите цепочку --</option>
-        {chainList.map(chain => (
-          <option key={chain.ChainId} value={chain.ChainId}>
-            #{chain.ChainId}: {chain.StartText}
-          </option>
-        ))}
-      </select>
+      <div className="anecdoteator-form">
+        <h2 className="anecdoteator-title">Управление анекдотами</h2>
 
-      <h3>Начать новую цепочку</h3>
-      <textarea
-        value={startText}
-        onChange={e => setStartText(e.target.value)}
-        placeholder="Введите начало анекдота"
-        style={{ width: '100%' }}
-      />
-      <button onClick={createNewChain}>Создать</button>
-
-      {selectedChainId && (
-        <>
-          <h3>Части анекдота</h3>
-          <div style={{ background: '#eee', padding: 10 }}>
-            {parts.map(p => (
-              <p key={p.IdPart}>{p.Text}</p>
+        <div className="anecdoteator-section">
+          <label className="anecdoteator-label">Выберите цепочку:</label>
+          <select
+            className="anecdoteator-select"
+            value={selectedChainId || ''}
+            onChange={e => setSelectedChainId(Number(e.target.value) || null)}
+          >
+            <option value="">-- Выберите цепочку --</option>
+            {chainList.map(chain => (
+              <option key={chain.ChainId} value={chain.ChainId}>
+                #{chain.ChainId}: {chain.StartText}
+              </option>
             ))}
+          </select>
+        </div>
+
+        <div className="anecdoteator-section">
+          <label className="anecdoteator-label">Начать новую цепочку:</label>
+          <textarea
+            value={startText}
+            onChange={e => setStartText(e.target.value)}
+            placeholder="Введите начало анекдота"
+            className="anecdoteator-textarea"
+          />
+          <button className="anecdoteator-button" onClick={createNewChain}>Создать</button>
+        </div>
+
+        {selectedChainId && (
+          <div className="anecdoteator-section">
+            <h3 className="anecdoteator-title">Части анекдота</h3>
+            {parts.map(p => (
+              <div key={p.IdPart} className="anecdoteator-part">{p.Text}</div>
+            ))}
+
+            {isClosed ? (
+              <>
+                <p className="anecdoteator-closed-note">❌ Цепочка закрыта для продолжения</p>
+                {loginData?.IdRights === 2 && (
+                  <div className="anecdoteator-button-group">
+                    <button
+                      className="anecdoteator-button anecdoteator-danger-button"
+                      onClick={deleteChain}
+                    >
+                      🗑 Удалить цепочку
+                    </button>
+                    <button
+                      className="anecdoteator-button anecdoteator-green-button"
+                      onClick={openChain}
+                    >
+                      🔓 Открыть цепочку
+                    </button>
+                  </div>
+                )}
+              </>
+            ) : (
+              <>
+                <label className="anecdoteator-label">Продолжить анекдот:</label>
+                <textarea
+                  value={continueText}
+                  onChange={e => setContinueText(e.target.value)}
+                  placeholder="Продолжите анекдот..."
+                  className="anecdoteator-textarea"
+                />
+                <button className="anecdoteator-button" onClick={addContinue}>Добавить продолжение</button>
+
+                {loginData?.IdRights === 2 && (
+                  <div className="anecdoteator-button-group">
+                    <button
+                      className="anecdoteator-button anecdoteator-danger-button"
+                      onClick={deleteChain}
+                    >
+                      🗑 Удалить цепочку
+                    </button>
+                    <button
+                      className="anecdoteator-button anecdoteator-danger-button"
+                      onClick={closeChain}
+                    >
+                      ❌ Закрыть анекдот
+                    </button>
+                  </div>
+                )}
+              </>
+            )}
           </div>
-
-          {isClosed ? (
-  <div>
-    {loginData?.IdRights == 2 && (
-      <div style={{ marginTop: 20 }}>
-        <button
-          onClick={deleteChain}
-          style={{ background: 'darkred', color: 'white', marginLeft: 10 }}
-        >
-          🗑 Удалить цепочку
-        </button>
-        <button
-          onClick={openChain}
-          style={{ background: 'green', color: 'white', marginLeft: 10 }}
-        >
-          🔓 Открыть цепочку
-        </button>
+        )}
       </div>
-    )}
-
-              <p style={{ color: 'red' }}>❌ Цепочка закрыта для продолжения</p>
-            </div>
-            
-          ) : (
-            <>
-              <textarea
-                placeholder="Продолжить анекдот..."
-                value={continueText}
-                onChange={e => setContinueText(e.target.value)}
-                style={{ width: '100%', marginTop: 10 }}
-              />
-              <button onClick={addContinue}>Добавить продолжение</button>
-            </>
-          )}
-
-          {loginData?.IdRights == 2 && !isClosed && (
-            <div style={{ marginTop: 20 }}>
-              <button
-                onClick={deleteChain}
-                style={{ background: 'darkred', color: 'white', marginLeft: 10 }}
-              >
-                🗑 Удалить цепочку
-              </button>
-              <button onClick={closeChain} style={{ background: 'darkred', color: 'white' }}>
-                ❌ Закрыть анекдот
-              </button>
-            </div>
-          )}
-        </>
-      )}
     </div>
   );
 };

@@ -27,32 +27,37 @@ export const DropdownLogin = () => {
     };
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        setError("");
+    e.preventDefault();
+    setError("");
 
-        try {
-            const response = await fetch("/api/users/users", {
-                method: "GET",
-                headers: { "Content-Type": "application/json" },
-            });
+    try {
+        const response = await fetch("/api/GetUserDetailsByNameAndPassword", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(credentials),
+        });
 
-            const result = await response.json();
-            const user = result.find(
-                (user) => user.Name === credentials.login && user.Password === credentials.password
-            );
-
-            if (user) {
-                login(credentials.login, credentials.password, user.IdRights);
-                navigate("/");
-                setIsOpen(false);
-            } else {
+        if (!response.ok) {
+            if (response.status === 401) {
                 setError("Неверный логин или пароль");
+            } else {
+                setError("Ошибка сервера");
             }
-        } catch (err) {
-            console.error("Ошибка авторизации:", err);
-            setError("Ошибка связи с сервером");
+            return;
         }
-    };
+
+        const user = await response.json();
+        login(credentials.login, credentials.password, user.IdRights);
+        navigate("/");
+        setIsOpen(false);
+    } catch (err) {
+        console.error("Ошибка авторизации:", err);
+        setError("Ошибка связи с сервером");
+    }
+};
+
 
     const handleLogout = () => {
         logout();

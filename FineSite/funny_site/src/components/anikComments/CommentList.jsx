@@ -8,8 +8,6 @@ export const CommentList = ({ comments: initialComments }) => {
     setComments(initialComments);
   }, [initialComments]);
 
-
-
   const handleDelete = (deletedId) => {
     setComments(prevComments =>
       prevComments.filter(comment => comment.IdCommentsontheAnecdote !== deletedId)

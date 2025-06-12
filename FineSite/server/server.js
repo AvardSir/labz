@@ -4,6 +4,10 @@ const path = require('path');
 const fs = require('fs');
 const multer = require('multer');
 const bodyParser = require('body-parser');
+const bcrypt = require('bcrypt');
+
+
+const saltRounds = 10;
 
 const app = express();
 app.use(bodyParser.json());
@@ -153,26 +157,6 @@ app.post("/api/add-comment-anecdote", async (req, res) => {
   }
 });
 
-app.put('/api/update-user', async (req, res) => {
-  const { IdUser, Name, Password, Email, Bio } = req.body;
-
-  try {
-    const pool = await poolPromise;
-
-    const result = await pool.request()
-      .input('IdUser', sql.Int, IdUser)
-      .input('Name', sql.NVarChar(255), Name)
-      .input('Password', sql.NVarChar(255), Password)
-      .input('Email', sql.NVarChar(255), Email)
-      .input('Bio', sql.NVarChar(sql.MAX), Bio)
-      .execute('UpdateUserInfo'); // Вызываем хранимую процедуру
-
-    res.status(200).json({ message: 'Данные успешно обновлены!' });
-  } catch (error) {
-    console.error('Ошибка при обновлении данных:', error);
-    res.status(500).json({ message: 'Ошибка сервера', error: error.message });
-  }
-});
 
 
 
@@ -309,11 +293,13 @@ app.post('/api/add-user', async (req, res) => {
   const { Name, Password, Email, Bio, IdRights } = req.body;
 
   try {
+    const hashedPassword = await bcrypt.hash(Password, saltRounds); // Хешируем
+
     const pool = await poolPromise;
 
     const result = await pool.request()
       .input('Name', sql.NVarChar(255), Name)
-      .input('Password', sql.NVarChar(255), Password)
+      .input('Password', sql.NVarChar(255), hashedPassword) // Сохраняем хеш
       .input('Email', sql.NVarChar(255), Email)
       .input('Bio', sql.NVarChar(sql.MAX), Bio)
       .input('IdRights', sql.Int, IdRights)
@@ -327,6 +313,7 @@ app.post('/api/add-user', async (req, res) => {
     res.status(500).json({ message: 'Ошибка сервера', error: error.message });
   }
 });
+
 
 app.get('/api/users/users', async (req, res) => {
   try {
@@ -372,15 +359,17 @@ app.put('/api/update-user', async (req, res) => {
   const { IdUser, Name, Password, Email, Bio } = req.body;
 
   try {
+    const hashedPassword = await bcrypt.hash(Password, saltRounds);
+
     const pool = await poolPromise;
 
-    const result = await pool.request()
+    await pool.request()
       .input('IdUser', sql.Int, IdUser)
       .input('Name', sql.NVarChar(255), Name)
-      .input('Password', sql.NVarChar(255), Password)
+      .input('Password', sql.NVarChar(255), hashedPassword)
       .input('Email', sql.NVarChar(255), Email)
       .input('Bio', sql.NVarChar(sql.MAX), Bio)
-      .execute('UpdateUserInfo'); // Вызываем хранимую процедуру
+      .execute('UpdateUserInfo');
 
     res.status(200).json({ message: 'Данные успешно обновлены!' });
   } catch (error) {
@@ -388,6 +377,8 @@ app.put('/api/update-user', async (req, res) => {
     res.status(500).json({ message: 'Ошибка сервера', error: error.message });
   }
 });
+
+
 
 
 
@@ -429,24 +420,35 @@ app.get("/api/check-name", async (req, res) => {
 // Запрос для логина (POST /api/login)
 app.post('/api/GetUserDetailsByNameAndPassword', async (req, res) => {
   const { login, password } = req.body;
+  console.log('Получен запрос:', req.body);
 
   try {
     const pool = await poolPromise;
     const result = await pool.request()
       .input('Name', sql.NVarChar, login)
-      .input('Password', sql.NVarChar, password)
-      .execute('[dbo].[GetUserDetailsByNameAndPassword]');
+      .query('SELECT TOP 1 * FROM Пользователь WHERE Name = @Name');
 
-    if (result.recordset.length > 0) {
-      res.json(result.recordset[0]);
-    } else {
-      res.status(401).send('Неверные логин или пароль');
+    if (result.recordset.length === 0) {
+      return res.status(401).send(' логин или пароль');
     }
+
+    const user = result.recordset[0];
+
+    const passwordMatch = await bcrypt.compare(password, user.Password);
+    
+    // console.log('ff')
+    if (!passwordMatch) {
+      return res.status(401).send('Неверный пароль или логин');
+    }
+
+    res.json(user); // Успешный вход
   } catch (err) {
     console.error('Ошибка авторизации:', err);
     res.status(500).send('Ошибка сервера');
   }
 });
+
+
 
 // Запрос для получения данных пользователя (GET /api/users/:id)
 app.get('/api/users/:id', async (req, res) => {
