@@ -2,118 +2,14 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../components/context/AuthContext';
 
-// Стили вынесены в отдельный объект
-const styles = {
-  container: {
-    maxWidth: '800px',
-    margin: '0 auto',
-    padding: '2rem',
-    minHeight: '100vh',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
-  form: {
-    width: '100%',
-    maxWidth: '500px',
-    backgroundColor: '#ffffff',
-    padding: '2rem',
-    borderRadius: '12px',
-    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-  },
-  formGroup: {
-    marginBottom: '1.5rem',
-  },
-  label: {
-    display: 'block',
-    marginBottom: '0.5rem',
-    fontWeight: '500',
-    color: '#2d3748',
-    fontSize: '0.95rem',
-  },
-  input: {
-    width: '100%',
-    padding: '0.75rem',
-    border: '1px solid #e2e8f0',
-    borderRadius: '8px',
-    fontSize: '1rem',
-    transition: 'all 0.2s ease',
-  },
-  textarea: {
-    width: '100%',
-    padding: '0.75rem',
-    border: '1px solid #e2e8f0',
-    borderRadius: '8px',
-    fontSize: '1rem',
-    resize: 'vertical',
-    minHeight: '100px',
-    transition: 'all 0.2s ease',
-  },
-  passwordContainer: {
-    position: 'relative',
-    display: 'flex',
-    alignItems: 'center',
-  },
-  toggleButton: {
-    position: 'absolute',
-    right: '0.5rem',
-    background: 'none',
-    border: 'none',
-    cursor: 'pointer',
-    color: '#4a5568',
-    fontSize: '0.85rem',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.25rem',
-  },
-  buttonGroup: {
-    display: 'flex',
-    gap: '1rem',
-    marginTop: '1.5rem',
-  },
-  primaryButton: {
-    padding: '0.75rem 1.5rem',
-    backgroundColor: '#4299e1',
-    color: 'white',
-    border: 'none',
-    borderRadius: '8px',
-    cursor: 'pointer',
-    fontSize: '1rem',
-    fontWeight: '500',
-    transition: 'all 0.2s ease',
-    flex: 1,
-  },
-  secondaryButton: {
-    padding: '0.75rem 1.5rem',
-    backgroundColor: '#e2e8f0',
-    color: '#4a5568',
-    border: 'none',
-    borderRadius: '8px',
-    cursor: 'pointer',
-    fontSize: '1rem',
-    fontWeight: '500',
-    transition: 'all 0.2s ease',
-    flex: 1,
-  },
-  errorMessage: {
-    color: '#e53e3e',
-    marginTop: '1rem',
-    textAlign: 'center',
-  },
-  title: {
-    color: 'white',
-    marginBottom: '2rem',
-  }
-};
-
 export const PersonalCabinet = () => {
-  const { isLoggedIn, loginData } = useContext(AuthContext); 
+  const { isLoggedIn, loginData } = useContext(AuthContext);
   const navigate = useNavigate();
-  const {  login, logout } = useContext(AuthContext); // Получаем данные и функции из AuthContext
+  const { logout } = useContext(AuthContext);
   const [userData, setUserData] = useState({
     IdUser: null,
     Name: "",
-    Password: "",
+    Password: "", // пароль пустой по умолчанию
     Email: "",
     Bio: "",
     initialName: "",
@@ -142,7 +38,7 @@ export const PersonalCabinet = () => {
             setUserData({
               IdUser: data.IdUser,
               Name: data.Name,
-              Password: data.Password,
+              Password: "", // НЕ записываем пароль из ответа, чтобы поле было пустым
               Email: data.Email,
               Bio: data.Bio,
               initialName: data.Name,
@@ -169,33 +65,41 @@ export const PersonalCabinet = () => {
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
   };
+
   const handleLogout = () => {
-    logout(); // Выход через AuthContext
-    navigate("/"); // Переход на главную
+    logout();
+    navigate("/");
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Формируем тело запроса, не включая пароль, если он пустой
+    const bodyToSend = {
+      IdUser: userData.IdUser,
+      Name: userData.Name,
+      Email: userData.Email,
+      Bio: userData.Bio,
+    };
+
+    if (userData.Password.trim() !== "") {
+      // если пароль введён — добавляем в тело запроса
+      bodyToSend.Password = userData.Password;
+    }
+
     try {
       const response = await fetch('/api/update-user', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          IdUser: userData.IdUser,
-          Name: userData.Name,
-          Password: userData.Password,
-          Email: userData.Email,
-          Bio: userData.Bio,
-        }),
+        body: JSON.stringify(bodyToSend),
       });
 
       if (response.ok) {
         const data = await response.json();
         alert(data.message);
-        handleLogout()
-        
-      console.log('lol')
+        handleLogout();
       } else {
         setError("Ошибка при сохранении данных");
       }
@@ -203,7 +107,6 @@ export const PersonalCabinet = () => {
       setError("Ошибка связи с сервером");
       console.error("Ошибка запроса:", err);
     }
-    
   };
 
   if (!userData.IdUser) {
@@ -211,11 +114,11 @@ export const PersonalCabinet = () => {
   }
 
   return (
-    <div style={styles.container}>
-      <h2 style={styles.title}>Личный кабинет</h2>
-      <form onSubmit={handleSubmit} style={styles.form}>
-        <div style={styles.formGroup}>
-          <label style={styles.label}>
+    <div className="personal-cabinet-container">
+      <h2 className="personal-cabinet-title">Личный кабинет</h2>
+      <form onSubmit={handleSubmit} className="personal-cabinet-form">
+        <div className="personal-cabinet-form-group">
+          <label className="personal-cabinet-label">
             Имя
             <input
               type="text"
@@ -223,36 +126,41 @@ export const PersonalCabinet = () => {
               value={userData.Name}
               required
               onChange={handleInputChange}
-              style={styles.input}
+              className="personal-cabinet-input"
             />
           </label>
         </div>
 
-        <div style={styles.formGroup}>
-          <label style={styles.label}>
-            Пароль
-            <div style={styles.passwordContainer}>
+        <div className="personal-cabinet-form-group">
+          <label className="personal-cabinet-label">
+            Задайте новый пароль
+            <div className="personal-cabinet-password-container">
               <input
                 type={passwordVisible ? "text" : "password"}
                 name="Password"
                 value={userData.Password}
                 onChange={handleInputChange}
-                required
-                style={styles.input}
+                className="personal-cabinet-input"
+                placeholder="Введите новый пароль"
+                
               />
               <button
                 type="button"
                 onClick={togglePasswordVisibility}
-                style={styles.toggleButton}
+                className="personal-cabinet-toggle-button"
+                aria-label={passwordVisible ? "Скрыть пароль" : "Показать пароль"}
               >
                 {passwordVisible ? "🙈 Скрыть" : "👁️ Показать"}
               </button>
             </div>
+            <small className="personal-cabinet-hint">
+              Оставьте пустым, если не хотите менять пароль
+            </small>
           </label>
         </div>
 
-        <div style={styles.formGroup}>
-          <label style={styles.label}>
+        <div className="personal-cabinet-form-group">
+          <label className="personal-cabinet-label">
             Email
             <input
               type="email"
@@ -260,34 +168,33 @@ export const PersonalCabinet = () => {
               value={userData.Email}
               onChange={handleInputChange}
               required
-              style={styles.input}
+              className="personal-cabinet-input"
             />
           </label>
         </div>
 
-        <div style={styles.formGroup}>
-          <label style={styles.label}>
+        <div className="personal-cabinet-form-group">
+          <label className="personal-cabinet-label">
             Биография
             <textarea
               name="Bio"
               value={userData.Bio}
               onChange={handleInputChange}
-              style={styles.textarea}
+              className="personal-cabinet-textarea"
             />
           </label>
         </div>
 
-        <div style={styles.buttonGroup}>
-          <button 
-            type="submit" 
-            style={styles.primaryButton}
-            
+        <div className="personal-cabinet-button-group">
+          <button
+            type="submit"
+            className="personal-cabinet-primary-button"
           >
             Сохранить изменения
           </button>
-          <button 
-            type="button" 
-            style={styles.primaryButton}
+          <button
+            type="button"
+            className="personal-cabinet-primary-button"
             onClick={() => navigate('/')}
           >
             Назад
@@ -295,7 +202,7 @@ export const PersonalCabinet = () => {
         </div>
       </form>
 
-      {error && <p style={styles.errorMessage}>{error}</p>}
+      {error && <p className="personal-cabinet-error-message">{error}</p>}
     </div>
   );
 };

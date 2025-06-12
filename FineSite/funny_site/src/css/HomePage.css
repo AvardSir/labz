@@ -1270,3 +1270,126 @@ button {
   border-radius: 8px;
   border: 1px solid #e2e8f0;
 }
+
+
+
+
+
+
+
+
+
+/* PersonalCabinet.css */
+.personal-cabinet-container {
+  /* max-width: 800px; */
+  /* margin: 0 auto; */
+  /* padding: 2rem; */
+  /* min-height: 100vh; */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-shadow: none;
+}
+
+.personal-cabinet-form {
+  width: 100%;
+  max-width: 500px;
+  background-color: #ffffff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.personal-cabinet-form-group {
+  margin-bottom: 1.5rem;
+}
+
+.personal-cabinet-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #2d3748;
+  font-size: 0.95rem;
+}
+
+.personal-cabinet-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.personal-cabinet-textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 1rem;
+  resize: vertical;
+  min-height: 100px;
+  transition: all 0.2s ease;
+}
+
+.personal-cabinet-password-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.personal-cabinet-toggle-button {
+  position: absolute;
+  right: 0.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #4a5568;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.personal-cabinet-button-group {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.personal-cabinet-primary-button {
+  padding: 0.75rem 1.5rem;
+  background-color: #4299e1;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  flex: 1;
+}
+
+.personal-cabinet-secondary-button {
+  padding: 0.75rem 1.5rem;
+  background-color: #e2e8f0;
+  color: #4a5568;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  flex: 1;
+}
+
+.personal-cabinet-error-message {
+  color: #e53e3e;
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.personal-cabinet-title {
+  color: white;
+  
+}

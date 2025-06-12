@@ -82,12 +82,12 @@ app.post('/api/upload-audio', upload.single('audio'), (req, res) => {
 app.post('/api/upload-audio', upload.single('audio'), (req, res) => {
   console.log('Uploaded file:', req.file);
   console.log('Request body:', req.body);
-  
+
   if (!req.file) {
     return res.status(400).json({ error: 'Файл не был загружен' });
   }
-  
-  res.status(200).json({ 
+
+  res.status(200).json({
     message: 'Файл успешно загружен',
     filename: req.file.filename
   });
@@ -357,15 +357,22 @@ app.get('/api/comments-anecdote', async (req, res) => {
 
 app.put('/api/update-user', async (req, res) => {
   const { IdUser, Name, Password, Email, Bio } = req.body;
-
+  console.log('Name::: ', Name);
+  console.log('Password::: ', Password);
   try {
-    const hashedPassword = await bcrypt.hash(Password, saltRounds);
+    // const hashedPassword = await bcrypt.hash(Password, saltRounds);
+    let hashedPassword = null;
+    if (Password && Password.trim() !== "") {
+      hashedPassword = await bcrypt.hash(Password, saltRounds);
+    }
+
 
     const pool = await poolPromise;
 
     await pool.request()
       .input('IdUser', sql.Int, IdUser)
       .input('Name', sql.NVarChar(255), Name)
+
       .input('Password', sql.NVarChar(255), hashedPassword)
       .input('Email', sql.NVarChar(255), Email)
       .input('Bio', sql.NVarChar(sql.MAX), Bio)
@@ -420,7 +427,7 @@ app.get("/api/check-name", async (req, res) => {
 // Запрос для логина (POST /api/login)
 app.post('/api/GetUserDetailsByNameAndPassword', async (req, res) => {
   const { login, password } = req.body;
-  console.log('Получен запрос:', req.body);
+
 
   try {
     const pool = await poolPromise;
@@ -435,7 +442,7 @@ app.post('/api/GetUserDetailsByNameAndPassword', async (req, res) => {
     const user = result.recordset[0];
 
     const passwordMatch = await bcrypt.compare(password, user.Password);
-    
+
     // console.log('ff')
     if (!passwordMatch) {
       return res.status(401).send('Неверный пароль или логин');
@@ -1290,11 +1297,11 @@ app.get('/api/guess-random', async (req, res) => {
     ].sort(() => Math.random() - 0.5);
 
     res.json({
-  id: row.Id, // 👈 добавь это
-  beginning: row.Beginning,
-  options,
-  correct: row.RealEnding,
-});
+      id: row.Id, // 👈 добавь это
+      beginning: row.Beginning,
+      options,
+      correct: row.RealEnding,
+    });
 
   } catch (err) {
     console.error('Ошибка в /api/guess-random:', err);
