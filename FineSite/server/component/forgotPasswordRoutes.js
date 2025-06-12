@@ -7,7 +7,11 @@ const router = express.Router()
 router.post("/ForgotPassword", async (req, res) => {
   try {
     const { email } = req.body
-    const result = await sendForgotPasswordEmail(req.poolPromise, email)
+
+    // Получаем пул из Promise
+    const pool = await req.app.locals.pool
+
+    const result = await sendForgotPasswordEmail(pool, email)
     res.status(200).json(result)
   } catch (error) {
     console.error("Ошибка восстановления пароля:", error)
@@ -24,7 +28,11 @@ router.post("/ForgotPassword", async (req, res) => {
 router.post("/ResetPassword", async (req, res) => {
   try {
     const { token, password } = req.body
-    const result = await resetPassword(req.poolPromise, token, password)
+
+    // Получаем пул из Promise
+    const pool = await req.app.locals.pool
+
+    const result = await resetPassword(pool, token, password)
     res.status(200).json(result)
   } catch (error) {
     console.error("Ошибка сброса пароля:", error)
@@ -41,7 +49,11 @@ router.post("/ResetPassword", async (req, res) => {
 router.get("/ValidateResetToken", async (req, res) => {
   try {
     const { token } = req.query
-    const result = await validateResetToken(req.poolPromise, token)
+
+    // Получаем пул из Promise
+    const pool = await req.app.locals.pool
+
+    const result = await validateResetToken(pool, token)
     res.status(200).json(result)
   } catch (error) {
     console.error("Ошибка проверки токена:", error)

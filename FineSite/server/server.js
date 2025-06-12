@@ -38,6 +38,7 @@ const poolPromise = new sql.ConnectionPool(dbConfig)
   .connect()
   .then(pool => {
     console.log('Подключено к базе данных!');
+    app.locals.pool = pool
     return pool;
   })
   .catch(err => {

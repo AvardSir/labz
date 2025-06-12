@@ -13,8 +13,8 @@ const transporter = nodemailer.createTransport({
   port: 465,
   secure: true, // true для 465 порта, false для других портов
   auth: {
-    user: "your-username@bk.ru", // ваш email на bk.ru
-    pass: "your-password", // ваш пароль от почты
+    user: "funnysite@bk.ru", // ваш email на bk.ru
+    pass: "QVywDI3M6hnHnb8eUdNt", // ваш пароль от почты
   },
 })
 

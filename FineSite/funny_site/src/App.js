@@ -26,12 +26,13 @@ import Anecdoteator from "./components/Anecdoteator";
 import AnecdoteGuessGame from "./components/AnecdoteGuessGame";
 // import FavoriteAnecdotesList from "./components/FavoriteAnecdotesList";
 import { FavoriteAnecdotesList } from "./components/FavoriteAnecdotesList";
+import { ResetPasswordPage } from "./components/ResetPasswordPage";
 function App() {
   return (
     <AuthProvider>
       <Router>
         <Routes>
-
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/anecdoteator" element={<Anecdoteator />} />
           <Route path="/" element={<AnecdotesPage />} />
           <Route path="/anecdotes" element={<AnecdotesPage />} />
