@@ -44,7 +44,7 @@ export const FavoriteAnecdotesList = () => {
 
     if (loading) return <p>Загрузка избранных анекдотов...</p>;
     if (error) return <p style={{ color: "red" }}>{error}</p>;
-    if (favorites.length === 0) return <p>У вас пока нет избранных анекдотов.</p>;
+    if (favorites.length === 0) return <p><Header />У вас пока нет избранных анекдотов.</p>;
 
     const handleCopy = (text) => {
         navigator.clipboard.writeText(text)
@@ -54,7 +54,7 @@ export const FavoriteAnecdotesList = () => {
 
     return (
         <div className="favorite-anecdotes" style={{ maxWidth: 600, margin: "auto" }}>
-            <Header />
+            
             <h3>Личный архив избранных анекдотов</h3>
             <ul style={{ listStyle: "none", padding: 0 }}>
                 {favorites.map((anecdote) => (

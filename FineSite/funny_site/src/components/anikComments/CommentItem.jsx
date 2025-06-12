@@ -40,7 +40,8 @@ export const CommentItem = ({ comment, onDelete }) => {
         </time>
       </div>
       
-      {loginData.IdRights == 2 && (
+      {(loginData.IdRights == 2 || comment.IdUser==loginData.IdUser) && (
+        
       <button onClick={handleDelete} style={{ marginTop: "5px" }}>
         Удалить
       </button>)}

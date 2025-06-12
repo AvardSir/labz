@@ -82,6 +82,8 @@ export const AnecdoteCommentsComponent = () => {
         }
       })
       .catch((err) => console.error("Ошибка добавления комментария:", err));
+
+      window.location.reload()
   };
 
   return (
@@ -89,10 +91,10 @@ export const AnecdoteCommentsComponent = () => {
       <AnecdoteCard anecdote={anecdote} setAnecdote={setAnecdote} />
       <button onClick={() => navigate('/')} className="back-button">Назад</button>
       <h4>Комментарии:</h4>
-      
-      
+
+
       <CommentList comments={comments} IdCommentsontheAnecdote={comments.IdCommentsontheAnecdote} />
-      
+
 
       <CommentForm
         newComment={newComment}
