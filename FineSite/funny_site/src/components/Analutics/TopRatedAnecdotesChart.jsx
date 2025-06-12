@@ -167,7 +167,7 @@ export const TopRatedAnecdotesChart = () => {
                         <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                         <XAxis
                             dataKey="text"
-                            tick={{ fill: '#666', fontSize: 12 }}
+                            tick={{ fill: '#fff', fontSize: 12 }}
                             angle={0} // убрать наклон (или вообще не указывать)
                             textAnchor="middle" // центрировать текст
                             interval={0} // показывать все метки

@@ -147,7 +147,7 @@ export const TopUsersAvgRatingChart = () => {
                             <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                             <XAxis
                                 dataKey="name"
-                                tick={{ fill: '#666', fontSize: 12 }}
+                                tick={{ fill: '#fff', fontSize: 12 }}
                                 angle={-45}
                                 textAnchor="end"
                                 interval={0}

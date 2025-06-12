@@ -28,7 +28,7 @@ export const AnecdoteRatingDistributionChart = () => {
                 // Группировка оценок по округленным значениям
                 const ratingCounts = {};
                 anecdotes.forEach(anecdote => {
-                    console.log(anecdote)
+                    // console.log(anecdote)
                     const roundedRating = Math.round(anecdote.Rate); // округляем до ближайшего целого
                     ratingCounts[roundedRating] = (ratingCounts[roundedRating] || 0) + 1;
                 });
@@ -97,7 +97,7 @@ export const AnecdoteRatingDistributionChart = () => {
                         <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                         <XAxis
                             dataKey="rating"
-                            tick={{ fill: '#666', fontSize: 12 }}
+                            tick={{ fill: '#fff', fontSize: 12 }}
                             label={{ value: 'Оценка', position: 'insideBottom', offset: -5 }}
                         />
                         <YAxis
