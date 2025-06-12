@@ -6,8 +6,9 @@ const multer = require('multer');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
 
-
 const saltRounds = 10;
+
+const forgotPasswordRoutes = require("./component/forgotPasswordRoutes")
 
 const app = express();
 app.use(bodyParser.json());
@@ -62,6 +63,9 @@ const upload = multer({
   storage: storage,
   limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
 });
+
+app.use("/api", forgotPasswordRoutes)
+
 
 // 📌 ЕДИНЫЙ ЭНДПОИНТ загрузки аудио
 app.post('/api/upload-audio', upload.single('audio'), (req, res) => {
