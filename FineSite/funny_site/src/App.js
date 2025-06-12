@@ -1,6 +1,8 @@
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom"
 import { AuthProvider } from "./components/context/AuthContext"
 import AddAnecdotePage from "./pages/AddAnecdotePage"
+
+import SuggestAnecdotePage from "./pages/SuggestAnecdotePage"
 import { AddEventPage } from "./pages/AddEventPage"
 import AnecdoteCommentsPage from "./pages/AnecdoteCommentsPage"
 import AnecdotesPage from "./pages/AnecdotesPage"
@@ -35,6 +37,7 @@ function App() {
               <Route path="/anecdote-comments/:anecdoteId" element={<AnecdoteCommentsPage />} />
               <Route path="/event-comments/:eventId" element={<EventCommentsPage />} />
               <Route path="/add-anecdote" element={<AddAnecdotePage />} />
+              <Route path="/suggest-anecdote" element={<SuggestAnecdotePage />} /> {/* Новый маршрут */}
               <Route path="/edit-anecdote/:id" element={<EditAnecdotePage />} />
               <Route path="/add-event" element={<AddEventPage />} />
               <Route path="/edit-event/:id" element={<EditEventPage />} />

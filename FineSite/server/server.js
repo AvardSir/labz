@@ -1566,6 +1566,190 @@ app.delete('/api/event-comment-delete/:id', async (req, res) => {
 
 
 
+app.post("/api/suggest-anecdote", async (req, res) => {
+  try {
+    const { Text, IdTypeAnecdote, IdUser, Comment, Status = "pending" } = req.body
+
+    // Валидация данных
+    if (!Text || !IdTypeAnecdote || !IdUser) {
+      return res.status(400).json({
+        error: "Обязательные поля: Text, IdTypeAnecdote, IdUser",
+      })
+    }
+
+    const pool = await req.app.locals.pool // Используем существующий пул подключений
+
+    // Вставляем предложенный анекдот в таблицу SuggestedAnecdotes
+    const result = await pool
+      .request()
+      .input("Text", sql.NVarChar, Text)
+      .input("IdTypeAnecdote", sql.Int, IdTypeAnecdote)
+      .input("IdUser", sql.Int, IdUser)
+      .input("Comment", sql.NVarChar, Comment || null)
+      .input("Status", sql.NVarChar, Status)
+      .query(`
+        INSERT INTO [dbo].[SuggestedAnecdotes] 
+        ([Text], [IdTypeAnecdote], [IdUser], [Comment], [Status], [DateSuggested])
+        VALUES (@Text, @IdTypeAnecdote, @IdUser, @Comment, @Status, GETDATE());
+        
+        SELECT SCOPE_IDENTITY() as IdSuggestedAnecdote;
+      `)
+
+    const suggestedAnecdoteId = result.recordset[0].IdSuggestedAnecdote
+
+    console.log(`Предложен новый анекдот ID: ${suggestedAnecdoteId} от пользователя ID: ${IdUser}`)
+
+    res.status(201).json({
+      message: "Анекдот успешно предложен!",
+      IdSuggestedAnecdote: suggestedAnecdoteId,
+    })
+  } catch (error) {
+    console.error("Ошибка при предложении анекдота:", error)
+    res.status(500).json({
+      error: "Ошибка сервера при предложении анекдота",
+    })
+  }
+})
+
+// API endpoint для получения предложенных анекдотов (для админов)
+app.get("/api/suggested-anecdotes", async (req, res) => {
+  try {
+    const { status = "pending" } = req.query
+    const pool = await req.app.locals.pool
+
+    const result = await pool
+      .request()
+      .input("status", sql.NVarChar, status)
+      .query(`
+        SELECT 
+          sa.[IdSuggestedAnecdote],
+          sa.[Text],
+          sa.[Comment],
+          sa.[Status],
+          sa.[DateSuggested],
+          sa.[DateReviewed],
+          sa.[ReviewComment],
+          u.[Name] as UserName,
+          tat.[Name] as AnecdoteType
+        FROM [dbo].[SuggestedAnecdotes] sa
+        JOIN [dbo].[Пользователь] u ON sa.[IdUser] = u.[IdUser]
+        JOIN [dbo].[ТипАнекдота] tat ON sa.[IdTypeAnecdote] = tat.[IdTypeAnecdote]
+        WHERE sa.[Status] = @status
+        ORDER BY sa.[DateSuggested] DESC
+      `)
+
+    res.json(result.recordset)
+  } catch (error) {
+    console.error("Ошибка при получении предложенных анекдотов:", error)
+    res.status(500).json({
+      error: "Ошибка сервера при получении предложенных анекдотов",
+    })
+  }
+})
+
+// API endpoint для одобрения/отклонения предложенного анекдота (для админов)
+app.post("/api/review-suggested-anecdote", async (req, res) => {
+  try {
+    const { IdSuggestedAnecdote, action, reviewComment, reviewerId } = req.body
+
+    if (!IdSuggestedAnecdote || !action || !reviewerId) {
+      return res.status(400).json({
+        error: "Обязательные поля: IdSuggestedAnecdote, action, reviewerId",
+      })
+    }
+
+    if (!["approve", "reject"].includes(action)) {
+      return res.status(400).json({
+        error: "action должен быть 'approve' или 'reject'",
+      })
+    }
+
+    const pool = await req.app.locals.pool
+
+    if (action === "approve") {
+      // Получаем данные предложенного анекдота
+      const suggestedResult = await pool
+        .request()
+        .input("IdSuggestedAnecdote", sql.Int, IdSuggestedAnecdote)
+        .query(`
+          SELECT [Text], [IdTypeAnecdote], [IdUser]
+          FROM [dbo].[SuggestedAnecdotes]
+          WHERE [IdSuggestedAnecdote] = @IdSuggestedAnecdote AND [Status] = 'pending'
+        `)
+
+      if (suggestedResult.recordset.length === 0) {
+        return res.status(404).json({
+          error: "Предложенный анекдот не найден или уже обработан",
+        })
+      }
+
+      const { Text, IdTypeAnecdote, IdUser } = suggestedResult.recordset[0]
+
+      // Добавляем анекдот в основную таблицу
+      const addResult = await pool
+        .request()
+        .input("Text", sql.NVarChar, Text)
+        .input("Rate", sql.Int, 1) // Начальный рейтинг
+        .input("IdTypeAnecdote", sql.Int, IdTypeAnecdote)
+        .input("IdUser", sql.Int, IdUser)
+        .query(`
+          INSERT INTO [dbo].[Анекдот] ([Text], [Rate], [Date], [IdTypeAnecdote], [IdUser])
+          VALUES (@Text, @Rate, GETDATE(), @IdTypeAnecdote, @IdUser);
+          
+          SELECT SCOPE_IDENTITY() as IdAnecdote;
+        `)
+
+      const newAnecdoteId = addResult.recordset[0].IdAnecdote
+
+      // Обновляем статус предложенного анекдота
+      await pool
+        .request()
+        .input("IdSuggestedAnecdote", sql.Int, IdSuggestedAnecdote)
+        .input("reviewComment", sql.NVarChar, reviewComment || null)
+        .input("reviewerId", sql.Int, reviewerId)
+        .input("newAnecdoteId", sql.Int, newAnecdoteId)
+        .query(`
+          UPDATE [dbo].[SuggestedAnecdotes]
+          SET [Status] = 'approved',
+              [DateReviewed] = GETDATE(),
+              [ReviewComment] = @reviewComment,
+              [ReviewerId] = @reviewerId,
+              [ApprovedAnecdoteId] = @newAnecdoteId
+          WHERE [IdSuggestedAnecdote] = @IdSuggestedAnecdote
+        `)
+
+      res.json({
+        message: "Анекдот одобрен и добавлен на сайт!",
+        IdAnecdote: newAnecdoteId,
+      })
+    } else {
+      // reject
+      await pool
+        .request()
+        .input("IdSuggestedAnecdote", sql.Int, IdSuggestedAnecdote)
+        .input("reviewComment", sql.NVarChar, reviewComment || null)
+        .input("reviewerId", sql.Int, reviewerId)
+        .query(`
+          UPDATE [dbo].[SuggestedAnecdotes]
+          SET [Status] = 'rejected',
+              [DateReviewed] = GETDATE(),
+              [ReviewComment] = @reviewComment,
+              [ReviewerId] = @reviewerId
+          WHERE [IdSuggestedAnecdote] = @IdSuggestedAnecdote AND [Status] = 'pending'
+        `)
+
+      res.json({
+        message: "Анекдот отклонен",
+      })
+    }
+  } catch (error) {
+    console.error("Ошибка при рассмотрении предложенного анекдота:", error)
+    res.status(500).json({
+      error: "Ошибка сервера при рассмотрении предложенного анекдота",
+    })
+  }
+})
+
 // Запуск сервера
 const PORT = 5000;
 app.listen(PORT, () => {
