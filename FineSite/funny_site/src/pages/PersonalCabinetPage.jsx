@@ -8,12 +8,14 @@ import HomePage from "./HomePage.jsx";
 import PersonalCabinet from "./PersonalCabinet.jsx";
 
 import "../css/HomePage.css";
+import { Footer } from "../components/Footer.jsx";
 
 const PersonalCabinetPage = () => {
   return (
     <div className="main-container">
       <Header/>
       <PersonalCabinet  />
+      <Footer/>
     </div>
   );
 };

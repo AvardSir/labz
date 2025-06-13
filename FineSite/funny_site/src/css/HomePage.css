@@ -23,8 +23,8 @@ body {
 .main-container {
   width: 100%;
   max-width: 1200px;            /* Фиксированная максимальная ширина */
-  margin: 0 auto;               /* Автоматические боковые отступы для центрирования */
-  padding: 3px ;           /* Вертикальные 15px, горизонтальные 20px */
+  /* margin: 0 auto;               Автоматические боковые отступы для центрирования */
+  /* padding: 3px ;           Вертикальные 15px, горизонтальные 20px */
   box-sizing: border-box;       /* Учет padding в общей ширине */
   
   /* Оптимизация для печати */
@@ -1465,3 +1465,21 @@ button {
 
 
 
+
+
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+#root, .page-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  flex: 1;
+}

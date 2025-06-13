@@ -10,7 +10,7 @@ import { AnecdoteTypeTag } from "./foundAnekdot/AnecdoteTypeTag"
 import AnecdoteAudioButton from "./AnecdoteAudioButton"
 import FavoriteButton from "./FavoriteButton"
 import { RatingButtons } from "./RatingButtons"
-
+import { Footer } from "./Footer"
 export const FoundAnecdotes = ({ anecdotes, setFoundAnecdotes, fetchAnecdotes }) => {
   const navigate = useNavigate()
   const { loginData } = useContext(AuthContext)
@@ -196,6 +196,7 @@ export const FoundAnecdotes = ({ anecdotes, setFoundAnecdotes, fetchAnecdotes })
           ))}
         </ul>
       )}
+      <Footer/>
     </div>
   )
 }

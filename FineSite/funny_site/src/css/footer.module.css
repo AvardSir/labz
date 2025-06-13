@@ -1,0 +1,16 @@
+.footerContainer {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px;
+  box-sizing: border-box;
+}
+
+.footer {
+  width: 100%;
+  padding: 1.5rem 0;
+  background: linear-gradient(135deg, #4a148c, #7b1fa2);
+  color: #fff;
+  text-shadow: 1px 1px 2px black;
+  margin-top: 2rem;
+}

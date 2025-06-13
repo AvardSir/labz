@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { AuthContext } from './context/AuthContext';
 import { Header } from './Header';
+import { Footer } from './Footer';
 // import './Anecdoteator.css';
 
 const Anecdoteator = () => {
@@ -120,8 +121,8 @@ const Anecdoteator = () => {
       <Header />
       <div className="anecdoteator-form">
         <h2 className="anecdoteator-title">
-Анекдотатор
-</h2>
+          Анекдотатор
+        </h2>
 
         <div className="anecdoteator-section">
           <label className="anecdoteator-label">Выберите цепочку:</label>
@@ -209,6 +210,7 @@ const Anecdoteator = () => {
           </div>
         )}
       </div>
+      
     </div>
   );
 };
