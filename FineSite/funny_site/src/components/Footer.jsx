@@ -8,7 +8,7 @@ export const Footer = () => {
     <footer className={styles.footer}>
       <div className={styles.footerContainer}>
         <div className={styles.footerContent}>
-          <h3 className={styles.contactTitle}>Связаться с нами</h3>
+          <h3 className={styles.contactTitle}>Связаться с нами о рекламе или мероприятиях</h3>
           <a 
             href="mailto:funnysite@bk.ru" 
             className={styles.contactEmail}

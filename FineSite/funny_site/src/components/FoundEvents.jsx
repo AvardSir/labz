@@ -6,6 +6,7 @@ import axios from "axios";
 import { EventTypeTag } from "./foundEvent/EventTypeTag";
 import TelegramIcon from "./TelegramIcon";
 import vkIcon from '../image/vk_ico.png';
+import { Footer } from "./Footer";
 
 export const FoundEvents = ({ events, fetchEvents, setFoundEvents }) => {
   const navigate = useNavigate();
@@ -121,5 +122,6 @@ export const FoundEvents = ({ events, fetchEvents, setFoundEvents }) => {
         ))}
       </ul>
     )}
+    <Footer/>
   </div>
 };
