@@ -145,6 +145,12 @@ export const DropdownLogin = () => {
             icon: "📊",
             description: "Статистика сайта",
           },
+          {
+            name: "Предложенные анекдоты",
+            path: "/suggested-anecdotes-admin",
+            icon: "📝",
+            description: "Модерация анекдотов",
+          },
         ]
       : []),
   ]

@@ -5,15 +5,20 @@ import { useNavigate } from "react-router-dom"
 import { AuthContext } from "./context/AuthContext"
 import { Header } from "../components/Header"
 
+
 const styles = {
   container: {
     maxWidth: "800px",
     margin: "0 auto",
     padding: "2rem",
     minHeight: "100vh",
+    color: 'black',
+    textShadow: 'none', // убираем тень
+
   },
   form: {
     width: "100%",
+
     maxWidth: "600px",
     margin: "0 auto",
     backgroundColor: "#ffffff",
@@ -28,7 +33,7 @@ const styles = {
     textAlign: "center",
   },
   subtitle: {
-    color: "#718096",
+    color: "black",
     marginBottom: "2rem",
     textAlign: "center",
     fontSize: "0.9rem",
@@ -222,15 +227,6 @@ export const SuggestAnecdoteComponent = () => {
             одобрении добавлено на сайт.
           </p>
 
-          <div style={styles.infoBox}>
-            <strong>📝 Правила предложения анекдотов:</strong>
-            <ul style={{ marginTop: "0.5rem", paddingLeft: "1.2rem" }}>
-              <li>Анекдот должен быть оригинальным или малоизвестным</li>
-              <li>Содержание должно быть уместным и не оскорбительным</li>
-              <li>Проверьте текст на грамматические ошибки</li>
-              <li>Выберите подходящий тип анекдота</li>
-            </ul>
-          </div>
 
           {error && <div style={styles.errorMessage}>❌ {error}</div>}
           {successMessage && <div style={styles.successMessage}>✅ {successMessage}</div>}

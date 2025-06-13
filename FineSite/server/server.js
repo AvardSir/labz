@@ -1612,6 +1612,7 @@ app.post("/api/suggest-anecdote", async (req, res) => {
 })
 
 // API endpoint для получения предложенных анекдотов (для админов)
+
 app.get("/api/suggested-anecdotes", async (req, res) => {
   try {
     const { status = "pending" } = req.query
@@ -1630,10 +1631,10 @@ app.get("/api/suggested-anecdotes", async (req, res) => {
           sa.[DateReviewed],
           sa.[ReviewComment],
           u.[Name] as UserName,
-          tat.[Name] as AnecdoteType
+          tat.[TypeAnecdote] as AnecdoteType
         FROM [dbo].[SuggestedAnecdotes] sa
         JOIN [dbo].[Пользователь] u ON sa.[IdUser] = u.[IdUser]
-        JOIN [dbo].[ТипАнекдота] tat ON sa.[IdTypeAnecdote] = tat.[IdTypeAnecdote]
+        JOIN [dbo].[Тип_анекдота] tat ON sa.[IdTypeAnecdote] = tat.[IdTypeAnecdote]
         WHERE sa.[Status] = @status
         ORDER BY sa.[DateSuggested] DESC
       `)
@@ -1646,6 +1647,7 @@ app.get("/api/suggested-anecdotes", async (req, res) => {
     })
   }
 })
+
 
 // API endpoint для одобрения/отклонения предложенного анекдота (для админов)
 app.post("/api/review-suggested-anecdote", async (req, res) => {

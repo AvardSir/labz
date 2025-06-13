@@ -1,0 +1,153 @@
+/* Стили для админ-панели управления предложенными анекдотами */
+.anecdotesList {
+  max-height: 75vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.anecdotesList::-webkit-scrollbar {
+  width: 6px;
+}
+
+.anecdotesList::-webkit-scrollbar-thumb {
+  background-color: #cbd5e0;
+  border-radius: 3px;
+}
+
+.anecdoteItem {
+  transition: all 0.2s ease;
+}
+
+.anecdoteItem:hover {
+  background-color: #f7fafc !important;
+}
+
+.anecdoteItem.active {
+  border-left: 4px solid #3182ce !important;
+  padding-left: calc(1rem - 4px) !important;
+}
+
+.anecdoteDetails {
+  max-height: 75vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  position: sticky;
+  top: 1rem;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-right: 0.5rem;
+}
+
+.badgePrimary {
+  background-color: #ebf8ff;
+  color: #3182ce;
+}
+
+/* Анимации для уведомлений */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+.notification {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+.notificationExit {
+  animation: fadeOut 0.3s ease-in forwards;
+}
+
+/* Кнопки действий */
+.btnApprove {
+  background: linear-gradient(135deg, #38a169 0%, #2f855a 100%) !important;
+  box-shadow: 0 4px 6px rgba(56, 161, 105, 0.25) !important;
+  transform: translateY(0);
+  transition: all 0.2s ease !important;
+}
+
+.btnApprove:hover:not(:disabled) {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 10px 15px rgba(56, 161, 105, 0.3) !important;
+}
+
+.btnReject {
+  background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%) !important;
+  box-shadow: 0 4px 6px rgba(229, 62, 62, 0.25) !important;
+  transform: translateY(0);
+  transition: all 0.2s ease !important;
+}
+
+.btnReject:hover:not(:disabled) {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 10px 15px rgba(229, 62, 62, 0.3) !important;
+}
+
+/* Адаптивная верстка */
+@media (max-width: 768px) {
+  .anecdotesContainer {
+    grid-template-columns: 1fr !important;
+  }
+
+  .anecdoteDetails {
+    position: static;
+  }
+}
+
+/* Стили для текста внутри белых блоков */
+.anecdotesList,
+.anecdoteDetails,
+.anecdoteItem,
+.anecdoteItem * {
+  color: #000000 !important;
+  text-shadow: none !important;
+}
+
+/* Более специфичные селекторы для текста внутри anecdoteDetails */
+.anecdoteDetails p,
+.anecdoteDetails span,
+.anecdoteDetails div:not(.btnApprove):not(.btnReject),
+.anecdoteDetails label,
+.anecdoteDetails h1,
+.anecdoteDetails h2,
+.anecdoteDetails h3,
+.anecdoteDetails h4,
+.anecdoteDetails h5,
+.anecdoteDetails h6 {
+  color: #000000 !important;
+  text-shadow: none !important;
+}
+
+/* Убедимся, что текст в кнопках остается белым */
+.btnApprove,
+.btnReject {
+  color: white !important;
+  text-shadow: none !important;
+}
+
+/* Стиль для кнопки "Отмена" */
+.cancelButton {
+  color: 'white' !important;
+}
