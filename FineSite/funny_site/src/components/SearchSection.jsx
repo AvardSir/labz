@@ -2,11 +2,12 @@
 import React, { useState, useEffect } from "react";
 
 // import { FoundAnecdotes } from "./FoundAnecdotes";
-import { FoundEvents } from "./FoundEvents";
+// import { FoundEvents } from "./FoundEvents";
 import { AnecdoteSearch } from "./AnecdoteSearch";
 import { EventSearch } from "./EventSearch";
-import { FoundAnecdotes } from "./FoundAnecdotes/FoundAnecdotes";
 
+import { FoundAnecdotes } from "./FoundAnecdotes/FoundAnecdotes";
+import { FoundEvents } from "./FoundEvents/FoundEvents";
 
 export const SearchSection = ({ what = 'anecdote' }) => {
   const [searchData, setSearchData] = useState({
