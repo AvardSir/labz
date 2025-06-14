@@ -1,48 +1,97 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect, useCallback } from "react";
 import { AuthContext } from "./context/AuthContext";
 import axios from "axios";
 import { Header } from "./Header";
+
+const PAGE_SIZE = 10;
 
 export const FavoriteAnecdotesList = () => {
     const { loginData } = useContext(AuthContext);
     const [favorites, setFavorites] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [loadingMore, setLoadingMore] = useState(false);
     const [error, setError] = useState(null);
-    // Вверху компонента
-    const fetchFavorites = async () => {
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
+
+    const fetchFavorites = useCallback(async (pageNum = 1) => {
         if (!loginData?.IdUser) {
             setFavorites([]);
             setLoading(false);
+            setHasMore(false);
             return;
         }
         try {
-            setLoading(true);
-            const res = await axios.get(`/api/favorites/${loginData.IdUser}`);
-            setFavorites(res.data);
+            if (pageNum === 1) {
+                setLoading(true);
+            } else {
+                setLoadingMore(true);
+            }
+            const res = await axios.get(`/api/favorites/${loginData.IdUser}`, {
+                params: {
+                    page: pageNum,
+                    limit: PAGE_SIZE,
+                },
+            });
+            if (res.data.length < PAGE_SIZE) {
+                setHasMore(false);
+            } else {
+                setHasMore(true);
+            }
+            if (pageNum === 1) {
+                setFavorites(res.data);
+            } else {
+                setFavorites(prev => [...prev, ...res.data]);
+            }
             setError(null);
         } catch (err) {
             setError("Ошибка загрузки избранных анекдотов");
         } finally {
             setLoading(false);
+            setLoadingMore(false);
         }
-    };
+    }, [loginData]);
 
     useEffect(() => {
-        fetchFavorites();
-    }, [loginData]);
+        setPage(1);
+        fetchFavorites(1);
+    }, [loginData, fetchFavorites]);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            if (loadingMore || loading || !hasMore) return;
+
+            const scrollTop = window.scrollY || document.documentElement.scrollTop;
+            const windowHeight = window.innerHeight;
+            const docHeight = document.documentElement.scrollHeight;
+
+            if (scrollTop + windowHeight >= docHeight - 150) {
+                setPage(prev => prev + 1);
+            }
+        };
+
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, [loadingMore, loading, hasMore]);
+
+    useEffect(() => {
+        if (page === 1) return; // Уже загрузили первую страницу
+        fetchFavorites(page);
+    }, [page, fetchFavorites]);
 
     const handleRemoveFavorite = async (IdAnecdote) => {
         try {
             await axios.delete(`/api/favorites/${loginData.IdUser}/${IdAnecdote}`);
-            // После удаления обновляем список
-            fetchFavorites();
+            // Обновляем список, можно просто перезагрузить первую страницу
+            setPage(1);
+            fetchFavorites(1);
         } catch (err) {
             alert("Ошибка при удалении из избранного");
             console.error(err);
         }
     };
 
-    if (loading) return <p>Загрузка избранных анекдотов...</p>;
+    if (loading && page === 1) return <p>Загрузка избранных анекдотов...</p>;
     if (error) return <p style={{ color: "red" }}>{error}</p>;
     if (favorites.length === 0) return <p><Header />У вас пока нет избранных анекдотов.</p>;
 
@@ -83,7 +132,7 @@ export const FavoriteAnecdotesList = () => {
                             <span>📅 {new Date(anecdote.Date).toLocaleDateString()}</span>
                             <button
                                 onClick={(e) => {
-                                    e.stopPropagation(); // чтобы не срабатывал клик по карточке (копирование)
+                                    e.stopPropagation();
                                     if (window.confirm("Удалить из избранного?")) {
                                         handleRemoveFavorite(anecdote.IdAnecdote);
                                     }
@@ -96,6 +145,8 @@ export const FavoriteAnecdotesList = () => {
                     </li>
                 ))}
             </ul>
+            {loadingMore && <p>Загрузка...</p>}
+            {!hasMore && <p>Больше анекдотов нет.</p>}
         </div>
     );
 };
