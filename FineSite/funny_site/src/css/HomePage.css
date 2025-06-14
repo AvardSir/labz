@@ -1527,3 +1527,28 @@ html, body {
   font-weight: 500;
   border-color: #222;
 }
+
+
+
+
+
+.image-gallery {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  margin-bottom: 10px;
+  justify-content: center;
+  scrollbar-gutter: stable;
+  height: 120px;
+}
+
+.image-gallery img {
+  height: 100px;
+  border-radius: 8px;
+  object-fit: cover;
+  cursor: pointer;
+  user-select: none;
+  pointer-events: auto;
+  transition: none !important;
+}

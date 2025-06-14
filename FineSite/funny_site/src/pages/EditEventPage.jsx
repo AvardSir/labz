@@ -5,11 +5,15 @@ import { Header } from "../components/Header";
 
 const styles = {
   container: {
+
     maxWidth: '800px',
     margin: '0 auto',
     padding: '2rem',
     minHeight: '100vh',
-  },
+        textShadow: 'none' // Убирает тень текста
+
+
+},
   form: {
     width: '100%',
     maxWidth: '600px',
@@ -207,10 +211,10 @@ const EditEventPage = () => {
   return (
     <div style={styles.container}>
       <Header />
-      
+
       <div style={styles.form}>
         <h2 style={styles.title}>Редактировать мероприятие</h2>
-        
+
         <form onSubmit={handleSubmit}>
           <div style={styles.formGroup}>
             <label htmlFor="Name" style={styles.label}>
@@ -244,7 +248,7 @@ const EditEventPage = () => {
           <div style={styles.formGroup}>
 
             {/* {console.log(event)} */}
-            
+
             {/* {console.log(data.Cost)} */}
             <label htmlFor="Cost" style={styles.label}>
               Стоимость:
@@ -313,8 +317,8 @@ const EditEventPage = () => {
           </div>
 
           <div style={styles.buttonGroup}>
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               disabled={loading}
               style={{
                 ...styles.primaryButton,
@@ -323,7 +327,7 @@ const EditEventPage = () => {
             >
               {loading ? "Сохранение..." : "Сохранить изменения"}
             </button>
-            <button 
+            <button
               type="button"
               onClick={() => navigate('/events')}
               style={styles.primaryButton}
