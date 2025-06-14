@@ -70,21 +70,21 @@ export const FoundEvents = ({ events, fetchEvents, setFoundEvents }) => {
 
               <span>{event.Проведено === true ? '✅ Проведено' : '🕒 Запланировано'}</span>
 
-<span
-  className="share-icon telegram"
-  title="Поделиться в Telegram"
-  onClick={() => handleShareClick("telegram", event)}
->
-  <TelegramIcon style={{ width: 16, height: 16, cursor: "pointer" }} />
-</span>
-              
-<span
-  className="share-icon vk"
-  title="Поделиться в VK"
-  onClick={() => handleShareClick("vk", event)}
->
-  <img src={vkIcon} alt="VK" width={16} height={16} style={{ cursor: "pointer" }} />
-</span>
+              <span
+                className="share-icon telegram"
+                title="Поделиться в Telegram"
+                onClick={() => handleShareClick("telegram", event)}
+              >
+                <TelegramIcon style={{ width: 16, height: 16, cursor: "pointer" }} />
+              </span>
+
+              <span
+                className="share-icon vk"
+                title="Поделиться в VK"
+                onClick={() => handleShareClick("vk", event)}
+              >
+                <img src={vkIcon} alt="VK" width={16} height={16} style={{ cursor: "pointer" }} />
+              </span>
             </div>
 
             {/* Блок кнопок */}
@@ -122,6 +122,6 @@ export const FoundEvents = ({ events, fetchEvents, setFoundEvents }) => {
         ))}
       </ul>
     )}
-    <Footer/>
+    <Footer />
   </div>
 };

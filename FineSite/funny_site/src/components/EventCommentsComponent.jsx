@@ -1,9 +1,8 @@
-import React, { useEffect, useState} from "react";
-import { useParams } from "react-router-dom";
-import { AuthContext } from "./context/AuthContext"; // Путь к вашему контексту
-import { useNavigate } from 'react-router-dom';
-// import { AuthContext } from "./context/AuthContext";
-import { useContext } from "react";
+import React, { useEffect, useState, useContext } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { AuthContext } from "./context/AuthContext";
+
+const BATCH_SIZE = 10;
 
 export const EventCommentsComponent = () => {
   const navigate = useNavigate();
@@ -11,38 +10,53 @@ export const EventCommentsComponent = () => {
   const { loginData } = useContext(AuthContext);
   const [event, setEvent] = useState(null);
   const [comments, setComments] = useState([]);
+  const [visibleCount, setVisibleCount] = useState(BATCH_SIZE);
   const [newComment, setNewComment] = useState("");
   const [userId, setUserId] = useState(null);
 
   useEffect(() => {
     fetch(`/event-details/${eventId}`)
-      .then((res) => {
-        if (!res.ok) throw new Error('Ошибка сети');
-        return res.json();
-      })
+      .then((res) => res.ok ? res.json() : Promise.reject("Ошибка сети"))
       .then((data) => setEvent(data[0]))
-      .catch((err) => console.error('Ошибка загрузки события:', err));
+      .catch((err) => console.error("Ошибка загрузки события:", err));
 
     fetch(`/api/get-comments-for-event?eventId=${eventId}`)
       .then((res) => res.json())
-      .then((data) => setComments(data))
+      .then((data) => {
+        setComments(data);
+        setVisibleCount(BATCH_SIZE);
+      })
       .catch((err) => console.error("Ошибка загрузки комментариев:", err));
 
-    if (loginData && loginData.login) {
+    if (loginData?.login) {
       fetch(`/api/IdByUsername_forEvents?Name=${encodeURIComponent(loginData.login)}`)
         .then((res) => res.json())
         .then((data) => {
-          if (data && data.IdUser) setUserId(data.IdUser);
+          if (data?.IdUser) setUserId(data.IdUser);
           else console.error("Не удалось получить IdUser.");
         })
         .catch((err) => console.error("Ошибка при получении IdUser:", err));
     }
   }, [eventId, loginData]);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const windowHeight = window.innerHeight;
+      const docHeight = document.documentElement.scrollHeight;
+
+      if (scrollTop + windowHeight >= docHeight - 200) {
+        setVisibleCount(prev => Math.min(prev + BATCH_SIZE, comments.length));
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [comments]);
+
   const handleAddComment = () => {
     if (!newComment) return alert("Комментарий не может быть пустым.");
-    if (!loginData || !loginData.login || !userId)
-      return alert("Пожалуйста, войдите в систему, чтобы добавить комментарий.");
+    if (!loginData?.login || !userId) return alert("Войдите, чтобы комментировать.");
 
     fetch(`/api/add-comment`, {
       method: "POST",
@@ -56,19 +70,17 @@ export const EventCommentsComponent = () => {
       .then((res) => res.json())
       .then((data) => {
         if (data.message === "Комментарий успешно добавлен.") {
-          setComments([
-            ...comments,
-            {
-              IdCommentsEvents: data.insertedId || Date.now(), // если сервер возвращает id
-              CommentText: newComment,
-              CommentDate: new Date().toISOString(),
-              AuthorName: loginData.login,
-              IdUser: userId,
-            },
-          ]);
+          const newCom = {
+            IdCommentsEvents: data.insertedId || Date.now(),
+            CommentText: newComment,
+            CommentDate: new Date().toISOString(),
+            AuthorName: loginData.login,
+            IdUser: userId,
+          };
+          setComments(prev => [...prev, newCom]);
           setNewComment("");
         } else {
-          console.error("Ошибка при добавлении комментария:", data.error);
+          console.error("Ошибка добавления:", data.error);
         }
       })
       .catch((err) => console.error("Ошибка добавления комментария:", err));
@@ -79,14 +91,15 @@ export const EventCommentsComponent = () => {
 
     try {
       const res = await fetch(`/api/event-comment-delete/${id}`, { method: "DELETE" });
-      if (!res.ok) throw new Error("Ошибка удаления комментария");
-      
-      setComments(comments.filter(c => c.IdCommentsEvents !== id));
+      if (!res.ok) throw new Error("Ошибка удаления");
+      setComments(prev => prev.filter(c => c.IdCommentsEvents !== id));
     } catch (err) {
       console.error(err);
       alert("Не удалось удалить комментарий");
     }
   };
+
+  const visibleComments = comments.slice(0, visibleCount);
 
   return (
     <div className="event-comments-page">
@@ -107,12 +120,13 @@ export const EventCommentsComponent = () => {
       ) : (
         <p>Загрузка мероприятия...</p>
       )}
+
       <button onClick={() => navigate('/events')} className="back-button">Назад</button>
-      
+
       <h4>Комментарии:</h4>
       <ul className="comments-list">
-        {comments.length > 0 ? (
-          comments.map((comment) => (
+        {visibleComments.length > 0 ? (
+          visibleComments.map((comment) => (
             <li key={comment.IdCommentsEvents} className="comment-item">
               <div className="comment-bubble">
                 <p className="comment-text">{comment.CommentText}</p>
@@ -132,8 +146,7 @@ export const EventCommentsComponent = () => {
                       })
                     : ''}
                 </time>
-                {/* Кнопка удаления, если текущий пользователь — автор комментария */}
-                {loginData.IdRights == 2 && (
+                {loginData.IdRights === 2 && (
                   <button
                     className="delete-comment-button"
                     onClick={() => handleDeleteComment(comment.IdCommentsEvents)}

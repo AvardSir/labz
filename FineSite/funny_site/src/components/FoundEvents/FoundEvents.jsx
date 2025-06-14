@@ -48,7 +48,7 @@ export const FoundEvents = ({ events, fetchEvents, setFoundEvents }) => {
         Сбросить поиск по типам
       </button>
 
-      {loginData.IdRights === 2 && (
+      {loginData.IdRights == 2 && (
         <button
           onClick={() => navigate(`/add-event`)}
           className="action-btn add-btn"
@@ -70,7 +70,7 @@ export const FoundEvents = ({ events, fetchEvents, setFoundEvents }) => {
                 event={event}
                 onDelete={handleDelete}
                 navigate={navigate}
-                canEdit={loginData.IdRights === 2}
+                canEdit={loginData.IdRights == 2}
                 setFoundEvents={setFoundEvents}
               />
             ))}

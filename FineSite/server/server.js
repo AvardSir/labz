@@ -568,35 +568,34 @@ app.get("/api/IdByUsername_forEvents", async (req, res) => {
 
 
 app.get('/api/get-comments-for-event', async (req, res) => {
-  // Получение параметра eventId из строки запроса
   const { eventId } = req.query;
+  const parsedEventId = Number(eventId);
 
-  // Проверка на наличие и валидность eventId
-  const parsedEventId = Number(eventId); // Преобразование в число
   if (!parsedEventId || isNaN(parsedEventId)) {
     return res.status(400).json({ error: 'Параметр eventId обязателен и должен быть числом.' });
   }
 
   try {
-    const pool = await poolPromise; // Используем глобальный пул соединений
+    const pool = await poolPromise;
 
-    // Вызов хранимой процедуры
     const result = await pool.request()
-      .input('EventId', sql.Int, parsedEventId) // Передаем параметр в запрос
-      .execute('GetCommentsForEventByIdEvent'); // Хранимая процедура
+      .input('EventId', sql.Int, parsedEventId)
+      .execute('GetCommentsForEventByIdEvent');
 
-    // Проверка на наличие результатов
     if (!result.recordset || result.recordset.length === 0) {
       return res.status(404).json({ message: 'Комментарии для этого события не найдены.' });
     }
 
-    // Возвращаем успешный результат
-    res.status(200).json(result.recordset);
+    // Сортируем записи по дате комментария (от старых к новым)
+    const sortedComments = result.recordset.sort((a, b) => new Date(a.CommentDate) - new Date(b.CommentDate));
+
+    res.status(200).json(sortedComments);
   } catch (err) {
     console.error('Ошибка выполнения запроса:', err.message, err.stack);
     res.status(500).json({ error: 'Ошибка сервера.' });
   }
 });
+
 
 
 
