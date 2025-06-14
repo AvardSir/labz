@@ -14,12 +14,22 @@ const app = express();
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
 
+const cors = require('cors');
+
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true,
+}));
+
 // Папка для хранения аудио
 const audioDir = path.join(__dirname, 'audio');
+const uploadsDir = path.join(__dirname, 'uploads');
+
 if (!fs.existsSync(audioDir)) {
   fs.mkdirSync(audioDir);
 }
 app.use('/audio', express.static(audioDir));
+app.use('/uploads', express.static(uploadsDir));
 
 // Настройки подключения к базе данных
 const dbConfig = {
@@ -60,6 +70,20 @@ const storage = multer.diskStorage({
   }
 });
 
+const imageStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, uploadsDir);
+  },
+  filename: (req, file, cb) => {
+    const timestamp = Date.now();
+    const ext = path.extname(file.originalname);
+    cb(null, `${timestamp}_${file.originalname}`);
+  },
+});
+
+const imageUpload = multer({ storage: imageStorage });
+
+
 const upload = multer({
   storage: storage,
   limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
@@ -82,6 +106,57 @@ app.post('/api/upload-audio', upload.single('audio'), (req, res) => {
   });
 });
 
+app.post('/api/events/:id/images', imageUpload.single('image'), async (req, res) => {
+  const eventId = req.params.id;
+  const file = req.file;
+
+  if (!file) {
+    return res.status(400).json({ error: 'Файл изображения не найден' });
+  }
+
+  const imagePath = `/uploads/${file.filename}`;
+
+  try {
+    const pool = await poolPromise;
+    await pool.request()
+      .input('IdEvent', sql.Int, eventId)
+      .input('ImagePath', sql.NVarChar, imagePath)
+      .query(`
+        INSERT INTO Картинки_Мероприятия (IdEvent, ImagePath)
+        VALUES (@IdEvent, @ImagePath)
+      `);
+
+    res.status(200).json({ message: 'Изображение добавлено', imagePath });
+  } catch (err) {
+    console.error('Ошибка при добавлении изображения:', err);
+    res.status(500).json({ error: 'Ошибка сервера' });
+  }
+});
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+// API: Получить список файлов из папки мероприятия
+app.get("/api/events/:id/images", (req, res) => {
+  const eventId = req.params.id;
+  const dir = path.join(__dirname, "uploads", eventId);
+
+  if (!fs.existsSync(dir)) {
+    return res.json([]); // Нет папки = нет картинок
+  }
+
+  fs.readdir(dir, (err, files) => {
+    if (err) {
+      console.error("Ошибка чтения папки:", err);
+      return res.status(500).json({ error: "Ошибка сервера" });
+    }
+
+    // Отфильтровать только изображения
+    const imageFiles = files.filter(name =>
+      /\.(jpg|jpeg|png|gif)$/i.test(name)
+    );
+
+    res.json(imageFiles); // ["test.jpg", "photo2.jpg"]
+  });
+});
 
 
 app.post('/api/upload-audio', upload.single('audio'), (req, res) => {
