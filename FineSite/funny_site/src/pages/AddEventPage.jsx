@@ -88,11 +88,58 @@ const styles = {
     margin: '1rem 0',
     textAlign: 'center',
   },
+  imageUpload: {
+    marginTop: '1rem',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '1rem',
+  },
+  previewContainer: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: '1rem',
+    marginTop: '1rem',
+  },
+  previewImage: {
+    width: '100px',
+    height: '100px',
+    objectFit: 'cover',
+    borderRadius: '8px',
+    border: '1px solid #e2e8f0',
+  },
+  uploadButton: {
+    padding: '0.5rem 1rem',
+    backgroundColor: '#4299e1',
+    color: 'white',
+    border: 'none',
+    borderRadius: '6px',
+    cursor: 'pointer',
+    fontSize: '0.9rem',
+    transition: 'all 0.2s ease',
+  },
+  removeButton: {
+    position: 'absolute',
+    top: '4px',
+    right: '4px',
+    backgroundColor: '#e53e3e',
+    color: 'white',
+    border: 'none',
+    borderRadius: '50%',
+    width: '24px',
+    height: '24px',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: '12px',
+  },
+  imageWrapper: {
+    position: 'relative',
+  },
 };
 
 export const AddEventPage = () => {
   const navigate = useNavigate();
-
   const [formData, setFormData] = useState({
     description: "",
     cost: "",
@@ -101,11 +148,13 @@ export const AddEventPage = () => {
     conducted: false,
     eventTypeId: "",
   });
-
   const [eventTypes, setEventTypes] = useState([]);
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [uploadingImages, setUploadingImages] = useState(false);
+  const [imagePreviews, setImagePreviews] = useState([]);
+  const fileInputRef = React.useRef(null);
 
   useEffect(() => {
     const fetchEventTypes = async () => {
@@ -124,7 +173,6 @@ export const AddEventPage = () => {
         setError("Не удалось загрузить типы мероприятий");
       }
     };
-
     fetchEventTypes();
   }, []);
 
@@ -135,35 +183,121 @@ export const AddEventPage = () => {
     }));
   };
 
+  const handleImageChange = (e) => {
+    const files = Array.from(e.target.files);
+    if (files.length === 0) return;
+    
+    if (imagePreviews.length + files.length > 10) {
+      setError("Можно загрузить не более 10 изображений");
+      return;
+    }
+
+    const newPreviews = files
+      .filter(file => {
+        if (!file.type.startsWith('image/')) {
+          setError(`Файл ${file.name} не является изображением`);
+          return false;
+        }
+        if (file.size > 5 * 1024 * 1024) {
+          setError(`Файл ${file.name} слишком большой (максимум 5MB)`);
+          return false;
+        }
+        return true;
+      })
+      .map(file => ({
+        id: URL.createObjectURL(file),
+        file,
+        preview: URL.createObjectURL(file)
+      }));
+
+    setImagePreviews(prev => [...prev, ...newPreviews]);
+  };
+
+  const removeImage = (index) => {
+    const newPreviews = [...imagePreviews];
+    URL.revokeObjectURL(newPreviews[index].preview);
+    newPreviews.splice(index, 1);
+    setImagePreviews(newPreviews);
+  };
+
+  const uploadImages = async (eventId) => {
+    if (imagePreviews.length === 0) return;
+
+    setUploadingImages(true);
+    try {
+      const uploadPromises = imagePreviews.map(async (preview) => {
+        const formData = new FormData();
+        formData.append('image', preview.file);
+
+        const response = await fetch(`/api/events/${eventId}/images`, {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!response.ok) {
+          throw new Error(`Ошибка загрузки изображения`);
+        }
+        return response.json();
+      });
+
+      await Promise.all(uploadPromises);
+    } catch (err) {
+      console.error('Ошибка загрузки изображений:', err);
+      throw err;
+    } finally {
+      setUploadingImages(false);
+    }
+  };
+
+  const findEventId = async () => {
+    try {
+      const response = await fetch(`/api/events/find?name=${encodeURIComponent(formData.name)}&description=${encodeURIComponent(formData.description)}&cost=${formData.cost}`);
+      const data = await response.json();
+      if (!response.ok || !data.id) {
+        throw new Error("Не удалось найти созданное мероприятие");
+      }
+      return data.id;
+    } catch (err) {
+      console.error("Ошибка поиска мероприятия:", err);
+      throw err;
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
     setSuccessMessage(null);
     setLoading(true);
 
-    const requestData = {
-      ...formData,
-      cost: parseFloat(formData.cost),
-      howManyFreeSeats: parseInt(formData.howManyFreeSeats, 10),
-      eventTypeId: parseInt(formData.eventTypeId, 10),
-    };
-
     try {
+      // 1. Создаем мероприятие
       const response = await fetch("/api/add_events", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(requestData),
+        body: JSON.stringify({
+          ...formData,
+          cost: parseFloat(formData.cost),
+          howManyFreeSeats: parseInt(formData.howManyFreeSeats, 10),
+          eventTypeId: parseInt(formData.eventTypeId, 10),
+        }),
       });
 
-      const result = await response.json();
-
       if (!response.ok) {
-        throw new Error(result.error || "Ошибка при добавлении мероприятия");
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Ошибка при добавлении мероприятия");
       }
 
-      setSuccessMessage("Мероприятие успешно добавлено!");
+      // 2. Получаем ID созданного мероприятия
+      const eventId = await findEventId();
+
+      // 3. Загружаем изображения, если они есть
+      if (imagePreviews.length > 0) {
+        await uploadImages(eventId);
+      }
+
+      setSuccessMessage("Мероприятие и изображения успешно добавлены!");
       setTimeout(() => navigate("/"), 2000);
     } catch (err) {
       setError(err.message);
@@ -171,6 +305,8 @@ export const AddEventPage = () => {
       setLoading(false);
     }
   };
+
+
 
   return (
     <div style={styles.container}>
@@ -182,6 +318,7 @@ export const AddEventPage = () => {
         {successMessage && <p style={styles.successMessage}>{successMessage}</p>}
 
         <form onSubmit={handleSubmit}>
+
           <div style={styles.formGroup}>
             <label htmlFor="name" style={styles.label}>Название:</label>
             <input
@@ -262,16 +399,64 @@ export const AddEventPage = () => {
             </label>
           </div>
 
+          {/* Блок загрузки изображений */}
+          <div style={styles.formGroup}>
+            <label style={styles.label}>Изображения мероприятия:</label>
+            <div style={styles.imageUpload}>
+              <button
+                type="button"
+                onClick={() => fileInputRef.current.click()}
+                style={styles.uploadButton}
+                disabled={uploadingImages || loading}
+              >
+                {uploadingImages ? "Загрузка..." : "Добавить изображения"}
+              </button>
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleImageChange}
+                multiple
+                accept="image/*"
+                style={{ display: 'none' }}
+                disabled={uploadingImages || loading}
+              />
+              <small>Максимум 10 изображений, до 5MB каждое</small>
+            </div>
+
+            {imagePreviews.length > 0 && (
+              <div style={styles.previewContainer}>
+                {imagePreviews.map((preview, index) => (
+                  <div key={preview.id} style={styles.imageWrapper}>
+                    <img
+                      src={preview.preview}
+                      alt={`Preview ${index}`}
+                      style={styles.previewImage}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeImage(index)}
+                      style={styles.removeButton}
+                      disabled={uploadingImages || loading}
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
           <div style={styles.buttonGroup}>
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || uploadingImages}
               style={{
                 ...styles.primaryButton,
-                opacity: loading ? 0.7 : 1,
+                opacity: (loading || uploadingImages) ? 0.7 : 1,
               }}
             >
-              {loading ? "Добавление..." : "Добавить"}
+              {loading ? "Добавление..." : 
+               uploadingImages ? "Загрузка изображений..." : "Добавить"}
             </button>
             <button
               type="button"

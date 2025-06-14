@@ -1878,8 +1878,47 @@ app.post("/api/review-suggested-anecdote", async (req, res) => {
   }
 })
 
+
+
+app.get('/api/events/find', async (req, res) => {
+  try {
+    const { name, description, cost } = req.query;
+    
+    // Подключение к базе данных
+    const pool = await sql.connect(dbConfig);
+    
+    const result = await pool.request()
+      .input('name', sql.NVarChar, name)
+      .input('description', sql.NVarChar, description)
+      .input('cost', sql.Decimal(10, 2), parseFloat(cost))
+      .query(`
+        SELECT TOP 1 [IdEvent] 
+        FROM [FunnySite].[dbo].[Мероприятие]
+        WHERE [Name] = @name
+          AND [Description] = @description
+          AND [Стоимость] = @cost
+      `);
+
+    if (result.recordset.length === 0) {
+      return res.status(404).json({ error: "Мероприятие не найдено" });
+    }
+    
+    res.json({ id: result.recordset[0].IdEvent });
+  } catch (err) {
+    console.error('Ошибка поиска мероприятия:', err);
+    res.status(500).json({ error: "Внутренняя ошибка сервера" });
+  } finally {
+    sql.close(); // Закрываем соединение
+  }
+});
+
+
+
 // Запуск сервера
 const PORT = 5000;
 app.listen(PORT, () => {
   console.log(`Сервер запущен на порту ${PORT}`);
 });
+
+
+
