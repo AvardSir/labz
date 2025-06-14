@@ -1,122 +1,134 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { useParams, useNavigate } from "react-router-dom";
-import { Header } from "../components/Header";
+"use client"
+
+import { useEffect, useState } from "react"
+import axios from "axios"
+import { useParams, useNavigate } from "react-router-dom"
+import { Header } from "../components/Header"
+import { EventImagesGallery } from "../components/EventImagesGallery"
 
 const styles = {
   container: {
-
-    maxWidth: '800px',
-    margin: '0 auto',
-    padding: '2rem',
-    minHeight: '100vh',
-        textShadow: 'none' // Убирает тень текста
-
-
-},
+    maxWidth: "800px",
+    margin: "0 auto",
+    padding: "2rem",
+    minHeight: "100vh",
+  },
   form: {
-    width: '100%',
-    maxWidth: '600px',
-    margin: '0 auto',
-    backgroundColor: '#ffffff',
-    padding: '2rem',
-    borderRadius: '12px',
-    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+    width: "100%",
+    maxWidth: "600px",
+    margin: "0 auto",
+    backgroundColor: "#ffffff",
+    padding: "2rem",
+    borderRadius: "12px",
+    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
   },
   title: {
-    color: '#2d3748',
-    marginBottom: '2rem',
-    textAlign: 'center',
+    color: "#2d3748",
+    marginBottom: "2rem",
+    textAlign: "center",
   },
   formGroup: {
-    marginBottom: '1.5rem',
+    marginBottom: "1.5rem",
   },
   label: {
-    display: 'block',
-    marginBottom: '0.5rem',
-    fontWeight: '500',
-    color: '#2d3748',
-    fontSize: '0.95rem',
+    display: "block",
+    marginBottom: "0.5rem",
+    fontWeight: "500",
+    color: "#2d3748",
+    fontSize: "0.95rem",
   },
   input: {
-    width: '100%',
-    padding: '0.75rem',
-    border: '1px solid #e2e8f0',
-    borderRadius: '8px',
-    fontSize: '1rem',
-    transition: 'all 0.2s ease',
+    width: "100%",
+    padding: "0.75rem",
+    border: "1px solid #e2e8f0",
+    borderRadius: "8px",
+    fontSize: "1rem",
+    transition: "all 0.2s ease",
   },
   textarea: {
-    width: '100%',
-    padding: '0.75rem',
-    border: '1px solid #e2e8f0',
-    borderRadius: '8px',
-    fontSize: '1rem',
-    resize: 'vertical',
-    minHeight: '120px',
-    transition: 'all 0.2s ease',
+    width: "100%",
+    padding: "0.75rem",
+    border: "1px solid #e2e8f0",
+    borderRadius: "8px",
+    fontSize: "1rem",
+    resize: "vertical",
+    minHeight: "120px",
+    transition: "all 0.2s ease",
   },
   select: {
-    width: '100%',
-    padding: '0.75rem',
-    border: '1px solid #e2e8f0',
-    borderRadius: '8px',
-    fontSize: '1rem',
-    backgroundColor: 'white',
-    transition: 'all 0.2s ease',
+    width: "100%",
+    padding: "0.75rem",
+    border: "1px solid #e2e8f0",
+    borderRadius: "8px",
+    fontSize: "1rem",
+    backgroundColor: "white",
+    transition: "all 0.2s ease",
   },
   checkboxContainer: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.5rem',
+    display: "flex",
+    alignItems: "center",
+    gap: "0.5rem",
   },
   checkbox: {
-    width: '1.2rem',
-    height: '1.2rem',
+    width: "1.2rem",
+    height: "1.2rem",
   },
   buttonGroup: {
-    display: 'flex',
-    gap: '1rem',
-    marginTop: '2rem',
+    display: "flex",
+    gap: "1rem",
+    marginTop: "2rem",
   },
   primaryButton: {
-    padding: '0.75rem 1.5rem',
-    backgroundColor: '#4299e1',
-    color: 'white',
-    border: 'none',
-    borderRadius: '8px',
-    cursor: 'pointer',
-    fontSize: '1rem',
-    fontWeight: '500',
-    transition: 'all 0.2s ease',
+    padding: "0.75rem 1.5rem",
+    backgroundColor: "#4299e1",
+    color: "white",
+    border: "none",
+    borderRadius: "8px",
+    cursor: "pointer",
+    fontSize: "1rem",
+    fontWeight: "500",
+    transition: "all 0.2s ease",
     flex: 1,
   },
   secondaryButton: {
-    padding: '0.75rem 1.5rem',
-    backgroundColor: '#e2e8f0',
-    color: '#4a5568',
-    border: 'none',
-    borderRadius: '8px',
-    cursor: 'pointer',
-    fontSize: '1rem',
-    fontWeight: '500',
-    transition: 'all 0.2s ease',
+    padding: "0.75rem 1.5rem",
+    backgroundColor: "#e2e8f0",
+    color: "#4a5568",
+    border: "none",
+    borderRadius: "8px",
+    cursor: "pointer",
+    fontSize: "1rem",
+    fontWeight: "500",
+    transition: "all 0.2s ease",
     flex: 1,
   },
   loadingText: {
-    textAlign: 'center',
-    color: '#4a5568',
-    fontStyle: 'italic',
+    textAlign: "center",
+    color: "#4a5568",
+    fontStyle: "italic",
   },
   errorMessage: {
-    color: '#e53e3e',
-    margin: '1rem 0',
-    textAlign: 'center',
+    color: "#e53e3e",
+    margin: "1rem 0",
+    textAlign: "center",
   },
-};
+  imagesSection: {
+    marginBottom: "2rem",
+    padding: "1.5rem",
+    backgroundColor: "#f8f9fa",
+    borderRadius: "8px",
+    border: "1px solid #e2e8f0",
+  },
+  sectionTitle: {
+    color: "#2d3748",
+    marginBottom: "1rem",
+    fontSize: "1.1rem",
+    fontWeight: "600",
+  },
+}
 
 const EditEventPage = () => {
-  const { id } = useParams();
+  const { id } = useParams()
   const [event, setEvent] = useState({
     Name: "",
     Description: "",
@@ -124,33 +136,33 @@ const EditEventPage = () => {
     HowManyFreeSeats: "",
     Conducted: false,
     EventTypeId: "",
-  });
-  const [eventTypes, setEventTypes] = useState([]);
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+  })
+  const [eventTypes, setEventTypes] = useState([])
+  const [error, setError] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (!id) {
-      setError("Id мероприятия не найдено");
-      return;
+      setError("Id мероприятия не найдено")
+      return
     }
 
     const fetchEventTypes = async () => {
       try {
-        const response = await axios.get("/api/event-types");
-        setEventTypes(response.data);
+        const response = await axios.get("/api/event-types")
+        setEventTypes(response.data)
       } catch (err) {
-        console.error("Ошибка при загрузке типов мероприятий", err);
-        setError("Ошибка при загрузке типов мероприятий");
+        console.error("Ошибка при загрузке типов мероприятий", err)
+        setError("Ошибка при загрузке типов мероприятий")
       }
-    };
+    }
 
     const fetchEventDetails = async () => {
       try {
-        setLoading(true);
-        const response = await axios.get(`/event-details/${id}`);
-        const data = response.data[0];
+        setLoading(true)
+        const response = await axios.get(`/event-details/${id}`)
+        const data = response.data[0]
         console.log(data)
         setEvent({
           Name: data.Name || "",
@@ -159,31 +171,31 @@ const EditEventPage = () => {
           HowManyFreeSeats: data.HowManyFreeSeats || "",
           Conducted: data.Проведено || false,
           EventTypeId: data.EventTypeId || "",
-        });
+        })
       } catch (err) {
-        console.error("Ошибка при загрузке данных мероприятия", err);
-        setError("Ошибка при загрузке данных мероприятия");
+        console.error("Ошибка при загрузке данных мероприятия", err)
+        setError("Ошибка при загрузке данных мероприятия")
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
 
-    fetchEventTypes();
-    fetchEventDetails();
-  }, [id]);
+    fetchEventTypes()
+    fetchEventDetails()
+  }, [id])
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setEvent(prev => ({
+    const { name, value, type, checked } = e.target
+    setEvent((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
-    }));
-  };
+      [name]: type === "checkbox" ? checked : value,
+    }))
+  }
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
+    e.preventDefault()
+    setLoading(true)
+    setError(null)
 
     try {
       const response = await axios.put("/api/update_event", {
@@ -194,19 +206,23 @@ const EditEventPage = () => {
         name: event.Name,
         conducted: event.Conducted,
         eventTypeId: event.EventTypeId,
-      });
-      // alert(response.data.message);
-      navigate("/events");
+      })
+      navigate("/events")
     } catch (err) {
-      console.error("Ошибка при обновлении мероприятия", err);
-      setError("Ошибка при обновлении мероприятия");
+      console.error("Ошибка при обновлении мероприятия", err)
+      setError("Ошибка при обновлении мероприятия")
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
-  if (error) return <p style={styles.errorMessage}>{error}</p>;
-  if (loading) return <p style={styles.loadingText}>Загрузка...</p>;
+  const handleImagesUpdate = (updatedImages) => {
+    console.log("Изображения обновлены:", updatedImages)
+    // Здесь можно добавить дополнительную логику при обновлении изображений
+  }
+
+  if (error) return <p style={styles.errorMessage}>{error}</p>
+  if (loading) return <p style={styles.loadingText}>Загрузка...</p>
 
   return (
     <div style={styles.container}>
@@ -214,6 +230,12 @@ const EditEventPage = () => {
 
       <div style={styles.form}>
         <h2 style={styles.title}>Редактировать мероприятие</h2>
+
+        {/* Секция управления изображениями */}
+        <div style={styles.imagesSection}>
+          <h3 style={styles.sectionTitle}>Изображения мероприятия</h3>
+          <EventImagesGallery eventId={id} canEdit={true} onImagesUpdate={handleImagesUpdate} />
+        </div>
 
         <form onSubmit={handleSubmit}>
           <div style={styles.formGroup}>
@@ -246,10 +268,6 @@ const EditEventPage = () => {
           </div>
 
           <div style={styles.formGroup}>
-
-            {/* {console.log(event)} */}
-
-            {/* {console.log(data.Cost)} */}
             <label htmlFor="Cost" style={styles.label}>
               Стоимость:
             </label>
@@ -327,18 +345,14 @@ const EditEventPage = () => {
             >
               {loading ? "Сохранение..." : "Сохранить изменения"}
             </button>
-            <button
-              type="button"
-              onClick={() => navigate('/events')}
-              style={styles.primaryButton}
-            >
+            <button type="button" onClick={() => navigate("/events")} style={styles.primaryButton}>
               Назад
             </button>
           </div>
         </form>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default EditEventPage;
+export default EditEventPage

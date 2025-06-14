@@ -13,44 +13,52 @@ const MOCK_IMAGES = [
   "/placeholder.svg?height=400&width=600&text=Event+Image+6",
 ]
 
-export const EventImagesGallery = ({ eventId, mockImages = MOCK_IMAGES }) => {
+export const EventImagesGallery = ({ eventId, mockImages = MOCK_IMAGES, canEdit = false, onImagesUpdate }) => {
   const [images, setImages] = useState([])
   const [selectedIdx, setSelectedIdx] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [isUploading, setIsUploading] = useState(false)
+  const [deletingImage, setDeletingImage] = useState(null)
 
-  // Refs для управления фокусом
+  // Refs для управления фокусом и загрузки файлов
   const modalRef = useRef(null)
   const previousFocusRef = useRef(null)
+  const fileInputRef = useRef(null)
+
+  const loadImages = useCallback(async () => {
+    try {
+      setIsLoading(true)
+      setError(null)
+
+      // Пробуем загрузить с API
+      const res = await fetch(`http://localhost:5000/api/events/${eventId}/images`)
+
+      if (res.ok) {
+        const files = await res.json()
+        // Формируем полные URL для изображений
+        const imageUrls = files.map((file) => `http://localhost:5000/uploads/${eventId}/${file}`)
+        setImages(imageUrls)
+
+        // Уведомляем родительский компонент об обновлении
+        if (onImagesUpdate) {
+          onImagesUpdate(imageUrls)
+        }
+      } else {
+        throw new Error(`API returned ${res.status}`)
+      }
+    } catch (err) {
+      console.warn("API не доступен, используем mock данные:", err)
+      // Fallback на mock данные для демонстрации
+      setImages(mockImages)
+    } finally {
+      setIsLoading(false)
+    }
+  }, [eventId, mockImages, onImagesUpdate])
 
   useEffect(() => {
-    const loadImages = async () => {
-      try {
-        setIsLoading(true)
-        setError(null)
-
-        // Пробуем загрузить с API
-        const res = await fetch(`http://localhost:5000/api/events/${eventId}/images`)
-
-        if (res.ok) {
-          const files = await res.json()
-          // Формируем полные URL для изображений
-          const imageUrls = files.map((file) => `http://localhost:5000/uploads/${eventId}/${file}`)
-          setImages(imageUrls)
-        } else {
-          throw new Error(`API returned ${res.status}`)
-        }
-      } catch (err) {
-        console.warn("API не доступен, используем mock данные:", err)
-        // Fallback на mock данные для демонстрации
-        setImages(mockImages)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
     loadImages()
-  }, [eventId, mockImages])
+  }, [loadImages])
 
   // Управление скроллом и фокусом при открытии/закрытии модального окна
   useEffect(() => {
@@ -102,6 +110,12 @@ export const EventImagesGallery = ({ eventId, mockImages = MOCK_IMAGES }) => {
           e.preventDefault()
           handleNext()
           break
+        case "Delete":
+          if (canEdit) {
+            e.preventDefault()
+            handleDeleteImage(selectedIdx)
+          }
+          break
         case "Tab":
           // Ограничиваем Tab только элементами внутри модального окна
           if (modalRef.current) {
@@ -131,7 +145,7 @@ export const EventImagesGallery = ({ eventId, mockImages = MOCK_IMAGES }) => {
       document.addEventListener("keydown", handleKeyDown)
       return () => document.removeEventListener("keydown", handleKeyDown)
     }
-  }, [selectedIdx, images.length])
+  }, [selectedIdx, images.length, canEdit])
 
   const handlePrev = useCallback(() => {
     if (selectedIdx !== null) {
@@ -152,6 +166,111 @@ export const EventImagesGallery = ({ eventId, mockImages = MOCK_IMAGES }) => {
   const handleImageClick = useCallback((idx) => {
     setSelectedIdx(idx)
   }, [])
+
+  // Обработка загрузки файлов
+  const handleFileSelect = useCallback(() => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click()
+    }
+  }, [])
+
+  const handleFileChange = useCallback(
+    async (e) => {
+      const file = e.target.files?.[0]
+      if (!file) return
+
+      // Проверяем тип файла
+      if (!file.type.startsWith("image/")) {
+        alert("Пожалуйста, выберите файл изображения")
+        return
+      }
+
+      // Проверяем размер файла (максимум 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert("Размер файла не должен превышать 5MB")
+        return
+      }
+
+      setIsUploading(true)
+
+      try {
+        const formData = new FormData()
+        formData.append("image", file)
+
+        const response = await fetch(`http://localhost:5000/api/events/${eventId}/images`, {
+          method: "POST",
+          body: formData,
+        })
+
+        if (response.ok) {
+          // Перезагружаем список изображений
+          await loadImages()
+          alert("Изображение успешно загружено!")
+        } else {
+          const errorData = await response.json()
+          throw new Error(errorData.error || "Ошибка загрузки")
+        }
+      } catch (err) {
+        console.error("Ошибка загрузки изображения:", err)
+        alert("Ошибка при загрузке изображения: " + err.message)
+      } finally {
+        setIsUploading(false)
+        // Очищаем input
+        if (fileInputRef.current) {
+          fileInputRef.current.value = ""
+        }
+      }
+    },
+    [eventId, loadImages],
+  )
+
+  // Обработка удаления изображения
+  const handleDeleteImage = useCallback(
+    async (imageIndex) => {
+      if (!canEdit) return
+
+      const imageUrl = images[imageIndex]
+      if (!imageUrl) return
+
+      // Извлекаем имя файла из URL
+      const filename = imageUrl.split("/").pop()
+      if (!filename) return
+
+      const confirmDelete = window.confirm("Вы уверены, что хотите удалить это изображение?")
+      if (!confirmDelete) return
+
+      setDeletingImage(filename)
+
+      try {
+        const response = await fetch(`http://localhost:5000/api/events/${eventId}/images/${filename}`, {
+          method: "DELETE",
+        })
+
+        if (response.ok) {
+          // Закрываем модальное окно если удаляем текущее изображение
+          if (selectedIdx === imageIndex) {
+            setSelectedIdx(null)
+          } else if (selectedIdx > imageIndex) {
+            // Корректируем индекс если удаляем изображение перед текущим
+            setSelectedIdx(selectedIdx - 1)
+          }
+
+          // Перезагружаем список изображений
+          await loadImages()
+          alert("Изображение удалено!")
+        } else {
+          const errorData = await response.json()
+          throw new Error(errorData.error || "Ошибка удаления")
+        }
+      } catch (err) {
+        console.error("Ошибка удаления изображения:", err)
+        alert("Ошибка при удалении изображения: " + err.message)
+      } finally {
+        setDeletingImage(null)
+      }
+    },
+    [canEdit, images, eventId, selectedIdx, loadImages],
+  )
 
   // Состояние загрузки
   if (isLoading) {
@@ -174,11 +293,6 @@ export const EventImagesGallery = ({ eventId, mockImages = MOCK_IMAGES }) => {
         <small>{error}</small>
       </div>
     )
-  }
-
-  // Нет изображений
-  if (images.length === 0) {
-    return null // Не показываем ничего, если нет изображений
   }
 
   // Модальное окно
@@ -206,6 +320,18 @@ export const EventImagesGallery = ({ eventId, mockImages = MOCK_IMAGES }) => {
           ×
         </button>
 
+        {/* Кнопка удаления - показываем только если можно редактировать */}
+        {canEdit && (
+          <button
+            onClick={() => handleDeleteImage(selectedIdx)}
+            disabled={deletingImage !== null}
+            className="modal-delete-btn"
+            aria-label="Удалить изображение"
+          >
+            {deletingImage === images[selectedIdx]?.split("/").pop() ? "Удаление..." : "🗑️"}
+          </button>
+        )}
+
         {/* Навигация - показываем только если больше одного изображения */}
         {images.length > 1 && (
           <>
@@ -231,32 +357,75 @@ export const EventImagesGallery = ({ eventId, mockImages = MOCK_IMAGES }) => {
 
   return (
     <div className="event-images-gallery">
-      {/* Галерея миниатюр */}
-      <div className="images-grid">
-        {images.slice(0, Math.min(4, images.length)).map((imageUrl, idx) => (
-          <div key={idx} className="image-wrapper" onClick={() => handleImageClick(idx)}>
-            <img
-              src={imageUrl || "/placeholder.svg"}
-              alt={`Миниатюра изображения ${idx + 1}`}
-              className="gallery-image"
-              loading="lazy"
-              draggable={false}
-            />
-            <div className="image-overlay">
-              <span className="overlay-text">Просмотр</span>
-            </div>
-          </div>
-        ))}
+      {/* Заголовок с кнопкой загрузки */}
+      {canEdit && (
+        <div className="gallery-header">
+          <button
+            onClick={handleFileSelect}
+            disabled={isUploading}
+            className="upload-btn"
+            aria-label="Загрузить изображение"
+          >
+            {isUploading ? "Загрузка..." : "+ Добавить фото"}
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            style={{ display: "none" }}
+          />
+        </div>
+      )}
 
-        {/* Показываем "+N" только если изображений больше 4 */}
-        {images.length > 4 && (
-          <div className="image-wrapper more-images" onClick={() => handleImageClick(0)}>
-            <div className="more-images-placeholder">
-              <span className="more-count">+{images.length - 4}</span>
+      {/* Галерея миниатюр */}
+      {images.length > 0 ? (
+        <div className="images-grid">
+          {images.slice(0, Math.min(4, images.length)).map((imageUrl, idx) => (
+            <div key={idx} className="image-wrapper" onClick={() => handleImageClick(idx)}>
+              <img
+                src={imageUrl || "/placeholder.svg"}
+                alt={`Миниатюра изображения ${idx + 1}`}
+                className="gallery-image"
+                loading="lazy"
+                draggable={false}
+              />
+              <div className="image-overlay">
+                <span className="overlay-text">Просмотр</span>
+              </div>
+
+              {/* Кнопка удаления на миниатюре */}
+              {canEdit && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    handleDeleteImage(idx)
+                  }}
+                  disabled={deletingImage !== null}
+                  className="thumbnail-delete-btn"
+                  aria-label="Удалить изображение"
+                >
+                  {deletingImage === imageUrl.split("/").pop() ? "..." : "×"}
+                </button>
+              )}
             </div>
-          </div>
-        )}
-      </div>
+          ))}
+
+          {/* Показываем "+N" только если изображений больше 4 */}
+          {images.length > 4 && (
+            <div className="image-wrapper more-images" onClick={() => handleImageClick(0)}>
+              <div className="more-images-placeholder">
+                <span className="more-count">+{images.length - 4}</span>
+              </div>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="no-images">
+          <p>Нет изображений</p>
+          {canEdit && <p className="no-images-hint">Нажмите "Добавить фото" чтобы загрузить первое изображение</p>}
+        </div>
+      )}
 
       {/* Рендерим модальное окно через портал */}
       {typeof window !== "undefined" && modal && createPortal(modal, document.body)}
@@ -264,6 +433,34 @@ export const EventImagesGallery = ({ eventId, mockImages = MOCK_IMAGES }) => {
       <style jsx>{`
         .event-images-gallery {
           margin: 10px 0;
+        }
+
+        .gallery-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 10px;
+        }
+
+        .upload-btn {
+          padding: 8px 16px;
+          background: #4299e1;
+          color: white;
+          border: none;
+          border-radius: 6px;
+          cursor: pointer;
+          font-size: 14px;
+          font-weight: 500;
+          transition: all 0.2s ease;
+        }
+
+        .upload-btn:hover:not(:disabled) {
+          background: #3182ce;
+        }
+
+        .upload-btn:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
         }
 
         .images-grid {
@@ -318,14 +515,69 @@ export const EventImagesGallery = ({ eventId, mockImages = MOCK_IMAGES }) => {
           opacity: 1;
         }
 
-        .more-overlay {
-          background: rgba(0, 0, 0, 0.6);
+        .thumbnail-delete-btn {
+          position: absolute;
+          top: 4px;
+          right: 4px;
+          width: 24px;
+          height: 24px;
+          background: rgba(220, 38, 38, 0.9);
+          color: white;
+          border: none;
+          border-radius: 50%;
+          font-size: 16px;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          opacity: 0;
+          transition: all 0.2s ease;
+          z-index: 10;
         }
 
-        .more-overlay .overlay-text {
+        .image-wrapper:hover .thumbnail-delete-btn {
           opacity: 1;
-          font-size: 18px;
+        }
+
+        .thumbnail-delete-btn:hover:not(:disabled) {
+          background: rgba(220, 38, 38, 1);
+          transform: scale(1.1);
+        }
+
+        .thumbnail-delete-btn:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+
+        .more-images-placeholder {
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.7);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 8px;
+        }
+
+        .more-count {
+          color: white;
+          font-size: 16px;
           font-weight: bold;
+        }
+
+        .no-images {
+          text-align: center;
+          padding: 40px 20px;
+          color: #666;
+          background: #f8f9fa;
+          border-radius: 8px;
+          border: 2px dashed #ddd;
+        }
+
+        .no-images-hint {
+          font-size: 14px;
+          margin-top: 8px;
+          color: #888;
         }
 
         /* Состояния загрузки */
@@ -409,10 +661,42 @@ export const EventImagesGallery = ({ eventId, mockImages = MOCK_IMAGES }) => {
           outline-offset: 2px;
         }
 
+        .modal-delete-btn {
+          position: absolute;
+          top: 16px;
+          right: 70px;
+          width: 40px;
+          height: 40px;
+          background: rgba(220, 38, 38, 0.8);
+          color: white;
+          border: none;
+          border-radius: 50%;
+          font-size: 18px;
+          cursor: pointer;
+          transition: background-color 0.2s ease;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .modal-delete-btn:hover:not(:disabled) {
+          background: rgba(220, 38, 38, 1);
+        }
+
+        .modal-delete-btn:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+
+        .modal-delete-btn:focus {
+          outline: 2px solid white;
+          outline-offset: 2px;
+        }
+
         .modal-nav-btn {
           position: absolute;
           top: 50%;
-        
+          transform: translateY(-50%);
           width: 48px;
           height: 48px;
           background: rgba(0, 0, 0, 0.5);
@@ -425,13 +709,11 @@ export const EventImagesGallery = ({ eventId, mockImages = MOCK_IMAGES }) => {
           display: flex;
           align-items: center;
           justify-content: center;
-          /* Добавляем фиксированную позицию */
           will-change: background-color;
         }
 
         .modal-nav-btn:hover {
           background: rgba(0, 0, 0, 0.7);
-          /* Убираем любые изменения позиции при hover */
         }
 
         .modal-prev-btn {
@@ -466,27 +748,15 @@ export const EventImagesGallery = ({ eventId, mockImages = MOCK_IMAGES }) => {
             font-size: 20px;
           }
           
-          .modal-close-btn {
+          .modal-close-btn, .modal-delete-btn {
             width: 36px;
             height: 36px;
             font-size: 20px;
           }
-        }
 
-        .more-images-placeholder {
-          width: 100%;
-          height: 100%;
-          background: rgba(0, 0, 0, 0.7);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border-radius: 8px;
-        }
-
-        .more-count {
-          color: white;
-          font-size: 16px;
-          font-weight: bold;
+          .modal-delete-btn {
+            right: 60px;
+          }
         }
       `}</style>
     </div>

@@ -72,16 +72,40 @@ const storage = multer.diskStorage({
 
 const imageStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, uploadsDir);
+    const eventId = req.params.id;
+    const eventDir = path.join(uploadsDir, eventId);
+
+    // Создаем папку для мероприятия, если её нет
+    if (!fs.existsSync(eventDir)) {
+      fs.mkdirSync(eventDir, { recursive: true });
+      console.log(`Создана папка для мероприятия: ${eventDir}`);
+    }
+
+    cb(null, eventDir); // Сохраняем сразу в папку мероприятия
   },
   filename: (req, file, cb) => {
     const timestamp = Date.now();
     const ext = path.extname(file.originalname);
-    cb(null, `${timestamp}_${file.originalname}`);
+    const name = path.basename(file.originalname, ext);
+    cb(null, `${timestamp}_${name}${ext}`);
   },
 });
 
-const imageUpload = multer({ storage: imageStorage });
+
+const imageUpload = multer({ 
+  storage: imageStorage,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB
+  },
+  fileFilter: (req, file, cb) => {
+    // Проверяем тип файла
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Только изображения разрешены!'), false);
+    }
+  },
+});
 
 
 const upload = multer({
@@ -106,6 +130,7 @@ app.post('/api/upload-audio', upload.single('audio'), (req, res) => {
   });
 });
 
+
 app.post('/api/events/:id/images', imageUpload.single('image'), async (req, res) => {
   const eventId = req.params.id;
   const file = req.file;
@@ -114,26 +139,53 @@ app.post('/api/events/:id/images', imageUpload.single('image'), async (req, res)
     return res.status(400).json({ error: 'Файл изображения не найден' });
   }
 
-  const imagePath = `/uploads/${file.filename}`;
-
   try {
-    const pool = await poolPromise;
-    await pool.request()
-      .input('IdEvent', sql.Int, eventId)
-      .input('ImagePath', sql.NVarChar, imagePath)
-      .query(`
-        INSERT INTO Картинки_Мероприятия (IdEvent, ImagePath)
-        VALUES (@IdEvent, @ImagePath)
-      `);
+    console.log(`Изображение загружено для мероприятия ${eventId}: ${file.filename}`);
 
-    res.status(200).json({ message: 'Изображение добавлено', imagePath });
+    res.status(200).json({
+      message: 'Изображение добавлено',
+      filename: file.filename,
+      path: `/uploads/${eventId}/${file.filename}`,
+    });
   } catch (err) {
     console.error('Ошибка при добавлении изображения:', err);
-    res.status(500).json({ error: 'Ошибка сервера' });
+
+    // Удаляем файл в случае ошибки
+    if (file.path && fs.existsSync(file.path)) {
+      fs.unlinkSync(file.path);
+    }
+
+    res.status(500).json({ error: 'Ошибка сервера при сохранении изображения' });
   }
 });
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.delete("/api/events/:id/images/:filename", (req, res) => {
+  const { id: eventId, filename } = req.params
+  const filePath = path.join(uploadsDir, eventId, filename)
+
+  if (!fs.existsSync(filePath)) {
+    return res.status(404).json({ error: "Файл не найден" })
+  }
+
+  try {
+    fs.unlinkSync(filePath)
+    console.log(`Изображение удалено: ${filePath}`)
+
+    // Проверяем, если папка пустая - удаляем её
+    const eventDir = path.join(uploadsDir, eventId)
+    const remainingFiles = fs.readdirSync(eventDir)
+    if (remainingFiles.length === 0) {
+      fs.rmdirSync(eventDir)
+      console.log(`Пустая папка удалена: ${eventDir}`)
+    }
+
+    res.json({ message: "Изображение удалено" })
+  } catch (err) {
+    console.error("Ошибка при удалении изображения:", err)
+    res.status(500).json({ error: "Ошибка при удалении изображения" })
+  }
+})
 // API: Получить список файлов из папки мероприятия
 app.get("/api/events/:id/images", (req, res) => {
   const eventId = req.params.id;
