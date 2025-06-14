@@ -12,11 +12,13 @@ body {
   color: #fff;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  /* justify-content: center; Центрирование по вертикали */
+  align-items: center; /* Центрирование по горизонтали */
   height: 100vh;
   text-shadow: 1px 1px 2px black;
   overflow-x: hidden;
 }
+
 
 
 /* Основной контейнер */
