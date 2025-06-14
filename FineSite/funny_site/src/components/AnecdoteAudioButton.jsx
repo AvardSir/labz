@@ -34,7 +34,7 @@ const AnecdoteAudioButton = ({ idAnecdote }) => {
     <div>
       {audioError ? (
         <div className="text-red-500 mt-2">
-          😔 Пока нет озвучки. Напиши нам на <a href="mailto:voice@funnysite.local" className="underline">voice@funnysite.local</a>
+          😔 Пока нет озвучки. Напиши нам на <a href="mailto:funnysite@bk.ru" className="underline">funnysite@bk.ru</a>
         </div>
       ) : (
         <>
