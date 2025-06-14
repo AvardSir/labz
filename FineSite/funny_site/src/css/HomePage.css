@@ -1485,3 +1485,45 @@ html, body {
 .main-content {
   flex: 1;
 }
+
+
+.dots {
+  padding: 6px 8px;
+  color: #aaa;
+  user-select: none;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.page-btn {
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  border-radius: 20px; /* круглая форма */
+  min-width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.page-btn:hover {
+  background-color: #eee;
+  border-color: #999;
+}
+
+.page-btn.active {
+  background-color: #222;
+  color: #fff;
+  font-weight: 500;
+  border-color: #222;
+}
