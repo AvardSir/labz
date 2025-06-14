@@ -1,10 +1,12 @@
 // SearchSection.jsx
 import React, { useState, useEffect } from "react";
 
-import { FoundAnecdotes } from "./FoundAnecdotes";
+// import { FoundAnecdotes } from "./FoundAnecdotes";
 import { FoundEvents } from "./FoundEvents";
 import { AnecdoteSearch } from "./AnecdoteSearch";
 import { EventSearch } from "./EventSearch";
+import { FoundAnecdotes } from "./FoundAnecdotes/FoundAnecdotes";
+
 
 export const SearchSection = ({ what = 'anecdote' }) => {
   const [searchData, setSearchData] = useState({
